@@ -625,7 +625,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             // find the field in the list
             var listField = siteList.Fields.GetById(fieldId);
 
-            siteList.Context.Load(listField, f => f.Id, f => f.Title, f => f.Hidden, f => f.Required);
+            siteList.Context.Load(listField, f => f.Id, f => f.Title/*, f => f.Hidden*/, f => f.Required);
             siteList.Context.ExecuteQueryRetry();
 
             var isDirty = false;
@@ -651,18 +651,18 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             }
 #endif
 
-            // We cannot configure Hidden property for Phonetic fields 
-            if (!(siteList.BaseTemplate == (int)ListTemplateType.Contacts &&
-                (fieldRef.Name.Equals("LastNamePhonetic", StringComparison.InvariantCultureIgnoreCase) ||
-                fieldRef.Name.Equals("FirstNamePhonetic", StringComparison.InvariantCultureIgnoreCase) ||
-                fieldRef.Name.Equals("CompanyPhonetic", StringComparison.InvariantCultureIgnoreCase))))
-            {
-                if (fieldRef.Hidden != listField.Hidden)
-                {
-                    listField.Hidden = fieldRef.Hidden;
-                    isDirty = true;
-                }
-            }
+            //// We cannot configure Hidden property for Phonetic fields 
+            //if (!(siteList.BaseTemplate == (int)ListTemplateType.Contacts &&
+            //    (fieldRef.Name.Equals("LastNamePhonetic", StringComparison.InvariantCultureIgnoreCase) ||
+            //    fieldRef.Name.Equals("FirstNamePhonetic", StringComparison.InvariantCultureIgnoreCase) ||
+            //    fieldRef.Name.Equals("CompanyPhonetic", StringComparison.InvariantCultureIgnoreCase))))
+            //{
+            //    if (fieldRef.Hidden != listField.Hidden)
+            //    {
+            //        listField.Hidden = fieldRef.Hidden;
+            //        isDirty = true;
+            //    }
+            //}
 
             if (fieldRef.Required != listField.Required)
             {
@@ -705,7 +705,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
             var createdField = listInfo.SiteList.Fields.Add(field);
 
-            createdField.Context.Load(createdField, cf => cf.Id, cf => cf.Title, cf => cf.Hidden, cf => cf.Required);
+            createdField.Context.Load(createdField, cf => cf.Id, cf => cf.Title/*, cf => cf.Hidden*/, cf => cf.Required);
             createdField.Context.ExecuteQueryRetry();
 
             var isDirty = false;
@@ -731,11 +731,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             }
 #endif
 
-            if (createdField.Hidden != fieldRef.Hidden)
-            {
-                createdField.Hidden = fieldRef.Hidden;
-                isDirty = true;
-            }
+            //if (createdField.Hidden != fieldRef.Hidden)
+            //{
+            //    createdField.Hidden = fieldRef.Hidden;
+            //    isDirty = true;
+            //}
             if (createdField.Required != fieldRef.Required)
             {
                 createdField.Required = fieldRef.Required;
