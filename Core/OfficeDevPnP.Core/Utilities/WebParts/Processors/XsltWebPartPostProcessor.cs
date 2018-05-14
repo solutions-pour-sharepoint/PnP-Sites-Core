@@ -17,11 +17,20 @@ namespace OfficeDevPnP.Core.Utilities.WebParts.Processors
     {
         private readonly IList<PropertyType> _properties;
 
+        /// <summary>
+        /// Constructor for XsltWebPartPostProcessor class
+        /// </summary>
+        /// <param name="schema">Webpart object</param>
         public XsltWebPartPostProcessor(WebPart schema)
         {
             _properties = schema.Data.Properties.Property.ToList();
         }
 
+        /// <summary>
+        /// Method to process webpart
+        /// </summary>
+        /// <param name="wpDefinition">WebPartDefinition object</param>
+        /// <param name="webPartPage">File object</param>
         public void Process(WebPartDefinition wpDefinition, File webPartPage)
         {
             var web = GetWeb(webPartPage);
@@ -138,7 +147,7 @@ namespace OfficeDevPnP.Core.Utilities.WebParts.Processors
                 }
 
                 var displayNameAttribute = viewSchemaElement.Attribute("DisplayName");
-                if (displayNameAttribute != null && TryGetView(() =>
+                if (!string.IsNullOrEmpty(displayNameAttribute?.Value) && TryGetView(() =>
                 {
                     var listView = list.Views.GetByTitle(displayNameAttribute.Value);
                     list.Context.Load(listView);

@@ -8,7 +8,7 @@ namespace OfficeDevPnP.Core.Entities
     public class SiteEntity
     {
         /// <summary>
-        /// The SPO url
+        /// The SPO URL
         /// </summary>
         public string Url
         {
@@ -70,6 +70,9 @@ namespace OfficeDevPnP.Core.Entities
             set;
         }
 
+        /// <summary>
+        /// Site lock status
+        /// </summary>
         public SiteLockState LockState
         {
             get;

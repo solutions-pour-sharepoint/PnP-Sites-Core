@@ -4,11 +4,21 @@ using System.Reflection;
 
 namespace OfficeDevPnP.Core
 {
+    /// <summary>
+    /// Class that deals with PnPClientContext methods
+    /// </summary>
     public class PnPClientContext : ClientContext
     {
         public int RetryCount { get; set; }
         public int Delay { get; set; }
 
+        /// <summary>
+        /// Converts ClientContext into PnPClientContext
+        /// </summary>
+        /// <param name="clientContext">A SharePoint ClientContext for resource operations</param>
+        /// <param name="retryCount">Maximum amount of retries before giving up</param>
+        /// <param name="delay">Initial delay in milliseconds</param>
+        /// <returns></returns>
         public static PnPClientContext ConvertFrom(ClientContext clientContext, int retryCount = 10, int delay = 500)
         {
             var context = new PnPClientContext(clientContext.Url, retryCount, delay);
@@ -42,9 +52,9 @@ namespace OfficeDevPnP.Core
         /// <summary>
         /// Creates a ClientContext allowing you to override the default retry and delay values of ExecuteQueryRetry
         /// </summary>
-        /// <param name="url"></param>
-        /// <param name="retryCount"></param>
-        /// <param name="delay"></param>
+        /// <param name="url">A SharePoint site URL</param>
+        /// <param name="retryCount">Maximum amount of retries before giving up</param>
+        /// <param name="delay">Initial delay in milliseconds</param>
         public PnPClientContext(string url, int retryCount = 10, int delay = 500) : base(url)
         {
             RetryCount = retryCount;
@@ -54,9 +64,9 @@ namespace OfficeDevPnP.Core
         /// <summary>
         /// Creates a ClientContext allowing you to override the default retry and delay values of ExecuteQueryRetry
         /// </summary>
-        /// <param name="uri"></param>
-        /// <param name="retryCount"></param>
-        /// <param name="delay"></param>
+        /// <param name="uri">A SharePoint site/web full URL</param>
+        /// <param name="retryCount">Maximum amount of retries before giving up</param>
+        /// <param name="delay">Initial delay in milliseconds</param>
         public PnPClientContext(Uri uri, int retryCount = 10, int delay = 500) : base(uri)
         {
             RetryCount = retryCount;
@@ -66,8 +76,8 @@ namespace OfficeDevPnP.Core
         /// <summary>
         /// Clones a PnPClientContext object while "taking over" the security context of the existing PnPClientContext instance
         /// </summary>
-        /// <param name="siteUrl">Site url to be used for cloned ClientContext</param>
-        /// <returns>A PnPClientContext object created for the passed site url</returns>
+        /// <param name="siteUrl">Site URL to be used for cloned ClientContext</param>
+        /// <returns>A PnPClientContext object created for the passed site URL</returns>
         public PnPClientContext Clone(string siteUrl)
         {
             if (string.IsNullOrWhiteSpace(siteUrl))
@@ -80,8 +90,8 @@ namespace OfficeDevPnP.Core
         /// <summary>
         /// Clones a PnPClientContext object while "taking over" the security context of the existing PnPClientContext instance
         /// </summary>
-        /// <param name="siteUri">Site url to be used for cloned ClientContext</param>
-        /// <returns>A PnPClientContext object created for the passed site url</returns>
+        /// <param name="siteUri">Site URL to be used for cloned ClientContext</param>
+        /// <returns>A PnPClientContext object created for the passed site URL</returns>
         public PnPClientContext Clone(Uri siteUri)
         {
             if (siteUri == null)

@@ -40,8 +40,8 @@ namespace Microsoft.SharePoint.Client
         /// <summary>
         /// Returns the current search configuration as as string
         /// </summary>
-        /// <param name="web"></param>
-        /// <returns></returns>
+        /// <param name="web">A SharePoint site/subsiste</param>
+        /// <returns>Returns search configuration</returns>
         public static string GetSearchConfiguration(this Web web)
         {
             return GetSearchConfigurationImplementation(web.Context, SearchObjectLevel.SPWeb);
@@ -50,8 +50,8 @@ namespace Microsoft.SharePoint.Client
         /// <summary>
         /// Returns the current search configuration as as string
         /// </summary>
-        /// <param name="site"></param>
-        /// <returns></returns>
+        /// <param name="site">A SharePoint site</param>
+        /// <returns>Returns search configuration</returns>
         public static string GetSearchConfiguration(this Site site)
         {
             return GetSearchConfigurationImplementation(site.Context, SearchObjectLevel.SPSite);
@@ -60,9 +60,9 @@ namespace Microsoft.SharePoint.Client
         /// <summary>
         /// Returns the current search configuration for the specified object level
         /// </summary>
-        /// <param name="context"></param>
-        /// <param name="searchSettingsObjectLevel"></param>
-        /// <returns></returns>
+        /// <param name="context">ClinetRuntimeContext for SharePoint objects and operations</param>
+        /// <param name="searchSettingsObjectLevel">A site server level value. i.e, SPWeb/SPSite/SPSiteSubscription/Ssa</param>
+        /// <returns>Returns search configuration</returns>
         private static string GetSearchConfigurationImplementation(ClientRuntimeContext context, SearchObjectLevel searchSettingsObjectLevel)
         {
             SearchConfigurationPortability sconfig = new SearchConfigurationPortability(context);
@@ -96,8 +96,8 @@ namespace Microsoft.SharePoint.Client
         /// <summary>
         /// Sets the search configuration
         /// </summary>
-        /// <param name="web"></param>
-        /// <param name="searchConfiguration"></param>
+        /// <param name="web">A SharePoint site/subsite</param>
+        /// <param name="searchConfiguration">search configuration</param>
         public static void SetSearchConfiguration(this Web web, string searchConfiguration)
         {
             SetSearchConfigurationImplementation(web.Context, SearchObjectLevel.SPWeb, searchConfiguration);
@@ -106,8 +106,8 @@ namespace Microsoft.SharePoint.Client
         /// <summary>
         /// Sets the search configuration
         /// </summary>
-        /// <param name="site"></param>
-        /// <param name="searchConfiguration"></param>
+        /// <param name="site">A SharePoint site</param>
+        /// <param name="searchConfiguration">search configuration</param>
         public static void SetSearchConfiguration(this Site site, string searchConfiguration)
         {
             SetSearchConfigurationImplementation(site.Context, SearchObjectLevel.SPSite, searchConfiguration);
@@ -139,10 +139,10 @@ namespace Microsoft.SharePoint.Client
         }
 
         /// <summary>
-        /// Sets the search center url on site collection (Site Settings -> Site collection administration --> Search Settings)
+        /// Sets the search center URL on site collection (Site Settings -> Site collection administration --> Search Settings)
         /// </summary>
         /// <param name="web">SharePoint site - root web</param>
-        /// <param name="searchCenterUrl">Search center url</param>
+        /// <param name="searchCenterUrl">Search center URL</param>
         public static void SetSiteCollectionSearchCenterUrl(this Web web, string searchCenterUrl)
         {
             if (searchCenterUrl == null)
@@ -150,7 +150,7 @@ namespace Microsoft.SharePoint.Client
                 throw new ArgumentNullException(nameof(searchCenterUrl));
             }
 
-            // Currently there is no direct API available to set the search center url on web.
+            // Currently there is no direct API available to set the search center URL on web.
             // Set search setting at web level   
 
             // if another value was set then respect that
@@ -161,33 +161,33 @@ namespace Microsoft.SharePoint.Client
 
             if (!string.IsNullOrEmpty(searchCenterUrl))
             {
-                // Set search center url
+                // Set search center URL
                 web.SetPropertyBagValue("SRCH_ENH_FTR_URL_SITE", searchCenterUrl);
             }
             else
             {
-                // When search center url is blank remove the property (like the SharePoint UI does)
+                // When search center URL is blank remove the property (like the SharePoint UI does)
                 web.RemovePropertyBagValue("SRCH_ENH_FTR_URL_SITE");
             }
         }
 
         /// <summary>
-        /// Get the search center url for the site collection (Site Settings -> Site collection administration --> Search Settings)
+        /// Get the search center URL for the site collection (Site Settings -> Site collection administration --> Search Settings)
         /// </summary>
         /// <param name="web">SharePoint site - root web</param>
-        /// <returns>Search center url for web</returns>
+        /// <returns>Search center URL for web</returns>
         public static string GetSiteCollectionSearchCenterUrl(this Web web)
         {
-            // Currently there is no direct API available to get the search center url on web.
-            // Get search center url
+            // Currently there is no direct API available to get the search center URL on web.
+            // Get search center URL
             return web.GetPropertyBagValueString("SRCH_ENH_FTR_URL_SITE", string.Empty);
         }
 
         /// <summary>
-        /// Sets the search results page url on current web (Site Settings -> Search --> Search Settings)
+        /// Sets the search results page URL on current web (Site Settings -> Search --> Search Settings)
         /// </summary>
         /// <param name="web">SharePoint current web</param>
-        /// <param name="searchCenterUrl">Search results page url</param>
+        /// <param name="searchCenterUrl">Search results page URL</param>
         public static void SetWebSearchCenterUrl(this Web web, string searchCenterUrl)
         {
             if (searchCenterUrl == null)
@@ -197,24 +197,24 @@ namespace Microsoft.SharePoint.Client
 
             if (!string.IsNullOrEmpty(searchCenterUrl))
             {
-                // Set search results page url
+                // Set search results page URL
                 web.SetPropertyBagValue("SRCH_SB_SET_WEB", "{\"Inherit\":false,\"ResultsPageAddress\":\"" + searchCenterUrl + "\",\"ShowNavigation\":false}");
             }
             else
             {
-                // When search results page url is blank remove the property (like the SharePoint UI does)
+                // When search results page URL is blank remove the property (like the SharePoint UI does)
                 web.RemovePropertyBagValue("SRCH_SB_SET_WEB");
             }
         }
 
         /// <summary>
-        /// Get the search results page url for the web (Site Settings -> Search --> Search Settings)
+        /// Get the search results page URL for the web (Site Settings -> Search --> Search Settings)
         /// </summary>
         /// <param name="web">SharePoint site - current web</param>
-        /// <returns>Search results page url for web</returns>
+        /// <returns>Search results page URL for web</returns>
         public static string GetWebSearchCenterUrl(this Web web)
         {
-            // Get search results page url of the current web
+            // Get search results page URL of the current web
             return web.GetPropertyBagValueString("SRCH_SB_SET_WEB", string.Empty);
         }
 
