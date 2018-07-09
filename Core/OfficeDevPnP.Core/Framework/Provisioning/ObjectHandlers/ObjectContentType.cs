@@ -332,10 +332,16 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
             var createdCT = web.CreateContentType(name, description, id, group);
 
+            var templateFieldsData = template.SiteFields.Select(tf => new
+            {
+                TemplateField = tf,
+                Id = (Guid)XElement.Parse(parser.ParseString(tf.SchemaXml)).Attribute("ID")
+            }).ToArray();
+
             var fieldsRefsToProcess = templateContentType.FieldRefs.Select(fr => new
             {
                 FieldRef = fr,
-                TemplateField = template.SiteFields.FirstOrDefault(tf => (Guid)XElement.Parse(parser.ParseString(tf.SchemaXml)).Attribute("ID") == fr.Id)
+                TemplateField = Array.Find(templateFieldsData, tfd => tfd.Id == fr.Id)?.TemplateField
             }).Where(frData =>
                 frData.TemplateField == null // Process fields refs if the target is not defined in the current template
                 || frData.TemplateField.GetFieldProvisioningStep(parser) == _step // or process field ref only if the current step is matching
