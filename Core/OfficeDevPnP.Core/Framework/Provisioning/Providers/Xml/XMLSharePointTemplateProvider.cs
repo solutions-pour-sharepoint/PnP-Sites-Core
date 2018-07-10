@@ -10,7 +10,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
 {
     public class XMLSharePointTemplateProvider : XMLTemplateProvider
     {
-
         public XMLSharePointTemplateProvider() : base()
         {
         }

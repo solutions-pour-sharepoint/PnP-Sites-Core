@@ -15,7 +15,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers.V2018
 
         public bool CustomCollectionResolver => false;
 
-
         public CdnFromModelToSchemaTypeResolver()
         {
         }
@@ -38,20 +37,20 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers.V2018
 
                 if (cdn.PublicCdn != null)
                 {
-                    Object publicCdn = Activator.CreateInstance(cdnSettingsType);
+                    var publicCdn = Activator.CreateInstance(cdnSettingsType);
                     PnPObjectsMapper.MapProperties(cdn.PublicCdn, publicCdn, null, true);
                     result.SetPublicInstancePropertyValue("Public", publicCdn);
                 }
 
                 if (cdn.PrivateCdn != null)
                 {
-                    Object privateCdn = Activator.CreateInstance(cdnSettingsType);
+                    var privateCdn = Activator.CreateInstance(cdnSettingsType);
                     PnPObjectsMapper.MapProperties(cdn.PrivateCdn, privateCdn, null, true);
                     result.SetPublicInstancePropertyValue("Private", privateCdn);
                 }
             }
 
-            return (result);
+            return result;
         }
     }
 }

@@ -48,11 +48,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|",
+            return String.Format("{0}|{1}|{2}|",
                 this.PackageId?.GetHashCode() ?? 0,
                 this.Src?.GetHashCode() ?? 0,
                 this.Action.GetHashCode()
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -64,9 +64,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is Package))
             {
-                return (false);
+                return false;
             }
-            return (Equals((Package)obj));
+            return Equals((Package)obj);
         }
 
         /// <summary>
@@ -78,13 +78,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.PackageId== other.PackageId &&
+            return this.PackageId== other.PackageId &&
                 this.Src == other.Src &&
                 this.Action == other.Action
-                );
+                ;
         }
 
         #endregion

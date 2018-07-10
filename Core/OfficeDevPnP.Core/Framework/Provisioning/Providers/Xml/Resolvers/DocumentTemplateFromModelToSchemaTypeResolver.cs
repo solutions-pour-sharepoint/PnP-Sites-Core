@@ -25,15 +25,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers
         public object Resolve(object source, Dictionary<String, IResolver> resolvers = null, Boolean recursive = false)
         {
             Object result = null;
-            Model.ContentType contentType = source as Model.ContentType;
-            
+            var contentType = source as Model.ContentType;
+
             if (null != contentType && !String.IsNullOrEmpty(contentType.DocumentTemplate))
             {
                 result = Activator.CreateInstance(this._targetType);
                 result.SetPublicInstancePropertyValue("TargetName", contentType.DocumentTemplate);
             }
 
-            return (result);
+            return result;
         }
     }
 }

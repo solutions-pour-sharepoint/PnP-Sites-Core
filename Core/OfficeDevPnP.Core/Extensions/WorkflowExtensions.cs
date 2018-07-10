@@ -28,7 +28,6 @@ namespace Microsoft.SharePoint.Client
             web.Context.ExecuteQueryRetry();
             var subscription = subscriptionsResults.FirstOrDefault();
             return subscription;
-
         }
 
         /// <summary>
@@ -142,7 +141,6 @@ namespace Microsoft.SharePoint.Client
                 taskList.EnsureProperty(l => l.Id);
             }
 
-
             var sub = new WorkflowSubscription(list.Context);
 
             sub.DefinitionId = workflowDefinition.Id;
@@ -177,8 +175,6 @@ namespace Microsoft.SharePoint.Client
 
             return subscriptionResult.Value;
         }
-
-
 
         /// <summary>
         /// Deletes the subscription
@@ -264,7 +260,7 @@ namespace Microsoft.SharePoint.Client
             var servicesManager = new WorkflowServicesManager(web.Context, web);
             var deploymentService = servicesManager.GetWorkflowDeploymentService();
 
-            WorkflowDefinition def = new WorkflowDefinition(web.Context);
+            var def = new WorkflowDefinition(web.Context);
             def.AssociationUrl = definition.AssociationUrl;
             def.Description = definition.Description;
             def.DisplayName = definition.DisplayName;
@@ -419,11 +415,11 @@ namespace Microsoft.SharePoint.Client
             var subscription = subscriptions.FirstOrDefault();
             if (subscription != null)
             {
-                return (StartWorkflowInstance(web, subscription.Id, payload));
+                return StartWorkflowInstance(web, subscription.Id, payload);
             }
             else
             {
-                return (Guid.Empty);
+                return Guid.Empty;
             }
         }
 
@@ -436,7 +432,7 @@ namespace Microsoft.SharePoint.Client
         /// <returns>The ID of the just started workflow instance</returns>
         public static Guid StartWorkflowInstance(this Web web, Guid subscriptionId, IDictionary<String, Object> payload)
         {
-            Guid result = Guid.Empty;
+            var result = Guid.Empty;
 
             var clientContext = web.Context as ClientContext;
             var servicesManager = new WorkflowServicesManager(clientContext, clientContext.Web);
@@ -457,7 +453,7 @@ namespace Microsoft.SharePoint.Client
                 result = startAction.Value;
             }
 
-            return (result);
+            return result;
         }
 
         /// <summary>
@@ -483,11 +479,11 @@ namespace Microsoft.SharePoint.Client
             var subscription = subscriptions.FirstOrDefault();
             if (subscription != null)
             {
-                return (StartWorkflowInstance(item, subscription.Id, payload));
+                return StartWorkflowInstance(item, subscription.Id, payload);
             }
             else
             {
-                return (Guid.Empty);
+                return Guid.Empty;
             }
         }
 
@@ -500,7 +496,7 @@ namespace Microsoft.SharePoint.Client
         /// <returns>The ID of the just started workflow instance</returns>
         public static Guid StartWorkflowInstance(this ListItem item, Guid subscriptionId, IDictionary<String, Object> payload)
         {
-            Guid result = Guid.Empty;
+            var result = Guid.Empty;
 
             var parentList = item.EnsureProperty(i => i.ParentList);
 
@@ -523,7 +519,7 @@ namespace Microsoft.SharePoint.Client
                 result = startAction.Value;
             }
 
-            return (result);
+            return result;
         }
 
         #endregion

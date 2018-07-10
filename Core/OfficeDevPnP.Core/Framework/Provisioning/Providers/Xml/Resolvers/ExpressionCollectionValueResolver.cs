@@ -41,7 +41,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers
                 var sourceList = (IList)sourceValue;
                 var resultArray = Array.CreateInstance(this.targetItemType, sourceList.Count);
 
-                int index = 0;
+                var index = 0;
                 foreach (var i in (IEnumerable)sourceValue)
                 {
                     var targetItem = this.expression.Invoke(i);
@@ -49,7 +49,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers
                 }
                 result = resultArray;
             }
-            return (result);
+            return result;
         }
     }
 
@@ -83,7 +83,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers
                     result.Add(targetItem);
                 }
             }
-            return (result);
+            return result;
         }
     }
 }

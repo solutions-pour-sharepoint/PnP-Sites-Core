@@ -108,14 +108,14 @@ namespace OfficeDevPnP.Core.Pages
         /// <returns>The HTML presentation of this section</returns>
         public string ToHtml()
         {
-            StringBuilder html = new StringBuilder(100);
+            var html = new StringBuilder(100);
 #if !NETSTANDARD2_0
             using (var htmlWriter = new HtmlTextWriter(new System.IO.StringWriter(html), ""))
             {
                 htmlWriter.NewLine = string.Empty;
 #endif
-                bool controlWrittenToSection = false;
-                int controlIndex = 0;
+                var controlWrittenToSection = false;
+                var controlIndex = 0;
                 foreach (var control in this.Section.Page.Controls.Where(p => p.Section == this.Section && p.Column == this).OrderBy(z => z.Order))
                 {
                     controlIndex++;
@@ -131,9 +131,9 @@ namespace OfficeDevPnP.Core.Pages
                 if (!controlWrittenToSection)
                 {
                     // Obtain the json data
-                    var clientSideCanvasPosition = new ClientSideCanvasData()
+                    var clientSideCanvasPosition = new ClientSideCanvasData
                     {
-                        Position = new ClientSideCanvasPosition()
+                        Position = new ClientSideCanvasPosition
                         {
                             ZoneIndex = this.Section.Order,
                             SectionIndex = this.Order,

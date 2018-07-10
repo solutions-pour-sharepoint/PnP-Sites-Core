@@ -123,7 +123,7 @@ namespace Microsoft.SharePoint.Client
 
         private static async Task<string> CreateAnonymousLinkForDocumentImplementation(Web web, string urlToDocument, ExternalSharingDocumentOption shareOption)
         {
-            bool isEditLink = true;
+            var isEditLink = true;
             switch (shareOption)
             {
                 case ExternalSharingDocumentOption.Edit:
@@ -175,7 +175,7 @@ namespace Microsoft.SharePoint.Client
             // If null given as expiration, there will not be automatic expiration time
             var expirationTimeAsString = expireTime.ToString("s", System.Globalization.CultureInfo.InvariantCulture);
 
-            bool isEditLink = true;
+            var isEditLink = true;
             switch (shareOption)
             {
                 case ExternalSharingDocumentOption.Edit:
@@ -239,7 +239,7 @@ namespace Microsoft.SharePoint.Client
         private static async Task<SharingResult> ShareDocumentImplementation(Web web, string urlToDocument, string targetEmailToShare, ExternalSharingDocumentOption shareOption, bool sendEmail, string emailBody, bool useSimplifiedRoles)
         {
             // Resolve people picker value for given email
-            string peoplePickerInput = await ResolvePeoplePickerValueForEmailImplementation(web, targetEmailToShare);
+            var peoplePickerInput = await ResolvePeoplePickerValueForEmailImplementation(web, targetEmailToShare);
             // Share document for user
             return await ShareDocumentWithPeoplePickerValueImplementation(web, urlToDocument, peoplePickerInput, shareOption, sendEmail, emailBody, useSimplifiedRoles);
         }
@@ -410,7 +410,7 @@ namespace Microsoft.SharePoint.Client
                 await web.Context.ExecuteQueryRetryAsync();
             }
 
-            ObjectSharingSettings info = Web.GetObjectSharingSettings(web.Context, web.Url, 0, useSimplifiedPolicies);
+            var info = Web.GetObjectSharingSettings(web.Context, web.Url, 0, useSimplifiedPolicies);
             web.Context.Load(info);
             web.Context.Load(info.ObjectSharingInformation);
             web.Context.Load(info.ObjectSharingInformation.SharedWithUsersCollection);
@@ -527,7 +527,7 @@ namespace Microsoft.SharePoint.Client
         private static async Task<SharingResult> ShareSiteImplementation(Web web, string email, ExternalSharingSiteOption shareOption, bool sendEmail, string emailBody, bool useSimplifiedRoles)
         {
             // Solve people picker value for email address
-            string peoplePickerValue = await ResolvePeoplePickerValueForEmailImplementation(web, email);
+            var peoplePickerValue = await ResolvePeoplePickerValueForEmailImplementation(web, email);
 
             // Share with the people picker value
             return await ShareSiteWithPeoplePickerValueImplementation(web, peoplePickerValue, shareOption, sendEmail, emailBody, useSimplifiedRoles);
@@ -573,7 +573,7 @@ namespace Microsoft.SharePoint.Client
         {
             // Solve the group id for the shared option based on default groups
             var groupId = await SolveGroupIdToShareAsync(web, shareOption);
-            string roleValue = $"group:{groupId}"; // Right permission setup
+            var roleValue = $"group:{groupId}"; // Right permission setup
 
             web.EnsureProperty(w => w.Url);
 
@@ -626,7 +626,7 @@ namespace Microsoft.SharePoint.Client
         {
             // Solve the group id for the shared option based on default groups
             var groupId = group.Id;
-            string roleValue = $"group:{groupId}"; // Right permission setup
+            var roleValue = $"group:{groupId}"; // Right permission setup
 
             web.EnsureProperty(w => w.Url);
 

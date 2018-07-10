@@ -128,13 +128,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             return parser;
         }
 
-
         public override ProvisioningTemplate ExtractObjects(Web web, ProvisioningTemplate template, ProvisioningTemplateCreationInformation creationInfo)
         {
             using (var scope = new PnPMonitoredScope(this.Name))
             {
                 var context = web.Context as ClientContext;
-                bool isSubSite = web.IsSubSite();
+                var isSubSite = web.IsSubSite();
                 var webFeatures = web.Features;
                 var siteFeatures = context.Site.Features;
 
@@ -148,7 +147,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 var features = new Features();
                 foreach (var feature in webFeatures)
                 {
-                    features.WebFeatures.Add(new Feature() { Deactivate = false, Id = feature.DefinitionId });
+                    features.WebFeatures.Add(new Feature { Deactivate = false, Id = feature.DefinitionId });
                 }
 
                 // if this is a sub site then we're not creating  site collection scoped feature entities
@@ -156,7 +155,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 {
                     foreach (var feature in siteFeatures)
                     {
-                        features.SiteFeatures.Add(new Feature() { Deactivate = false, Id = feature.DefinitionId });
+                        features.SiteFeatures.Add(new Feature { Deactivate = false, Id = feature.DefinitionId });
                     }
                 }
 
@@ -173,7 +172,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
         private ProvisioningTemplate CleanupEntities(ProvisioningTemplate template, ProvisioningTemplate baseTemplate, bool isSubSite)
         {
-            List<Guid> featuresToExclude = new List<Guid>();
+            var featuresToExclude = new List<Guid>();
             // Seems to be an feature left over on some older online sites...
             featuresToExclude.Add(Guid.Parse("d70044a4-9f71-4a3f-9998-e7238c11ce1a"));
 
@@ -181,7 +180,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             {
                 foreach (var feature in baseTemplate.Features.SiteFeatures)
                 {
-                    int index = template.Features.SiteFeatures.FindIndex(f => f.Id.Equals(feature.Id));
+                    var index = template.Features.SiteFeatures.FindIndex(f => f.Id.Equals(feature.Id));
 
                     if (index > -1)
                     {
@@ -191,19 +190,18 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                 foreach (var feature in featuresToExclude)
                 {
-                    int index = template.Features.SiteFeatures.FindIndex(f => f.Id.Equals(feature));
+                    var index = template.Features.SiteFeatures.FindIndex(f => f.Id.Equals(feature));
 
                     if (index > -1)
                     {
                         template.Features.SiteFeatures.RemoveAt(index);
                     }
                 }
-
             }
 
             foreach (var feature in baseTemplate.Features.WebFeatures)
             {
-                int index = template.Features.WebFeatures.FindIndex(f => f.Id.Equals(feature.Id));
+                var index = template.Features.WebFeatures.FindIndex(f => f.Id.Equals(feature.Id));
 
                 if (index > -1)
                 {
@@ -213,7 +211,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
             foreach (var feature in featuresToExclude)
             {
-                int index = template.Features.WebFeatures.FindIndex(f => f.Id.Equals(feature));
+                var index = template.Features.WebFeatures.FindIndex(f => f.Id.Equals(feature));
 
                 if (index > -1)
                 {
@@ -223,7 +221,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
             return template;
         }
-
 
         public override bool WillProvision(Web web, ProvisioningTemplate template, ProvisioningTemplateApplyingInformation applyingInformation)
         {

@@ -40,8 +40,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     var webTemplates = web.GetAvailableWebTemplates(web.Language, false);
                     web.Context.Load(webTemplates, wts => wts.Include(wt => wt.Name, wt => wt.Lcid));
                     web.Context.ExecuteQueryRetry();
-                    Publishing publishing = new Publishing();
-                    publishing.AvailableWebTemplates.AddRange(webTemplates.AsEnumerable<WebTemplate>().Select(wt => new AvailableWebTemplate() { TemplateName = wt.Name, LanguageCode = (int)wt.Lcid }));
+                    var publishing = new Publishing();
+                    publishing.AvailableWebTemplates.AddRange(webTemplates.AsEnumerable<WebTemplate>().Select(wt => new AvailableWebTemplate { TemplateName = wt.Name, LanguageCode = (int)wt.Lcid }));
                     publishing.AutoCheckRequirements = AutoCheckRequirementsOptions.MakeCompliant;
                     publishing.DesignPackage = null;
                     publishing.PageLayouts.AddRange(GetAvailablePageLayouts(web));
@@ -56,12 +56,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         private void ExtractMasterPagesAndPageLayouts(Web web, ProvisioningTemplate template, PnPMonitoredScope scope, ProvisioningTemplateCreationInformation creationInfo)
         {
             web.EnsureProperty(w => w.Url);
-            String webApplicationUrl = GetWebApplicationUrl(web.Url);
+            var webApplicationUrl = GetWebApplicationUrl(web.Url);
 
             if (!String.IsNullOrEmpty(webApplicationUrl))
             {
                 // Get the Publishing Feature reference template
-                ProvisioningTemplate publishingFeatureTemplate = GetPublishingFeatureBaseTemplate();
+                var publishingFeatureTemplate = GetPublishingFeatureBaseTemplate();
 
                 // Get a reference to the root folder of the master page gallery
                 var gallery = web.GetCatalog(116);
@@ -73,7 +73,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 // Load the files in the master page gallery
                 web.Context.Load(masterPageGalleryFolder.Files);
                 web.Context.ExecuteQueryRetry();
-
 
                 var sourceFiles = GetFiles(masterPageGalleryFolder).Where(
                     f => f.Name.EndsWith(".aspx", StringComparison.InvariantCultureIgnoreCase) ||
@@ -127,7 +126,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                 var containerPath = folderPath.StartsWith(web.ServerRelativeUrl) && web.ServerRelativeUrl != "/"  ? folderPath.Substring(web.ServerRelativeUrl.Length) : folderPath;
                                 var container = HttpUtility.UrlDecode(containerPath).Trim('/').Replace("/", "\\");
 
-                                var publishingFile = new Model.File()
+                                var publishingFile = new Model.File
                                 {
                                     Folder = Tokenize(folderPath, web.Url),
                                     Src = !string.IsNullOrEmpty(container) ? $"{container}\\{HttpUtility.UrlDecode(fileName)}" : HttpUtility.UrlDecode(fileName),
@@ -189,11 +188,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         {
             ProvisioningTemplate result = null;
 
-            string nativeFilesTemplatePath = string.Format("OfficeDevPnP.Core.Framework.Provisioning.BaseTemplates.Common.Publishing-Feature-Native-Files.xml");
+            var nativeFilesTemplatePath = string.Format("OfficeDevPnP.Core.Framework.Provisioning.BaseTemplates.Common.Publishing-Feature-Native-Files.xml");
             using (Stream stream = typeof(BaseTemplateManager).Assembly.GetManifestResourceStream(nativeFilesTemplatePath))
             {
                 // Figure out the formatter to use
-                XDocument xTemplate = XDocument.Load(stream);
+                var xTemplate = XDocument.Load(stream);
                 var namespaceDeclarations = xTemplate.Root.Attributes().Where(a => a.IsNamespaceDeclaration).
                         GroupBy(a => a.Name.Namespace == XNamespace.None ? String.Empty : a.Name.LocalName,
                                 a => XNamespace.Get(a.Value)).
@@ -204,13 +203,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 stream.Seek(0, SeekOrigin.Begin);
 
                 // Get the XML document from the stream
-                ITemplateFormatter formatter = XMLPnPSchemaFormatter.GetSpecificFormatter(pnpns.NamespaceName);
+                var formatter = XMLPnPSchemaFormatter.GetSpecificFormatter(pnpns.NamespaceName);
 
                 // And convert it into a template
                 result = formatter.ToProvisioningTemplate(stream);
             }
 
-            return (result);
+            return result;
         }
 
         /// <summary>
@@ -222,7 +221,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         /// <returns>Whether the file is native or not for the publishing feature</returns>
         private Boolean IsPublishingFeatureNativeFile(ProvisioningTemplate nativeFilesTemplate, String fileName)
         {
-            Boolean result = false;
+            var result = false;
 
             if (nativeFilesTemplate != null
                 && nativeFilesTemplate.Files != null
@@ -231,7 +230,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 result = nativeFilesTemplate.Files.Any(f => f.Src == fileName);
             }
 
-            return (result);
+            return result;
         }
 
         /// <summary>
@@ -248,7 +247,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 result = $"{uri.Scheme}://{uri.Authority}/";
             }
 
-            return (result);
+            return result;
         }
 
         private IEnumerable<PageLayout> GetAvailablePageLayouts(Web web)
@@ -261,7 +260,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 defaultPageLayoutUrl = XElement.Parse(defaultLayoutXml).Attribute("url").Value.Replace("_catalogs/masterpage/", String.Empty);
             }
 
-            List<PageLayout> layouts = new List<PageLayout>();
+            var layouts = new List<PageLayout>();
 
             var layoutsXml = web.GetPropertyBagValueString(AVAILABLEPAGELAYOUTS, null);
 
@@ -282,7 +281,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         }
                         layouts.Add(pageLayout);
                     }
-
                 }
             }
             return layouts;
@@ -331,7 +329,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 }
 
                 // Set allowed web templates
-                var availableWebTemplates = template.Publishing.AvailableWebTemplates.Select(t => new WebTemplateEntity() { LanguageCode = t.LanguageCode.ToString(), TemplateName = t.TemplateName }).ToList();
+                var availableWebTemplates = template.Publishing.AvailableWebTemplates.Select(t => new WebTemplateEntity { LanguageCode = t.LanguageCode.ToString(), TemplateName = t.TemplateName }).ToList();
                 if (availableWebTemplates.Any())
                 {
                     web.SetAvailableWebTemplates(availableWebTemplates);
@@ -367,7 +365,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 {
                     web.SetDefaultPageLayoutForSite(site.RootWeb, defaultPageLayout.Path);
                 }
-
 
                 return parser;
             }

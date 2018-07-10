@@ -283,7 +283,7 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
                 if (useThreading)
                 {
                     // Divide the workload in batches based on the maximum number of threads that we want
-                    List<List<string>> batchWork = CreateWorkBatches();
+                    var batchWork = CreateWorkBatches();
 
                     // Determine the number of threads we'll spin off. Will be less or equal to the set maximum number of threads
                     numberOfThreadsNotYetCompleted = batchWork.Count;
@@ -305,7 +305,6 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
                 }
                 else
                 {
-
                     Log.Info(Constants.LOGGING_SOURCE, CoreResources.TimerJob_Run_ProcessSequentially, this.sitesToProcess.Count);
                     // No threading, just execute an event per site
                     foreach (string site in this.sitesToProcess)
@@ -360,7 +359,7 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
             Log.Info(Constants.LOGGING_SOURCE, CoreResources.TimerJob_DoWork_Start, site);
 
             // Get the root site of the passed site
-            string rootSite = GetRootSite(site);
+            var rootSite = GetRootSite(site);
 
             ClientContext ccWeb = null;
             ClientContext ccSite = null;
@@ -370,7 +369,6 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
             try
             {
                 ccWeb = CreateClientContext(site);
-
 
                 if (rootSite.Equals(site, StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -383,7 +381,7 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
 
 #if !ONPREMISES
                 // Instantiate ClientContext against tenant admin site, this is needed to operate using the Tenant API
-                string tenantAdminSiteUrl = tenantAdminSite;
+                var tenantAdminSiteUrl = tenantAdminSite;
                 if (string.IsNullOrEmpty(tenantAdminSiteUrl))
                 {
                     tenantAdminSiteUrl = GetTenantAdminSite(site);
@@ -405,7 +403,7 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
             }
 
             // Prepare the TimerJob callback event arguments
-            TimerJobRunEventArgs e = new TimerJobRunEventArgs(site, ccSite, ccWeb, ccTenant, null, null, "", new Dictionary<string, string>(), this.ConfigurationData);
+            var e = new TimerJobRunEventArgs(site, ccSite, ccWeb, ccTenant, null, null, "", new Dictionary<string, string>(), this.ConfigurationData);
 
             // Trigger the event to fire, but only when there's an event handler connected
             if (TimerJobRun != null)
@@ -429,7 +427,7 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
             try
             {
                 // Copy for thread safety?
-                TimerJobRunHandler timerJobRunHandlerThreadCopy = TimerJobRun;
+                var timerJobRunHandlerThreadCopy = TimerJobRun;
                 if (timerJobRunHandlerThreadCopy != null)
                 {
                     PropertyValues props = null;
@@ -438,7 +436,7 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
 #endif
 
                     // if state is managed then the state value is stored in a property named "<timerjobname>_Properties"
-                    string propertyKey = $"{NormalizedTimerJobName(this.name)}_Properties";
+                    var propertyKey = $"{NormalizedTimerJobName(this.name)}_Properties";
 
                     // read the properties from the web property bag
                     if (this.manageState)
@@ -453,7 +451,7 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
                         // we've found previously stored state, so this is not the first timer job run
                         if (props.FieldValues.ContainsKey(propertyKey))
                         {
-                            string timerJobProps = props.FieldValues[propertyKey].ToString();
+                            var timerJobProps = props.FieldValues[propertyKey].ToString();
 
                             // We should have a value, but you never know...
                             if (!string.IsNullOrEmpty(timerJobProps))
@@ -462,7 +460,7 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
 
                                 // Deserialize the json string into a TimerJobRun class instance
 #if !NETSTANDARD2_0
-                                TimerJobRun timerJobRunProperties = s.Deserialize<TimerJobRun>(timerJobProps);
+                                var timerJobRunProperties = s.Deserialize<TimerJobRun>(timerJobProps);
 #else
                                 TimerJobRun timerJobRunProperties = JsonConvert.DeserializeObject<TimerJobRun>(timerJobProps);
 #endif
@@ -492,7 +490,7 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
                     if (this.manageState)
                     {
                         // Retrieve the values of the event arguments and complete them with defaults
-                        TimerJobRun timerJobRunProperties = new TimerJobRun()
+                        var timerJobRunProperties = new TimerJobRun
                         {
                             PreviousRun = DateTime.Now,
                             PreviousRunSuccessful = e.CurrentRunSuccessful,
@@ -506,7 +504,7 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
 
                         // Serialize to json string
 #if !NETSTANDARD2_0
-                        string timerJobProps = s.Serialize(timerJobRunProperties);
+                        var timerJobProps = s.Serialize(timerJobRunProperties);
 #else
                         string timerJobProps = JsonConvert.SerializeObject(timerJobRunProperties);
 #endif
@@ -531,7 +529,6 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
                         e.WebClientContext.ExecuteQueryRetry();
                         Log.Info(Constants.LOGGING_SOURCE, CoreResources.TimerJob_OnTimerJobRun_PropertiesSet, propertyKey, e.Url);
                     }
-
                 }
             }
             catch (Exception ex)
@@ -548,9 +545,9 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
         private List<List<string>> CreateWorkBatches()
         {
             // How many batches do we need, can't have more batches then sites to process
-            int numberOfBatches = Math.Min(this.sitesToProcess.Count, this.maximumThreads);
+            var numberOfBatches = Math.Min(this.sitesToProcess.Count, this.maximumThreads);
             // Size of batch
-            int batchCount = (this.sitesToProcess.Count / numberOfBatches);
+            var batchCount = (this.sitesToProcess.Count / numberOfBatches);
             // Increase batch size by 1 to avoid the last batch being overloaded, rahter spread out over all batches and make the last batch smaller
             if (this.sitesToProcess.Count % numberOfBatches != 0)
             {
@@ -558,10 +555,10 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
             }
 
             // Initialize batching variables
-            List<List<string>> batches = new List<List<string>>(numberOfBatches);
-            List<string> sitesBatch = new List<string>(batchCount);
-            int batchCounter = 0;
-            int batchesAdded = 1;
+            var batches = new List<List<string>>(numberOfBatches);
+            var sitesBatch = new List<string>(batchCount);
+            var batchCounter = 0;
+            var batchesAdded = 1;
 
             for (int i = 0; i < this.sitesToProcess.Count; i++)
             {
@@ -711,7 +708,7 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
             }
 
             Log.Info(Constants.LOGGING_SOURCE, CoreResources.TimerJob_Authentication_RetrieveFromCredMan, credentialName);
-            NetworkCredential cred = Core.Utilities.CredentialManager.GetCredential(credentialName);
+            var cred = Core.Utilities.CredentialManager.GetCredential(credentialName);
 
             SecureString securePassword = null;
             if (cred != null)
@@ -791,11 +788,11 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
             }
 
             Log.Info(Constants.LOGGING_SOURCE, CoreResources.TimerJob_Authentication_RetrieveFromCredMan, credentialName);
-            NetworkCredential cred = Core.Utilities.CredentialManager.GetCredential(credentialName);
+            var cred = Core.Utilities.CredentialManager.GetCredential(credentialName);
 
             if (!String.IsNullOrEmpty(cred.UserName))
             {
-                string[] parts = cred.UserName.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
+                var parts = cred.UserName.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
                 if (parts.Length == 2)
                 {
                     cred.UserName = parts[1];
@@ -817,7 +814,6 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
             {
                 throw new Exception(String.Format(CoreResources.TimerJob_Authentication_RetrieveFromCredManFailed, credentialName));
             }
-
         }
 
         /// <summary>
@@ -900,7 +896,6 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
             }
             UseAppOnlyAuthentication(clientId, certificatePath, Core.Utilities.EncryptionUtility.ToSecureString(certificatePassword), certificateIssuerId);
         }
-
 
 #if !ONPREMISES
         /// <summary>
@@ -1022,7 +1017,7 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
         private AuthenticationManager GetAuthenticationManager(string url)
         {
             // drop the wild card if still there
-            Uri uri = new Uri(url.Replace("*", ""));
+            var uri = new Uri(url.Replace("*", ""));
 
             if (this.authenticationManagers.ContainsKey(uri.Host))
             {
@@ -1030,7 +1025,7 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
             }
             else
             {
-                AuthenticationManager am = new AuthenticationManager();
+                var am = new AuthenticationManager();
                 this.authenticationManagers.TryAdd(uri.Host, am);
                 return am;
             }
@@ -1053,7 +1048,6 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
                 this.excludeOD4B = value;
             }
         }
-
 
         /// <summary>
         /// Does the TimerJob need to fire as well for every sub site in the site?
@@ -1231,7 +1225,7 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
             }
 
             Log.Info(Constants.LOGGING_SOURCE, CoreResources.TimerJob_Authentication_RetrieveFromCredMan, credentialName);
-            NetworkCredential cred = Core.Utilities.CredentialManager.GetCredential(credentialName);
+            var cred = Core.Utilities.CredentialManager.GetCredential(credentialName);
 
             SecureString securePassword = null;
             if (cred != null)
@@ -1241,17 +1235,15 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
 
             if (cred != null && !String.IsNullOrEmpty(cred.UserName) && securePassword != null && securePassword.Length != 0)
             {
-
                 if (!String.IsNullOrEmpty(cred.UserName))
                 {
-                    string[] parts = cred.UserName.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
+                    var parts = cred.UserName.Split(new string[] { "\\" }, StringSplitOptions.RemoveEmptyEntries);
                     if (parts.Length == 2)
                     {
                         cred.UserName = parts[1];
                         cred.Domain = parts[0];
                     }
                 }
-
 
                 if (String.IsNullOrEmpty(cred.Domain))
                 {
@@ -1323,7 +1315,7 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
         {
             Log.Info(Constants.LOGGING_SOURCE, CoreResources.TimerJob_ResolveSites_Started);
 
-            List<string> resolvedSites = new List<string>();
+            var resolvedSites = new List<string>();
 
             // Step 1: obtain the list of all site collections
             foreach (string site in this.requestedSites)
@@ -1347,13 +1339,13 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
             // Step 2 (optional): If the job wants to run at sub site level then we'll need to resolve all sub sites
             if (expandSubSites)
             {
-                List<string> resolvedSitesAndSubSites = new List<string>();
+                var resolvedSitesAndSubSites = new List<string>();
 
                 // Preferred option is to use threading to increase the list resolving speed
                 if (useThreading)
                 {
                     // Split the sites to resolve in batches
-                    List<List<string>> expandBatches = CreateExpandBatches(resolvedSites);
+                    var expandBatches = CreateExpandBatches(resolvedSites);
 
                     // Determine the number of threads we'll spin off. Will be less or equal to the maximum number of threads
                     numberOfThreadsNotYetCompleted = expandBatches.Count;
@@ -1428,9 +1420,9 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
         private List<List<string>> CreateExpandBatches(List<string> resolvedSites)
         {
             // How many batches do we need, can't have more batches then sites to expand
-            int numberOfBatches = Math.Min(resolvedSites.Count, this.maximumThreads);
+            var numberOfBatches = Math.Min(resolvedSites.Count, this.maximumThreads);
             // Size of batch
-            int batchCount = (resolvedSites.Count / numberOfBatches);
+            var batchCount = (resolvedSites.Count / numberOfBatches);
             // Increase batch size by 1 to avoid the last batch being overloaded, rahter spread out over all batches and make the last batch smaller
             if (resolvedSites.Count % numberOfBatches != 0)
             {
@@ -1438,10 +1430,10 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
             }
 
             // Initialize batching variables
-            List<List<string>> batches = new List<List<string>>(numberOfBatches);
-            List<string> sitesBatch = new List<string>(batchCount);
-            int batchCounter = 0;
-            int batchesAdded = 1;
+            var batches = new List<List<string>>(numberOfBatches);
+            var sitesBatch = new List<string>(batchCount);
+            var batchCounter = 0;
+            var batchesAdded = 1;
 
             for (int i = 0; i < resolvedSites.Count; i++)
             {
@@ -1476,8 +1468,8 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
         {
             try
             {
-                ClientContext ccExpand = CreateClientContext(site);
-                IEnumerable<string> expandedSites = GetAllSubSites(ccExpand.Site);
+                var ccExpand = CreateClientContext(site);
+                var expandedSites = GetAllSubSites(ccExpand.Site);
                 resolvedSitesAndSubSites.AddRange(expandedSites);
             }
             catch (WebException ex)
@@ -1603,7 +1595,7 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
             if (SharePointVersion == 15)
             {
                 //Good we can use search...searching requires a valid client context, so we assume that the top level site exists and is accessible for the passed creds
-                ClientContext ccEnumerate = GetAuthenticationManager(site).GetNetworkCredentialAuthenticatedContext(GetTopLevelSite(site.Replace("*", "")), EnumerationUser, EnumerationPassword, EnumerationDomain);
+                var ccEnumerate = GetAuthenticationManager(site).GetNetworkCredentialAuthenticatedContext(GetTopLevelSite(site.Replace("*", "")), EnumerationUser, EnumerationPassword, EnumerationDomain);
                 SiteEnumeration.Instance.ResolveSite(ccEnumerate, site, resolvedSites);
             }
             else
@@ -1635,7 +1627,7 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
 #if !NETSTANDARD2_0
             }
 #endif
-                Tenant tenant = new Tenant(ccEnumerate);
+                var tenant = new Tenant(ccEnumerate);
                 SiteEnumeration.Instance.ResolveSite(tenant, site, resolvedSites, this.excludeOD4B);
 #else
                 ccEnumerate = GetAuthenticationManager(site).GetNetworkCredentialAuthenticatedContext(GetTopLevelSite(site.Replace("*", "")), EnumerationUser, EnumerationPassword, EnumerationDomain);
@@ -1701,7 +1693,7 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
         /// <returns>Returns SharePoint version</returns>
         private int GetSharePointVersion()
         {
-            Assembly asm = Assembly.GetAssembly(typeof(Site));
+            var asm = Assembly.GetAssembly(typeof(Site));
             return asm.GetName().Version.Major;
         }
 
@@ -1717,8 +1709,8 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
             }
             else
             {
-                Uri u = new Uri(GetTopLevelSite(site.Replace("*", "")));
-                string tenantName = u.DnsSafeHost.Split(new string[] { "." }, StringSplitOptions.RemoveEmptyEntries)[0];
+                var u = new Uri(GetTopLevelSite(site.Replace("*", "")));
+                var tenantName = u.DnsSafeHost.Split(new string[] { "." }, StringSplitOptions.RemoveEmptyEntries)[0];
                 return $"https://{tenantName}-admin.sharepoint.com";
             }
         }
@@ -1730,7 +1722,7 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
         /// <returns>Returns top levl string given URL string</returns>
         private string GetTopLevelSite(string site)
         {
-            Uri uri = new Uri(site.TrimEnd(new[] { '/' }));
+            var uri = new Uri(site.TrimEnd(new[] { '/' }));
             return $"{uri.Scheme}://{uri.DnsSafeHost}";
         }
 
@@ -1741,7 +1733,7 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
         /// <returns>Root site Url of the given site Url</returns>
         private string GetRootSite(string site)
         {
-            Uri uri = new Uri(site.TrimEnd(new[] { '/' }));
+            var uri = new Uri(site.TrimEnd(new[] { '/' }));
 
             //e.g. https://bertonline.sharepoint.com
             if (String.IsNullOrEmpty(uri.AbsolutePath) || uri.AbsolutePath.Equals("/", StringComparison.InvariantCultureIgnoreCase))
@@ -1750,7 +1742,7 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
                 return string.Format("{0}://{1}", uri.Scheme, uri.DnsSafeHost);
             }
 
-            string[] siteParts = uri.AbsolutePath.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
+            var siteParts = uri.AbsolutePath.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
 
             // e.g. https://bertonline.sharepoint.com/sub1
             // e.g. https://bertonline.sharepoint.com/sub1/sub11/sub111

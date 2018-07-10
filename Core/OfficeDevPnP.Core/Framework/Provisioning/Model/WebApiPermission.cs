@@ -11,7 +11,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
     /// </summary>
     public partial class WebApiPermission : BaseModel, IEquatable<WebApiPermission>
     {
-
         #region Public Members
         /// <summary>
         /// Gets or sets the Scope of the Web API permission
@@ -34,10 +33,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}",
+            return String.Format("{0}|{1}",
                 this.Scope.GetHashCode(),
-                (this.Resource != null ? this.Resource.GetHashCode() : 0)
-            ).GetHashCode());
+                this.Resource != null ? this.Resource.GetHashCode() : 0
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -49,9 +48,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is WebApiPermission))
             {
-                return (false);
+                return false;
             }
-            return (Equals((WebApiPermission)obj));
+            return Equals((WebApiPermission)obj);
         }
 
         /// <summary>
@@ -63,11 +62,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.Scope == other.Scope &&
-                this.Resource == other.Resource);
+            return this.Scope == other.Scope &&
+                this.Resource == other.Resource;
         }
 
         #endregion

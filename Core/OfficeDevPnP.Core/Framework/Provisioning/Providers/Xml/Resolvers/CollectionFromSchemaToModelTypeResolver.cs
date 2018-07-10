@@ -27,7 +27,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers
         {
             var itemType = typeof(List<>);
             var resultType = itemType.MakeGenericType(new Type[] { this._targetItemType });
-            IList result = (IList)Activator.CreateInstance(resultType);
+            var result = (IList)Activator.CreateInstance(resultType);
 
             if (null != source)
             {
@@ -39,7 +39,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers
                 }
             }
 
-            return (result);
+            return result;
         }
     }
 }

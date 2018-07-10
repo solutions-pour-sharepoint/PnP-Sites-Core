@@ -67,8 +67,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 for (int i = 0; i < siteSecurity.SiteGroups.Count; i++)
                 {
                     var currentGroup = siteSecurity.SiteGroups[i];
-                    string currentGroupOwner = currentGroup.Owner;
-                    string currentGroupTitle = parser.ParseString(currentGroup.Title);
+                    var currentGroupOwner = currentGroup.Owner;
+                    var currentGroupTitle = parser.ParseString(currentGroup.Title);
 
                     if (currentGroupOwner != "SHAREPOINT\\system" && currentGroupOwner != currentGroupTitle && !(currentGroupOwner.StartsWith("{{associated") && currentGroupOwner.EndsWith("group}}")))
                     {
@@ -91,9 +91,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     var allGroups = web.Context.LoadQuery(web.SiteGroups.Include(gr => gr.LoginName));
                     web.Context.ExecuteQueryRetry();
 
-                    string parsedGroupTitle = parser.ParseString(siteGroup.Title);
-                    string parsedGroupOwner = parser.ParseString(siteGroup.Owner);
-                    string parsedGroupDescription = parser.ParseString(siteGroup.Description);
+                    var parsedGroupTitle = parser.ParseString(siteGroup.Title);
+                    var parsedGroupOwner = parser.ParseString(siteGroup.Owner);
+                    var parsedGroupDescription = parser.ParseString(siteGroup.Description);
 
                     if (!web.GroupExists(parsedGroupTitle))
                     {
@@ -117,7 +117,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                 ownerPrincipal = web.EnsureUser(parsedGroupOwner);
                             }
                             group.Owner = ownerPrincipal;
-
                         }
                         group.Update();
                         web.Context.Load(group, g => g.Id, g => g.Title);
@@ -222,7 +221,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         {
                             web.Context.ExecuteQueryRetry();
                         }
-
                     }
                     if (group != null && siteGroup.Members.Any())
                     {
@@ -266,7 +264,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                 var roleDefinitionCI = new RoleDefinitionCreationInformation();
                                 roleDefinitionCI.Name = parsedRoleDefinitionName;
                                 roleDefinitionCI.Description = parsedTemplateRoleDefinitionDesc;
-                                BasePermissions basePermissions = new BasePermissions();
+                                var basePermissions = new BasePermissions();
 
                                 foreach (var permission in templateRoleDefinition.Permissions)
                                 {
@@ -317,14 +315,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     {
                         foreach (var roleAssignment in siteSecurity.SiteSecurityPermissions.RoleAssignments)
                         {
-
                             var parsedRoleDefinition = parser.ParseString(roleAssignment.RoleDefinition);
                             if (!roleAssignment.Remove)
                             {
                                 var roleDefinition = webRoleDefinitions.FirstOrDefault(r => r.Name == parsedRoleDefinition);
                                 if (roleDefinition != null)
                                 {
-                                    Principal principal = GetPrincipal(web, parser, scope, groups, roleAssignment);
+                                    var principal = GetPrincipal(web, parser, scope, groups, roleAssignment);
 
                                     if (principal != null)
                                     {
@@ -363,7 +360,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
         private static Principal GetPrincipal(Web web, TokenParser parser, PnPMonitoredScope scope, IEnumerable<Group> groups, Model.RoleAssignment roleAssignment)
         {
-
             var parsedRoleDefinition = parser.ParseString(roleAssignment.Principal);
             Principal principal = groups.FirstOrDefault(g => g.LoginName == parsedRoleDefinition);
 
@@ -444,7 +440,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             }
         }
 
-
         public override ProvisioningTemplate ExtractObjects(Web web, ProvisioningTemplate template, ProvisioningTemplateCreationInformation creationInfo)
         {
             using (var scope = new PnPMonitoredScope(this.Name))
@@ -477,7 +472,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 }
                 web.Context.ExecuteQueryRetry();
 
-                List<int> associatedGroupIds = new List<int>();
+                var associatedGroupIds = new List<int>();
                 var owners = new List<User>();
                 var members = new List<User>();
                 var visitors = new List<User>();
@@ -486,7 +481,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     associatedGroupIds.Add(ownerGroup.Id);
                     foreach (var member in ownerGroup.Users)
                     {
-                        owners.Add(new User() { Name = member.LoginName });
+                        owners.Add(new User { Name = member.LoginName });
                     }
                 }
                 if (!memberGroup.ServerObjectIsNull.Value)
@@ -494,7 +489,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     associatedGroupIds.Add(memberGroup.Id);
                     foreach (var member in memberGroup.Users)
                     {
-                        members.Add(new User() { Name = member.LoginName });
+                        members.Add(new User { Name = member.LoginName });
                     }
                 }
                 if (!visitorGroup.ServerObjectIsNull.Value)
@@ -502,7 +497,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     associatedGroupIds.Add(visitorGroup.Id);
                     foreach (var member in visitorGroup.Users)
                     {
-                        visitors.Add(new User() { Name = member.LoginName });
+                        visitors.Add(new User { Name = member.LoginName });
                     }
                 }
                 var siteSecurity = new SiteSecurity();
@@ -520,7 +515,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 var admins = new List<User>();
                 foreach (var member in allUsers)
                 {
-                    admins.Add(new User() { Name = member.LoginName });
+                    admins.Add(new User { Name = member.LoginName });
                 }
                 siteSecurity.AdditionalAdministrators.AddRange(admins);
 
@@ -551,7 +546,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         try
                         {
                             scope.LogDebug("Processing group {0}", group.Title);
-                            var siteGroup = new SiteGroup()
+                            var siteGroup = new SiteGroup
                             {
                                 Title = !string.IsNullOrEmpty(web.Title) ? group.Title.Replace(web.Title, "{sitename}") : group.Title,
                                 AllowMembersEditMembership = group.AllowMembersEditMembership,
@@ -579,7 +574,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                             foreach (var member in group.Users)
                             {
                                 scope.LogDebug("Processing member {0} of group {0}", member.LoginName, group.Title);
-                                siteGroup.Members.Add(new User() { Name = member.LoginName });
+                                siteGroup.Members.Add(new User { Name = member.LoginName });
                             }
                             siteSecurity.SiteGroups.Add(siteGroup);
                         }
@@ -597,7 +592,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                 if (web.HasUniqueRoleAssignments)
                 {
-
                     var permissionKeys = Enum.GetNames(typeof(PermissionKind));
                     if (!web.IsSubSite())
                     {
@@ -680,7 +674,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 if (creationInfo.BaseTemplate != null)
                 {
                     template = CleanupEntities(template, creationInfo.BaseTemplate);
-
                 }
             }
             return template;
@@ -711,7 +704,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         {
             foreach (var user in baseTemplate.Security.AdditionalAdministrators)
             {
-                int index = template.Security.AdditionalAdministrators.FindIndex(f => f.Name.Equals(user.Name));
+                var index = template.Security.AdditionalAdministrators.FindIndex(f => f.Name.Equals(user.Name));
 
                 if (index > -1)
                 {
@@ -721,7 +714,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
             foreach (var user in baseTemplate.Security.AdditionalMembers)
             {
-                int index = template.Security.AdditionalMembers.FindIndex(f => f.Name.Equals(user.Name));
+                var index = template.Security.AdditionalMembers.FindIndex(f => f.Name.Equals(user.Name));
 
                 if (index > -1)
                 {
@@ -731,7 +724,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
             foreach (var user in baseTemplate.Security.AdditionalOwners)
             {
-                int index = template.Security.AdditionalOwners.FindIndex(f => f.Name.Equals(user.Name));
+                var index = template.Security.AdditionalOwners.FindIndex(f => f.Name.Equals(user.Name));
 
                 if (index > -1)
                 {
@@ -741,7 +734,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
             foreach (var user in baseTemplate.Security.AdditionalVisitors)
             {
-                int index = template.Security.AdditionalVisitors.FindIndex(f => f.Name.Equals(user.Name));
+                var index = template.Security.AdditionalVisitors.FindIndex(f => f.Name.Equals(user.Name));
 
                 if (index > -1)
                 {
@@ -811,7 +804,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             }
 
             return _willProvision.Value;
-
         }
 
         public override bool WillExtract(Web web, ProvisioningTemplate template, ProvisioningTemplateCreationInformation creationInfo)

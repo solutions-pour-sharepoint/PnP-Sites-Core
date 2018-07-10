@@ -108,17 +108,17 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|",
-                (this.Title != null ? this.Title.GetHashCode() : 0),
-                (this.Description != null ? this.Description.GetHashCode() : 0),
+            return String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|",
+                this.Title != null ? this.Title.GetHashCode() : 0,
+                this.Description != null ? this.Description.GetHashCode() : 0,
                 this.IsDefault.GetHashCode(),
                 this.WebTemplate.GetHashCode(),
-                (this.PreviewImageUrl != null ? this.PreviewImageUrl.GetHashCode() : 0),
-                (this.PreviewImageAltText != null ? this.PreviewImageAltText.GetHashCode() : 0),
+                this.PreviewImageUrl != null ? this.PreviewImageUrl.GetHashCode() : 0,
+                this.PreviewImageAltText != null ? this.PreviewImageAltText.GetHashCode() : 0,
                 this.SiteScripts.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.Overwrite.GetHashCode(),
                 this.Grants.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0))
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -130,9 +130,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is SiteDesign))
             {
-                return (false);
+                return false;
             }
-            return (Equals((SiteDesign)obj));
+            return Equals((SiteDesign)obj);
         }
 
         /// <summary>
@@ -144,10 +144,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.Title == other.Title &&
+            return this.Title == other.Title &&
                 this.Description == other.Description &&
                 this.IsDefault == other.IsDefault &&
                 this.WebTemplate == other.WebTemplate &&
@@ -156,7 +156,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                 this.SiteScripts.DeepEquals(other.SiteScripts) &&
                 this.Overwrite == other.Overwrite &&
                 this.Grants.DeepEquals(other.Grants)
-                );
+                ;
         }
 
         #endregion

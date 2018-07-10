@@ -49,8 +49,8 @@ namespace OfficeDevPnP.Core.Utilities
         /// <param name="asyncUserToken">The user token that is used to correlate the asynchronous email message.</param>
         public static void SendEmail(string servername, string fromAddress, SecureString fromUserPassword, IEnumerable<String> to, IEnumerable<String> cc, string subject, string body, bool sendAsync = false, object asyncUserToken = null)
         {
-            SmtpClient client = CreateSmtpClient(servername, fromAddress, fromUserPassword);
-            MailMessage mail = CreateMailMessage(fromAddress, to, cc, subject, body);
+            var client = CreateSmtpClient(servername, fromAddress, fromUserPassword);
+            var mail = CreateMailMessage(fromAddress, to, cc, subject, body);
             try
             {
                 if (sendAsync)
@@ -118,8 +118,8 @@ namespace OfficeDevPnP.Core.Utilities
         /// <param name="body">HTML body of the mail.</param>
         public static async Task SendEmailAsync(string servername, string fromAddress, SecureString fromUserPassword, IEnumerable<String> to, IEnumerable<String> cc, string subject, string body)
         {
-            SmtpClient client = CreateSmtpClient(servername, fromAddress, fromUserPassword);
-            MailMessage mail = CreateMailMessage(fromAddress, to, cc, subject, body);
+            var client = CreateSmtpClient(servername, fromAddress, fromUserPassword);
+            var mail = CreateMailMessage(fromAddress, to, cc, subject, body);
             try
             {
                 await client.SendMailAsync(mail);
@@ -145,7 +145,7 @@ namespace OfficeDevPnP.Core.Utilities
         /// <param name="body">HTML body of the mail.</param>
         public static void SendEmail(ClientContext context, IEnumerable<String> to, IEnumerable<String> cc, string subject, string body)
         {
-            EmailProperties properties = new EmailProperties();
+            var properties = new EmailProperties();
             properties.To = to;
 
             if (cc != null)
@@ -187,7 +187,7 @@ namespace OfficeDevPnP.Core.Utilities
 
         private static MailMessage CreateMailMessage(string fromAddress, IEnumerable<String> to, IEnumerable<String> cc, string subject, string body)
         {
-            MailMessage mail = new MailMessage()
+            var mail = new MailMessage
             {
                 From = new MailAddress(fromAddress),
                 Subject = subject,

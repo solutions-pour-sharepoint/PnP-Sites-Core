@@ -26,7 +26,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers
 
         public object Resolve(object source, object destination, object sourceValue)
         {
-            T res = default(T);
+            var res = default(T);
             if (sourceValue != null)
             {
                 var nullable = sourceValue as Nullable<T>;

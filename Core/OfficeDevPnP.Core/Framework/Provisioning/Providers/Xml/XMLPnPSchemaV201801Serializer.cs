@@ -33,12 +33,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
 
         public override string NamespaceUri
         {
-            get { return (XMLConstants.PROVISIONING_SCHEMA_NAMESPACE_2018_01); }
+            get { return XMLConstants.PROVISIONING_SCHEMA_NAMESPACE_2018_01; }
         }
 
         public override string NamespacePrefix
         {
-            get { return (XMLConstants.PROVISIONING_SCHEMA_PREFIX); }
+            get { return XMLConstants.PROVISIONING_SCHEMA_PREFIX; }
         }
 
         protected override void DeserializeTemplate(object persistenceTemplate, Model.ProvisioningTemplate template)

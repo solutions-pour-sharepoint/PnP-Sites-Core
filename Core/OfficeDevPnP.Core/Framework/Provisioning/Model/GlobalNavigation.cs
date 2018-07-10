@@ -50,10 +50,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}",
+            return String.Format("{0}|{1}",
                 base.GetHashCode(),
                 this.NavigationType.GetHashCode()
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -65,9 +65,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is GlobalNavigation))
             {
-                return (false);
+                return false;
             }
-            return (Equals((GlobalNavigation)obj));
+            return Equals((GlobalNavigation)obj);
         }
 
         /// <summary>
@@ -79,12 +79,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (((BaseNavigationKind)this).Equals((BaseNavigationKind)other) &&
+            return ((BaseNavigationKind)this).Equals((BaseNavigationKind)other) &&
                 this.NavigationType == other.NavigationType
-                );
+                ;
         }
 
         #endregion

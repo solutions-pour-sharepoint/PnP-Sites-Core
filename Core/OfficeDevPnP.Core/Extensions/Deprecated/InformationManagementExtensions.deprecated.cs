@@ -6,7 +6,6 @@ using OfficeDevPnP.Core.Entities;
 
 namespace Microsoft.SharePoint.Client
 {
-
     /// <summary>
     /// Class that deals with information management features
     /// </summary>

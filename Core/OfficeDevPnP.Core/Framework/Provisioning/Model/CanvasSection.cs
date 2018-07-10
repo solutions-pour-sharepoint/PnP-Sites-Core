@@ -61,11 +61,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|",
+            return String.Format("{0}|{1}|{2}|",
                 this.Controls.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 Order.GetHashCode(),
                 Type.GetHashCode()
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -77,9 +77,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is CanvasSection))
             {
-                return (false);
+                return false;
             }
-            return (Equals((CanvasSection)obj));
+            return Equals((CanvasSection)obj);
         }
 
         /// <summary>
@@ -91,13 +91,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.Controls.DeepEquals(other.Controls) &&
+            return this.Controls.DeepEquals(other.Controls) &&
                 this.Order == other.Order &&
                 this.Type == other.Type
-                );
+                ;
         }
 
         #endregion

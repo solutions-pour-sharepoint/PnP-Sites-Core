@@ -44,7 +44,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Utilities
                 else
                 {
                     // Create the page
-                    var extractedPageInstance = new ClientSidePage()
+                    var extractedPageInstance = new ClientSidePage
                     {
                         PageName = pageName,
                         PromoteAsNewsArticle = false,
@@ -57,7 +57,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Utilities
 
                     if(pageToExtract.PageHeader != null)
                     {
-                        var extractedHeader = new ClientSidePageHeader()
+                        var extractedHeader = new ClientSidePageHeader
                         {
                             Type = (ClientSidePageHeaderType)Enum.Parse(typeof(Pages.ClientSidePageHeaderType),pageToExtract.PageHeader.Type.ToString()),
                             ServerRelativeImageUrl = TokenizeJsonControlData(web, pageToExtract.PageHeader.ImageServerRelativeUrl),
@@ -71,7 +71,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Utilities
                     foreach (var section in pageToExtract.Sections)
                     {
                         // Set order
-                        var sectionInstance = new CanvasSection()
+                        var sectionInstance = new CanvasSection
                         {
                             Order = section.Order,
                         };
@@ -108,7 +108,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Utilities
                             foreach (var control in column.Controls)
                             {
                                 // Create control
-                                CanvasControl controlInstance = new CanvasControl()
+                                var controlInstance = new CanvasControl
                                 {
                                     Column = column.Order,
                                     ControlId = control.InstanceId,
@@ -223,7 +223,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Utilities
                                     if ((control as Pages.ClientSideWebPart).ServerProcessedContent != null)
                                     {
                                         // If we have serverProcessedContent then also export that one, it's important as some controls depend on this information to be present
-                                        string serverProcessedContent = (control as Pages.ClientSideWebPart).ServerProcessedContent.ToString(Formatting.None);
+                                        var serverProcessedContent = (control as Pages.ClientSideWebPart).ServerProcessedContent.ToString(Formatting.None);
                                         controlInstance.JsonControlData = "{ \"serverProcessedContent\": " + serverProcessedContent + ", \"properties\": " + (control as Pages.ClientSideWebPart).PropertiesJson + "}";
                                     }
                                     else
@@ -237,13 +237,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Utilities
                                     // Export relevant files if this flag is set
                                     if (creationInfo.PersistBrandingFiles)
                                     {
-                                        List<Guid> fileGuids = new List<Guid>();
-                                        Dictionary<string, string> exportedFiles = new Dictionary<string, string>();
-                                        Dictionary<string, string> exportedPages = new Dictionary<string, string>();
+                                        var fileGuids = new List<Guid>();
+                                        var exportedFiles = new Dictionary<string, string>();
+                                        var exportedPages = new Dictionary<string, string>();
 
                                         // grab all the guids in the already tokenized json and check try to get them as a file
-                                        string guidPattern = "\"[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}\"";
-                                        Regex regexClientIds = new Regex(guidPattern);
+                                        var guidPattern = "\"[a-fA-F0-9]{8}-([a-fA-F0-9]{4}-){3}[a-fA-F0-9]{12}\"";
+                                        var regexClientIds = new Regex(guidPattern);
                                         if (regexClientIds.IsMatch(controlInstance.JsonControlData))
                                         {
                                             foreach (Match guidMatch in regexClientIds.Matches(controlInstance.JsonControlData))
@@ -299,7 +299,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Utilities
                                                         if (fileAlreadyExported == null)
                                                         {
                                                             // Add a File to the template
-                                                            template.Files.Add(new Model.File()
+                                                            template.Files.Add(new Model.File
                                                             {
                                                                 Folder = templateFolderPath,
                                                                 Src = $"{templateFolderPath}/{fileName}",
@@ -352,7 +352,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Utilities
                     }
 
                     // Renumber the sections...when editing modern homepages you can end up with section with order 0.5 or 0.75...let's ensure we render section as of 1
-                    int sectionOrder = 1;
+                    var sectionOrder = 1;
                     foreach (var sectionInstance in extractedPageInstance.Sections)
                     {
                         sectionInstance.Order = sectionOrder;
@@ -393,8 +393,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Utilities
             if (creationInfo.FileConnector != null)
             {
                 var fileConnector = creationInfo.FileConnector;
-                SharePointConnector connector = new SharePointConnector(web.Context, web.Url, "dummy");
-                Uri u = new Uri(web.Url);
+                var connector = new SharePointConnector(web.Context, web.Url, "dummy");
+                var u = new Uri(web.Url);
 
                 if (u.PathAndQuery != "/")
                 {
@@ -405,8 +405,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Utilities
                 }
 
                 folderPath = HttpUtility.UrlDecode(folderPath);
-                String container = HttpUtility.UrlDecode(folderPath).Trim('/').Replace("/", "\\");
-                String persistenceFileName = HttpUtility.UrlDecode(fileName);
+                var container = HttpUtility.UrlDecode(folderPath).Trim('/').Replace("/", "\\");
+                var persistenceFileName = HttpUtility.UrlDecode(fileName);
 
                 if (fileConnector.Parameters.ContainsKey(FileConnectorBase.CONTAINER))
                 {

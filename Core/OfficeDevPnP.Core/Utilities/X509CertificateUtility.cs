@@ -19,14 +19,14 @@ namespace OfficeDevPnP.Core.Utilities
         public static X509Certificate2 LoadCertificate(StoreName storeName, StoreLocation storeLocation, string thumbprint)
         {
             // The following code gets the cert from the keystore
-            X509Store store = new X509Store(storeName, storeLocation);
+            var store = new X509Store(storeName, storeLocation);
             store.Open(OpenFlags.ReadOnly);
 
-            X509Certificate2Collection certCollection =
+            var certCollection =
                     store.Certificates.Find(X509FindType.FindByThumbprint,
                     thumbprint, false);
 
-            X509Certificate2Enumerator enumerator = certCollection.GetEnumerator();
+            var enumerator = certCollection.GetEnumerator();
 
             X509Certificate2 cert = null;
 
@@ -106,6 +106,5 @@ namespace OfficeDevPnP.Core.Utilities
 
             return certificate.PublicKey.Key.ToXmlString(false);
         }
-
     }
 }

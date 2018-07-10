@@ -29,7 +29,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.TokenDefinitio
                 return entry.Value;
             }
             else { return ""; }
-
         }
 
         public List<ResourceEntry> ResourceEntries

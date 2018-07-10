@@ -38,7 +38,7 @@ namespace Microsoft.SharePoint.Client
         public static String GetBaseTemplateId(this Web parentWeb)
         {
             parentWeb.EnsureProperties(w => w.WebTemplate, w => w.Configuration);
-            return ($"{parentWeb.WebTemplate}#{parentWeb.Configuration}");
+            return $"{parentWeb.WebTemplate}#{parentWeb.Configuration}";
         }
 
         /// <summary>
@@ -72,10 +72,10 @@ namespace Microsoft.SharePoint.Client
                 throw new ArgumentException("The argument must be a single web URL and cannot contain path characters.", nameof(leafUrl));
             }
 
-            bool isNoScript = parentWeb.IsNoScriptSite();
+            var isNoScript = parentWeb.IsNoScriptSite();
 
             Log.Info(Constants.LOGGING_SOURCE, CoreResources.WebExtensions_CreateWeb, leafUrl, template);
-            WebCreationInformation creationInfo = new WebCreationInformation()
+            var creationInfo = new WebCreationInformation
             {
                 Url = leafUrl,
                 Title = title,
@@ -85,7 +85,7 @@ namespace Microsoft.SharePoint.Client
                 Language = language
             };
 
-            Web newWeb = parentWeb.Webs.Add(creationInfo);
+            var newWeb = parentWeb.Webs.Add(creationInfo);
 
             if (!isNoScript)
             {
@@ -234,7 +234,7 @@ namespace Microsoft.SharePoint.Client
         /// <returns>true if the Web (site) exists; otherwise false</returns>
         public static bool WebExistsFullUrl(this ClientRuntimeContext context, string webFullUrl)
         {
-            bool exists = false;
+            var exists = false;
             try
             {
                 using (ClientContext testContext = context.Clone(webFullUrl))
@@ -265,7 +265,7 @@ namespace Microsoft.SharePoint.Client
         /// <returns>True if a web with the given title exists.</returns>
         public static bool WebExistsByTitle(this Web parentWeb, string title)
         {
-            bool exists = false;
+            var exists = false;
 
             parentWeb.EnsureProperty(p => p.Webs);
 
@@ -310,7 +310,6 @@ namespace Microsoft.SharePoint.Client
 
             return featureActivated != null && bool.Parse(featureActivated.ToString());
         }
-
 
         /// <summary>
         /// Detects if the site in question has no script enabled or not. Detection is done by verifying if the AddAndCustomizePages permission is missing.
@@ -427,7 +426,7 @@ namespace Microsoft.SharePoint.Client
         public static bool RemoveAppInstanceByTitle(this Web web, string appTitle)
         {
             // Removes the association between the App and the Web
-            bool removed = false;
+            var removed = false;
             var instances = AppCatalog.GetAppInstances(web.Context, web);
             web.Context.Load(instances);
             web.Context.ExecuteQueryRetry();
@@ -459,7 +458,7 @@ namespace Microsoft.SharePoint.Client
         [SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "OfficeDevPnP.Core.Diagnostics.Log.Debug(System.String,System.String,System.Object[])")]
         public static void InstallSolution(this Site site, Guid packageGuid, string sourceFilePath, int majorVersion = 1, int minorVersion = 0)
         {
-            string fileName = Path.GetFileName(sourceFilePath);
+            var fileName = Path.GetFileName(sourceFilePath);
             Log.Info(Constants.LOGGING_SOURCE, CoreResources.WebExtensions_InstallSolution, fileName, site.Context.Url);
 
             var rootWeb = site.RootWeb;
@@ -471,7 +470,7 @@ namespace Microsoft.SharePoint.Client
 
             rootFolder.UploadFile(sourceFileName, sourceFilePath, true);
 
-            var packageInfo = new DesignPackageInfo()
+            var packageInfo = new DesignPackageInfo
             {
                 PackageName = fileName,
                 PackageGuid = packageGuid,
@@ -482,7 +481,6 @@ namespace Microsoft.SharePoint.Client
             Log.Debug(Constants.LOGGING_SOURCE, "Uninstalling package '{0}'", packageInfo.PackageName);
             UninstallSolution(site, packageGuid, fileName, majorVersion, minorVersion);
             site.Context.ExecuteQueryRetry();
-
 
             var packageServerRelativeUrl = UrlUtility.Combine(rootWeb.RootFolder.ServerRelativeUrl, fileName);
             Log.Debug(Constants.LOGGING_SOURCE, "Installing package '{0}'", packageInfo.PackageName);
@@ -529,7 +527,7 @@ namespace Microsoft.SharePoint.Client
             if (solutions.AreItemsAvailable && solutions.Count > 0)
             {
                 var packageItem = solutions.FirstOrDefault();
-                var packageInfo = new DesignPackageInfo()
+                var packageInfo = new DesignPackageInfo
                 {
                     PackageGuid = packageGuid,
                     PackageName = fileName,
@@ -583,23 +581,20 @@ namespace Microsoft.SharePoint.Client
             {
                 Log.Debug(Constants.LOGGING_SOURCE, "Site search '{0}'", keywordQueryValue);
 
-                List<SiteEntity> sites = new List<SiteEntity>();
+                var sites = new List<SiteEntity>();
 
-                KeywordQuery keywordQuery = new KeywordQuery(web.Context);
+                var keywordQuery = new KeywordQuery(web.Context);
                 keywordQuery.TrimDuplicates = trimDuplicates;
 
                 if (keywordQueryValue.Length == 0)
                 {
-
                     keywordQueryValue = "contentclass:\"STS_Site\"";
-
                 }
 
                 //int startRow = 0;
-                int totalRows = 0;
+                var totalRows = 0;
 
                 totalRows = web.ProcessQuery(keywordQueryValue, sites, keywordQuery);
-
 
                 if (totalRows > 0)
                 {
@@ -627,7 +622,7 @@ namespace Microsoft.SharePoint.Client
         /// <returns>All found site collections</returns>
         public static List<SiteEntity> SiteSearchScopedByUrl(this Web web, string siteUrl)
         {
-            string keywordQuery = $"contentclass:\"STS_Site\" AND site:{siteUrl}";
+            var keywordQuery = $"contentclass:\"STS_Site\" AND site:{siteUrl}";
             return web.SiteSearch(keywordQuery);
         }
 
@@ -639,7 +634,7 @@ namespace Microsoft.SharePoint.Client
         /// <returns>All found site collections</returns>
         public static List<SiteEntity> SiteSearchScopedByTitle(this Web web, string siteTitle)
         {
-            string keywordQuery = $"contentclass:\"STS_Site\" AND Title:{siteTitle}";
+            var keywordQuery = $"contentclass:\"STS_Site\" AND Title:{siteTitle}";
             return web.SiteSearch(keywordQuery);
         }
 
@@ -655,7 +650,7 @@ namespace Microsoft.SharePoint.Client
         /// <returns>Total number of rows for the query</returns>
         private static int ProcessQuery(this Web web, string keywordQueryValue, List<SiteEntity> sites, KeywordQuery keywordQuery)
         {
-            int totalRows = 0;
+            var totalRows = 0;
 
             keywordQuery.QueryText = keywordQueryValue;
             keywordQuery.RowLimit = 500;
@@ -666,12 +661,12 @@ namespace Microsoft.SharePoint.Client
             keywordQuery.SelectProperties.Add("WebTemplate");
             keywordQuery.SelectProperties.Add("IndexDocId"); // Change : Include IndexDocId property to get the IndexDocId for paging
             keywordQuery.SortList.Add("IndexDocId", SortDirection.Ascending); // Change : Sort by IndexDocId
-            SearchExecutor searchExec = new SearchExecutor(web.Context);
+            var searchExec = new SearchExecutor(web.Context);
 
             // Important to avoid trimming "similar" site collections
             keywordQuery.TrimDuplicates = false;
 
-            ClientResult<ResultTableCollection> results = searchExec.ExecuteQuery(keywordQuery);
+            var results = searchExec.ExecuteQuery(keywordQuery);
             web.Context.ExecuteQueryRetry();
 
             if (results != null)
@@ -710,7 +705,6 @@ namespace Microsoft.SharePoint.Client
         {
             SetPropertyBagValueInternal(web, key, value);
         }
-
 
         /// <summary>
         /// Sets a key/value pair in the web property bag
@@ -803,7 +797,7 @@ namespace Microsoft.SharePoint.Client
         /// <returns>Value of the property bag entry as integer</returns>
         public static int? GetPropertyBagValueInt(this Web web, string key, int defaultValue)
         {
-            object value = GetPropertyBagValueInternal(web, key);
+            var value = GetPropertyBagValueInternal(web, key);
             if (value != null)
             {
                 return (int)value;
@@ -823,7 +817,7 @@ namespace Microsoft.SharePoint.Client
         /// <returns>Value of the property bag entry as integer</returns>
         public static DateTime? GetPropertyBagValueDateTime(this Web web, string key, DateTime defaultValue)
         {
-            object value = GetPropertyBagValueInternal(web, key);
+            var value = GetPropertyBagValueInternal(web, key);
             if (value != null)
             {
                 return (DateTime)value;
@@ -843,7 +837,7 @@ namespace Microsoft.SharePoint.Client
         /// <returns>Value of the property bag entry as string</returns>
         public static string GetPropertyBagValueString(this Web web, string key, string defaultValue)
         {
-            object value = GetPropertyBagValueInternal(web, key);
+            var value = GetPropertyBagValueInternal(web, key);
             if (value != null)
             {
                 return (string)value;
@@ -877,7 +871,6 @@ namespace Microsoft.SharePoint.Client
             }
         }
 
-
         /// <summary>
         /// Checks if the given property bag entry exists
         /// </summary>
@@ -908,7 +901,7 @@ namespace Microsoft.SharePoint.Client
         /// <returns>string formatted list of keys in proper format</returns>
         private static string GetEncodedValueForSearchIndexProperty(IEnumerable<string> keys)
         {
-            StringBuilder stringBuilder = new StringBuilder();
+            var stringBuilder = new StringBuilder();
             foreach (string current in keys)
             {
                 stringBuilder.Append(Convert.ToBase64String(Encoding.Unicode.GetBytes(current)));
@@ -1006,7 +999,7 @@ namespace Microsoft.SharePoint.Client
             }
             else
             {
-                int searchversion = 0;
+                var searchversion = 0;
                 if (web.PropertyBagContainsKey("vti_searchversion"))
                 {
                     searchversion = (int)web.GetPropertyBagValueInt("vti_searchversion", 0);
@@ -1017,7 +1010,6 @@ namespace Microsoft.SharePoint.Client
         #endregion
 
         #region Events
-
 
         /// <summary>
         /// Registers a remote event receiver
@@ -1066,7 +1058,7 @@ namespace Microsoft.SharePoint.Client
 
             if (!receiverExists)
             {
-                EventReceiverDefinitionCreationInformation receiver = new EventReceiverDefinitionCreationInformation();
+                var receiver = new EventReceiverDefinitionCreationInformation();
                 receiver.EventType = eventReceiverType;
                 receiver.ReceiverUrl = url;
                 receiver.ReceiverName = name;
@@ -1181,7 +1173,7 @@ namespace Microsoft.SharePoint.Client
         /// <returns>ProvisioningTemplate object with generated values from existing site</returns>
         public static ProvisioningTemplate GetProvisioningTemplate(this Web web)
         {
-            ProvisioningTemplateCreationInformation creationInfo = new ProvisioningTemplateCreationInformation(web);
+            var creationInfo = new ProvisioningTemplateCreationInformation(web);
 
             return new SiteToTemplateConversion().GetRemoteTemplate(web, creationInfo);
         }
@@ -1214,7 +1206,7 @@ namespace Microsoft.SharePoint.Client
         {
             const string cacheProfileUrl = "Cache Profiles/{0}_.000";
 
-            string publishingWebValue = web.GetPropertyBagValueString("__PublishingFeatureActivated", string.Empty);
+            var publishingWebValue = web.GetPropertyBagValueString("__PublishingFeatureActivated", string.Empty);
             if (string.IsNullOrEmpty(publishingWebValue))
             {
                 throw new Exception("Page output cache can be set only on publishing sites.");
@@ -1405,7 +1397,6 @@ namespace Microsoft.SharePoint.Client
             return DeployApplicationPackageToAppCatalogImplementation(web, appCatalogSite.ToString(), spPkgName, spPkgPath, autoDeploy, skipFeatureDeployment, overwrite);
         }
 
-
         private static ListItem DeployApplicationPackageToAppCatalogImplementation(this Web web, string appCatalogSiteUrl, string spPkgName, string spPkgPath, bool autoDeploy, bool skipFeatureDeployment, bool overwrite)
         {
             if (String.IsNullOrEmpty(appCatalogSiteUrl))
@@ -1431,13 +1422,13 @@ namespace Microsoft.SharePoint.Client
 
             using (var appCatalogContext = web.Context.Clone(catalogUri))
             {
-                List catalog = appCatalogContext.Web.GetListByUrl("appcatalog");
+                var catalog = appCatalogContext.Web.GetListByUrl("appcatalog");
                 if (catalog == null)
                 {
                     throw new Exception($"No app catalog found...did you provide a valid app catalog site?");
                 }
 
-                Folder rootFolder = catalog.RootFolder;
+                var rootFolder = catalog.RootFolder;
 
                 // Upload package
                 var sppkgFile = rootFolder.UploadFile(spPkgName, System.IO.Path.Combine(spPkgPath, spPkgName), overwrite);

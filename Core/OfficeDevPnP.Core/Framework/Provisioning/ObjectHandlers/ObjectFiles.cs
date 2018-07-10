@@ -34,7 +34,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             using (var scope = new PnPMonitoredScope(this.Name))
             {
                 // Check if this is not a noscript site as we're not allowed to write to the web property bag is that one
-                bool isNoScriptSite = web.IsNoScriptSite();
+                var isNoScriptSite = web.IsNoScriptSite();
                 web.EnsureProperties(w => w.ServerRelativeUrl, w => w.Url);
 
                 // Build on the fly the list of additional files coming from the Directories
@@ -65,7 +65,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         web.EnsureProperties(w => w.ServerRelativeUrl, w => w.Url);
                     }
 
-                    if (folderName.ToLower().StartsWith((web.ServerRelativeUrl.ToLower())))
+                    if (folderName.ToLower().StartsWith(web.ServerRelativeUrl.ToLower()))
                     {
                         folderName = folderName.Substring(web.ServerRelativeUrl.Length);
                     }
@@ -121,12 +121,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 #endif
                         if (file.Properties != null && file.Properties.Any())
                         {
-                            Dictionary<string, string> transformedProperties = file.Properties.ToDictionary(property => property.Key, property => parser.ParseString(property.Value));
+                            var transformedProperties = file.Properties.ToDictionary(property => property.Key, property => parser.ParseString(property.Value));
                             SetFileProperties(targetFile, transformedProperties, false);
                         }
 
 #if !SP2013
-                        bool webPartsNeedLocalization = false;
+                        var webPartsNeedLocalization = false;
 #endif
                         if (file.WebParts != null && file.WebParts.Any())
                         {
@@ -238,13 +238,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             return checkedOut;
         }
 
-
         public override ProvisioningTemplate ExtractObjects(Web web, ProvisioningTemplate template, ProvisioningTemplateCreationInformation creationInfo)
         {
-
             return template;
         }
-
 
         public void SetFileProperties(File file, IDictionary<string, string> properties, bool checkoutIfRequired = true)
         {
@@ -287,7 +284,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         {
                             case "CONTENTTYPE":
                                 {
-                                    Microsoft.SharePoint.Client.ContentType targetCT = parentList.GetContentTypeByName(propertyValue);
+                                    var targetCT = parentList.GetContentTypeByName(propertyValue);
                                     context.ExecuteQueryRetry();
 
                                     if (targetCT != null)
@@ -372,7 +369,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         /// <returns>True is the file will not be uploaded, false otherwise</returns>
         public static bool SkipFile(bool isNoScriptSite, string fileName, string folderName)
         {
-            string fileExtionsion = Path.GetExtension(fileName).ToLower();
+            var fileExtionsion = Path.GetExtension(fileName).ToLower();
             if (isNoScriptSite)
             {
                 if (!String.IsNullOrEmpty(fileExtionsion) && BlockedExtensionsInNoScript.Contains(fileExtionsion))
@@ -523,7 +520,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 }
             }
 
-            return (result);
+            return result;
         }
 
         internal static List<Model.File> GetDirectoryFiles(this Model.Directory directory,
@@ -532,7 +529,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             var result = new List<Model.File>();
 
             // If the connector has a container specified we need to take that in account to find the files we need
-            string folderToGrabFilesFrom = directory.Src;
+            var folderToGrabFilesFrom = directory.Src;
             if (!String.IsNullOrEmpty(directory.ParentTemplate.Connector.GetContainer()))
             {
                 folderToGrabFilesFrom = directory.ParentTemplate.Connector.GetContainer() + @"\" + directory.Src;
@@ -581,7 +578,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 }
             }
 
-            return (result);
+            return result;
         }
     }
 }

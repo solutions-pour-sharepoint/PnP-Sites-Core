@@ -202,13 +202,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}|{4}|",
+            return String.Format("{0}|{1}|{2}|{3}|{4}|",
                 this.AppCatalog?.GetHashCode() ?? 0,
                 this.ContentDeliveryNetwork?.GetHashCode() ?? 0,
                 this.SiteDesigns.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.SiteScripts.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.StorageEntities.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0))
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -220,9 +220,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is ProvisioningTenant))
             {
-                return (false);
+                return false;
             }
-            return (Equals((ProvisioningTenant)obj));
+            return Equals((ProvisioningTenant)obj);
         }
 
         /// <summary>
@@ -234,15 +234,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.AppCatalog == other.AppCatalog &&
+            return this.AppCatalog == other.AppCatalog &&
                 this.ContentDeliveryNetwork == other.ContentDeliveryNetwork &&
                 this.SiteDesigns.DeepEquals(other.SiteDesigns) &&
                 this.SiteScripts.DeepEquals(other.SiteScripts) &&
                 this.StorageEntities.DeepEquals(other.StorageEntities)
-                );
+                ;
         }
 
         #endregion

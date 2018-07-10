@@ -18,15 +18,15 @@ namespace OfficeDevPnP.Core.Utilities
         {
             get
             {
-                return (PnPCoreVersionTagLazy.Value);
+                return PnPCoreVersionTagLazy.Value;
             }
         }
 
         private static Lazy<String> PnPCoreVersionTagLazy = new Lazy<String>(
             () => {
-                Assembly coreAssembly = Assembly.GetExecutingAssembly();
-                String result = $"PnPCore:{((AssemblyFileVersionAttribute) coreAssembly.GetCustomAttribute(typeof(AssemblyFileVersionAttribute))).Version.Split('.')[2]}";
-                return (result);
+                var coreAssembly = Assembly.GetExecutingAssembly();
+                var result = $"PnPCore:{((AssemblyFileVersionAttribute) coreAssembly.GetCustomAttribute(typeof(AssemblyFileVersionAttribute))).Version.Split('.')[2]}";
+                return result;
             }, 
             true);
 
@@ -38,15 +38,15 @@ namespace OfficeDevPnP.Core.Utilities
         {
             get
             {
-                return (PnPCoreUserAgentLazy.Value);
+                return PnPCoreUserAgentLazy.Value;
             }
         }
 
         private static Lazy<String> PnPCoreUserAgentLazy = new Lazy<String>(
             () => {
-                Assembly coreAssembly = Assembly.GetExecutingAssembly();         
-                String result = $"NONISV|SharePointPnP|PnPCore/{((AssemblyFileVersionAttribute)coreAssembly.GetCustomAttribute(typeof(AssemblyFileVersionAttribute))).Version}";
-                return (result);
+                var coreAssembly = Assembly.GetExecutingAssembly();
+                var result = $"NONISV|SharePointPnP|PnPCore/{((AssemblyFileVersionAttribute)coreAssembly.GetCustomAttribute(typeof(AssemblyFileVersionAttribute))).Version}";
+                return result;
             },
             true);
 

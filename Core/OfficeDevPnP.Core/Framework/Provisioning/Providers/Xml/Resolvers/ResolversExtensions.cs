@@ -20,11 +20,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers
         /// <returns>The property value, if any</returns>
         public static Object GetPublicInstancePropertyValue(this Object source, String propertyName)
         {
-            return (source?.GetType()?.GetProperty(propertyName,
+            return source?.GetType()?.GetProperty(propertyName,
                     System.Reflection.BindingFlags.Instance |
                     System.Reflection.BindingFlags.Public |
                     System.Reflection.BindingFlags.IgnoreCase)?
-                .GetValue(source));
+                .GetValue(source);
         }
 
         /// <summary>
@@ -35,10 +35,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers
         /// <returns>The property, if any</returns>
         public static PropertyInfo GetPublicInstanceProperty(this Object source, String propertyName)
         {
-            return (source?.GetType()?.GetProperty(propertyName,
+            return source?.GetType()?.GetProperty(propertyName,
                     System.Reflection.BindingFlags.Instance |
                     System.Reflection.BindingFlags.Public |
-                    System.Reflection.BindingFlags.IgnoreCase));
+                    System.Reflection.BindingFlags.IgnoreCase);
         }
 
         /// <summary>

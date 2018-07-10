@@ -219,7 +219,7 @@ namespace OfficeDevPnP.Core.Diagnostics.Tree
         /// </summary>
         public int Depth
         {
-            get { return (Parent == null ? 0 : Parent.Depth + 1); }
+            get { return Parent == null ? 0 : Parent.Depth + 1; }
         }
 
         //private UpDownTraversalType _DisposeTraversal = UpDownTraversalType.BottomUp;

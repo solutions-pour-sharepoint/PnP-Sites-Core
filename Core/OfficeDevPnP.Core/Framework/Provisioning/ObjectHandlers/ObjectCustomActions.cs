@@ -24,7 +24,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 var site = context.Site;
 
                 // Check if this is not a noscript site as we're not allowed to update some properties
-                bool isNoScriptSite = web.IsNoScriptSite();
+                var isNoScriptSite = web.IsNoScriptSite();
 
                 // if this is a sub site then we're not enabling the site collection scoped custom actions
                 if (!web.IsSubSite())
@@ -62,7 +62,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             }
             foreach (var customAction in customActions)
             {
-
                 if (isNoScriptSite && Guid.Empty == customAction.ClientSideComponentId)
                 {
                     scope.LogWarning(CoreResources.Provisioning_ObjectHandlers_CustomActions_SkippingAddUpdateDueToNoScript, customAction.Name);
@@ -83,7 +82,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 if (!caExists && !customAction.Remove && customAction.Enabled)
                 {
                     // Then we add it to the target
-                    var customActionEntity = new CustomActionEntity()
+                    var customActionEntity = new CustomActionEntity
                     {
 #if !ONPREMISES
                         ClientSideComponentId = customAction.ClientSideComponentId,
@@ -105,7 +104,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         Title = parser.ParseString(customAction.Title),
                         Url = parser.ParseString(customAction.Url)
                     };
-
 
                     if (site != null)
                     {
@@ -289,7 +287,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 {
                     isDirty = true;
                 }
-
             }
 #endif
             if (existingCustomAction.Url != parser.ParseString(customAction.Url))
@@ -310,7 +307,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         {
             if (uca != null)
             {
-                bool isDirty = false;
+                var isDirty = false;
 #if !ONPREMISES
                 if (!string.IsNullOrEmpty(customAction.Title) && customAction.Title.ContainsResourceToken())
                 {
@@ -340,7 +337,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             using (var scope = new PnPMonitoredScope(this.Name))
             {
                 var context = (ClientContext)web.Context;
-                bool isSubSite = web.IsSubSite();
+                var isSubSite = web.IsSubSite();
                 var webCustomActions = web.GetCustomActions();
                 var siteCustomActions = context.Site.GetCustomActions();
 
@@ -378,7 +375,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             {
                 foreach (var customAction in baseTemplate.CustomActions.SiteCustomActions)
                 {
-                    int index = template.CustomActions.SiteCustomActions.FindIndex(f => f.Name.Equals(customAction.Name));
+                    var index = template.CustomActions.SiteCustomActions.FindIndex(f => f.Name.Equals(customAction.Name));
 
                     if (index > -1)
                     {
@@ -390,7 +387,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
             foreach (var customAction in baseTemplate.CustomActions.WebCustomActions)
             {
-                int index = template.CustomActions.WebCustomActions.FindIndex(f => f.Name.Equals(customAction.Name));
+                var index = template.CustomActions.WebCustomActions.FindIndex(f => f.Name.Equals(customAction.Name));
 
                 if (index > -1)
                 {
@@ -437,7 +434,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 {
                     var customActionTitle = $"{{res:CustomAction_{resourceKey}_Title}}";
                     customAction.Title = customActionTitle;
-
                 }
                 if (UserResourceExtensions.PersistResourceValue(userCustomAction.DescriptionResource, $"CustomAction_{resourceKey}_Description", template, creationInfo))
                 {

@@ -93,7 +93,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Serializers
                 }
                 persistence.GetPublicInstanceProperty("SearchSettings").SetValue(persistence, searchSettings);
             }
-
         }
     }
 }

@@ -39,7 +39,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             using (var scope = new PnPMonitoredScope(this.Name))
             {
                 // Check if this is not a noscript site as we're not allowed to update some properties
-                bool isNoScriptSite = web.IsNoScriptSite();
+                var isNoScriptSite = web.IsNoScriptSite();
 
                 web.Context.Load(web.ContentTypes, ct => ct.IncludeWithDefaultProperties(c => c.StringId, c => c.FieldLinks,
                                                                                          c => c.FieldLinks.Include(fl => fl.Id, fl => fl.Required, fl => fl.Hidden)));
@@ -299,7 +299,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 }
                 else
                 {
-                    Microsoft.SharePoint.Client.DocumentSet.DocumentSetTemplate templateToUpdate =
+                    var templateToUpdate =
                         Microsoft.SharePoint.Client.DocumentSet.DocumentSetTemplate.GetDocumentSetTemplate(web.Context, existingContentType);
 
                     // TODO: Implement Delta Handling
@@ -340,7 +340,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 frData.TemplateField == null // Process fields refs if the target is not defined in the current template
                 || frData.TemplateField.GetFieldProvisioningStep(parser) == _step // or process field ref only if the current step is matching
             ).Select(fr => fr.FieldRef).ToArray();
-
 
             foreach (var fieldRef in fieldsRefsToProcess)
             {
@@ -429,7 +428,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             if (templateContentType.DocumentSetTemplate != null)
             {
                 // Retrieve a reference to the DocumentSet Content Type
-                Microsoft.SharePoint.Client.DocumentSet.DocumentSetTemplate documentSetTemplate =
+                var documentSetTemplate =
                     Microsoft.SharePoint.Client.DocumentSet.DocumentSetTemplate.GetDocumentSetTemplate(web.Context, createdCT);
 
                 // Load the collections to allow for deletion scenarions
@@ -442,10 +441,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 }
 
                 // Add additional content types to the set of allowed content types
-                bool hasDefaultDocumentContentTypeInTemplate = false;
+                var hasDefaultDocumentContentTypeInTemplate = false;
                 foreach (String ctId in templateContentType.DocumentSetTemplate.AllowedContentTypes)
                 {
-                    Microsoft.SharePoint.Client.ContentType ct = existingCTs.FirstOrDefault(c => c.StringId == ctId);
+                    var ct = existingCTs.FirstOrDefault(c => c.StringId == ctId);
                     if (ct != null)
                     {
                         if (ct.Id.StringValue.Equals("0x0101", StringComparison.InvariantCultureIgnoreCase))
@@ -459,7 +458,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 // If the default document content type (0x0101) is not in our definition then remove it
                 if (!hasDefaultDocumentContentTypeInTemplate)
                 {
-                    Microsoft.SharePoint.Client.ContentType ct = existingCTs.FirstOrDefault(c => c.StringId == "0x0101");
+                    var ct = existingCTs.FirstOrDefault(c => c.StringId == "0x0101");
                     if (ct != null)
                     {
                         documentSetTemplate.AllowedContentTypes.Remove(ct.Id);
@@ -470,7 +469,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 {
                     foreach (var doc in templateContentType.DocumentSetTemplate.DefaultDocuments)
                     {
-                        Microsoft.SharePoint.Client.ContentType ct = existingCTs.FirstOrDefault(c => c.StringId == doc.ContentTypeId);
+                        var ct = existingCTs.FirstOrDefault(c => c.StringId == doc.ContentTypeId);
                         if (ct != null)
                         {
                             using (Stream fileStream = connector.GetFileStream(doc.FileSourcePath))
@@ -490,7 +489,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                 foreach (var sharedField in templateContentType.DocumentSetTemplate.SharedFields)
                 {
-                    Microsoft.SharePoint.Client.Field field = existingFields.FirstOrDefault(f => f.Id == sharedField);
+                    var field = existingFields.FirstOrDefault(f => f.Id == sharedField);
                     if (field != null)
                     {
                         documentSetTemplate.SharedFields.Add(field);
@@ -499,7 +498,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                 foreach (var welcomePageField in templateContentType.DocumentSetTemplate.WelcomePageFields)
                 {
-                    Microsoft.SharePoint.Client.Field field = existingFields.FirstOrDefault(f => f.Id == welcomePageField);
+                    var field = existingFields.FirstOrDefault(f => f.Id == welcomePageField);
                     if (field != null)
                     {
                         documentSetTemplate.WelcomePageFields.Add(field);
@@ -564,7 +563,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             {
                 WriteMessage("We discovered content types in this subweb. While technically possible, we recommend moving these content types to the root site collection. Consider excluding them from this template.", ProvisioningMessageType.Warning);
             }
-            List<ContentType> ctsToReturn = new List<ContentType>();
+            var ctsToReturn = new List<ContentType>();
             var currentCtIndex = 0;
             foreach (var ct in cts)
             {
@@ -601,13 +600,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         ct.ReadOnly,
                         ctDocumentTemplate,
                         false,
-                            (from fieldLink in ct.FieldLinks.AsEnumerable<FieldLink>()
+                            from fieldLink in ct.FieldLinks.AsEnumerable<FieldLink>()
                              select new FieldRef(fieldLink.Name)
                              {
                                  Id = fieldLink.Id,
                                  Hidden = fieldLink.Hidden,
                                  Required = fieldLink.Required,
-                             })
+                             }
                         )
                     {
                         DisplayFormUrl = ct.DisplayFormUrl,
@@ -622,7 +621,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         var persistLanguages = true;
                         if (creationInfo.BaseTemplate != null)
                         {
-                            int index = creationInfo.BaseTemplate.ContentTypes.FindIndex(c => c.Id.Equals(ct.StringId));
+                            var index = creationInfo.BaseTemplate.ContentTypes.FindIndex(c => c.Id.Equals(ct.StringId));
 
                             if (index > -1)
                             {
@@ -649,7 +648,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     if (Microsoft.SharePoint.Client.DocumentSet.DocumentSetTemplate.IsChildOfDocumentSetContentType(web.Context, ct).Value ||
                         ct.StringId.StartsWith(BuiltInContentTypeId.DocumentSet)) // TODO: This is kind of an hack... we should find a better solution ...
                     {
-                        Microsoft.SharePoint.Client.DocumentSet.DocumentSetTemplate documentSetTemplate =
+                        var documentSetTemplate =
                             Microsoft.SharePoint.Client.DocumentSet.DocumentSetTemplate.GetDocumentSetTemplate(web.Context, ct);
 
                         // Retrieve the Document Set
@@ -743,7 +742,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
         private static Byte[] ReadFullStream(Stream input)
         {
-            byte[] buffer = new byte[16 * 1024];
+            var buffer = new byte[16 * 1024];
             using (var mem = new MemoryStream())
             {
                 int read;

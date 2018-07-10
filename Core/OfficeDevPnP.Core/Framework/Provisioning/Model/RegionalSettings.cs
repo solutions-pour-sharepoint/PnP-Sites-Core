@@ -105,7 +105,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|",
+            return String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|",
                 this.AdjustHijriDays.GetHashCode(),
                 this.AlternateCalendarType.GetHashCode(),
                 this.CalendarType.GetHashCode(),
@@ -119,7 +119,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                 this.WorkDayEndHour.GetHashCode(),
                 this.WorkDays.GetHashCode(),
                 this.WorkDayStartHour.GetHashCode()
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -131,9 +131,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is RegionalSettings))
             {
-                return (false);
+                return false;
             }
-            return (Equals((RegionalSettings)obj));
+            return Equals((RegionalSettings)obj);
         }
 
         /// <summary>
@@ -146,10 +146,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.AdjustHijriDays == other.AdjustHijriDays &&
+            return this.AdjustHijriDays == other.AdjustHijriDays &&
                 this.AlternateCalendarType == other.AlternateCalendarType &&
                 this.CalendarType == other.CalendarType &&
                 this.Collation == other.Collation &&
@@ -162,7 +162,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                 this.WorkDayEndHour == other.WorkDayEndHour &&
                 this.WorkDays == other.WorkDays &&
                 this.WorkDayStartHour == other.WorkDayStartHour
-                );
+                ;
         }
 
         #endregion

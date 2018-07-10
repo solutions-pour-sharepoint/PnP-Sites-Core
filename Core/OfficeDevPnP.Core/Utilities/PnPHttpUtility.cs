@@ -26,7 +26,6 @@ namespace OfficeDevPnP.Core.Utilities
         /// <returns>A plain-text string version of the string.</returns>        
         public static string ConvertSimpleHtmlToText(string html, int maxLength)
         {
-            
             return HtmlDecodeCore(html, maxLength, null);
         }
 
@@ -41,19 +40,19 @@ namespace OfficeDevPnP.Core.Utilities
             {
                 return string.Empty;
             }
-            StringBuilder builder = new StringBuilder();
-            int currentPosition = 0;
-            int startIndex = 0;
+            var builder = new StringBuilder();
+            var currentPosition = 0;
+            var startIndex = 0;
             while ((currentPosition < html.Length) && ((maxLength < 0) || (builder.Length < maxLength)))
             {
-                char ch = html[currentPosition];
+                var ch = html[currentPosition];
                 switch (ch)
                 {
                     case '&':
                     case '<':
                         {
-                            int length = currentPosition - startIndex;
-                            bool flag = false;
+                            var length = currentPosition - startIndex;
+                            var flag = false;
                             if ((maxLength > -1) && ((builder.Length + length) >= maxLength))
                             {
                                 flag = true;
@@ -93,7 +92,7 @@ namespace OfficeDevPnP.Core.Utilities
             }
             else
             {
-                int num4 = maxLength - builder.Length;
+                var num4 = maxLength - builder.Length;
                 if (num4 > 0)
                 {
                     builder.Append(html.Substring(startIndex, num4));
@@ -105,13 +104,13 @@ namespace OfficeDevPnP.Core.Utilities
         //Code copied from Microsoft.SharePoint.Utilities.SPHttpUtility 
         internal static string ProceedToEndOfHtmlString(string html, ref int currentPosition)
         {
-            char ch = html[currentPosition];
-            int num = currentPosition;
+            var ch = html[currentPosition];
+            var num = currentPosition;
             while ((ch != ';') && (num < (html.Length - 1)))
             {
                 ch = html[++num];
             }
-            string str = string.Empty;
+            var str = string.Empty;
             switch (html.Substring(currentPosition, (num - currentPosition) + 1))
             {
                 case "&quot;":
@@ -145,27 +144,27 @@ namespace OfficeDevPnP.Core.Utilities
         //Code copied from Microsoft.SharePoint.Utilities.SPHttpUtility 
         internal static string ProceedToEndOfTag(string html, IList<string> tagsToRetain, ref int currentPosition)
         {
-            char ch = html[currentPosition];
-            int num = currentPosition;
+            var ch = html[currentPosition];
+            var num = currentPosition;
             while ((ch != '>') && (num < (html.Length - 1)))
             {
                 ch = html[++num];
             }
-            string str = html.Substring(currentPosition, (num - currentPosition) + 1);
-            bool flag = str.EndsWith("/>", StringComparison.Ordinal);
-            int index = str.IndexOf(' ');
+            var str = html.Substring(currentPosition, (num - currentPosition) + 1);
+            var flag = str.EndsWith("/>", StringComparison.Ordinal);
+            var index = str.IndexOf(' ');
             if (index == -1)
             {
                 index = str.IndexOf('>');
             }
-            string item = str.Substring(1, index - 1);
-            string targetCloseTag = "</" + item + ">";
-            string str4 = string.Empty;
+            var item = str.Substring(1, index - 1);
+            var targetCloseTag = "</" + item + ">";
+            var str4 = string.Empty;
             if (str == HTMLData[7])
             {
                 str4 = "\n";
             }
-            if ((string.IsNullOrEmpty(str4) && (tagsToRetain != null)) && tagsToRetain.Contains(item))
+            if (string.IsNullOrEmpty(str4) && (tagsToRetain != null) && tagsToRetain.Contains(item))
             {
                 if (flag)
                 {
@@ -173,9 +172,9 @@ namespace OfficeDevPnP.Core.Utilities
                     currentPosition = num + 1;
                     return str4;
                 }
-                int startIndex = num + 1;
+                var startIndex = num + 1;
                 ProceedToEndOfCloseTag(targetCloseTag, html, ref currentPosition);
-                return (str + html.Substring(startIndex, currentPosition - startIndex));
+                return str + html.Substring(startIndex, currentPosition - startIndex);
             }
             if (!flag && ((str == "<style>") || str.Contains("display:none")))
             {
@@ -189,12 +188,12 @@ namespace OfficeDevPnP.Core.Utilities
         //Code copied from Microsoft.SharePoint.Utilities.SPHttpUtility 
         private static void ProceedToEndOfCloseTag(string targetCloseTag, string html, ref int currentPosition)
         {
-            int length = targetCloseTag.Length;
+            var length = targetCloseTag.Length;
             while (currentPosition < (html.Length - 1))
             {
                 int num2;
                 currentPosition = num2 = currentPosition + 1;
-                if (((html[num2] == '<') && ((currentPosition + length) < html.Length)) && targetCloseTag.Equals(html.Substring(currentPosition, length)))
+                if ((html[num2] == '<') && ((currentPosition + length) < html.Length) && targetCloseTag.Equals(html.Substring(currentPosition, length)))
                 {
                     currentPosition += targetCloseTag.Length;
                     return;

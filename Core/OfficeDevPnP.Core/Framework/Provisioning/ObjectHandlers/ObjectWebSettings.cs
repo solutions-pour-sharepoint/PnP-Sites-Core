@@ -65,7 +65,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         var masterUrl = web.MasterUrl.ToLower();
                         if (!masterUrl.EndsWith("default.master") && !masterUrl.EndsWith("custom.master") && !masterUrl.EndsWith("v4.master") && !masterUrl.EndsWith("seattle.master") && !masterUrl.EndsWith("oslo.master"))
                         {
-
                             if (PersistFile(web, creationInfo, scope, web.MasterUrl))
                             {
                                 template.Files.Add(GetTemplateFile(web, web.MasterUrl));
@@ -87,9 +86,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     if (!string.IsNullOrEmpty(web.SiteLogoUrl) && (!web.SiteLogoUrl.ToLowerInvariant().Contains("_api/")))
                     {
                         // Convert to server relative URL if needed (web.SiteLogoUrl can be set to FQDN URL of a file hosted in the site (e.g. for communication sites))
-                        Uri webUri = new Uri(web.Url);
-                        string webUrl = $"{webUri.Scheme}://{webUri.DnsSafeHost}";
-                        string siteLogoServerRelativeUrl = web.SiteLogoUrl.Replace(webUrl, "");
+                        var webUri = new Uri(web.Url);
+                        var webUrl = $"{webUri.Scheme}://{webUri.DnsSafeHost}";
+                        var siteLogoServerRelativeUrl = web.SiteLogoUrl.Replace(webUrl, "");
 
                         if (PersistFile(web, creationInfo, scope, siteLogoServerRelativeUrl))
                         {
@@ -133,7 +132,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         //TODO: Candidate for cleanup
         private Model.File GetTemplateFile(Web web, string serverRelativeUrl)
         {
-
             var webServerUrl = web.EnsureProperty(w => w.Url);
             var serverUri = new Uri(webServerUrl);
             var serverUrl = $"{serverUri.Scheme}://{serverUri.Authority}";
@@ -144,7 +142,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
             // store as site relative path
             folderPath = folderPath.Replace(web.ServerRelativeUrl, "").Trim('/');
-            var templateFile = new Model.File()
+            var templateFile = new Model.File
             {
                 Folder = Tokenize(folderPath, web.Url),
                 Src = !string.IsNullOrEmpty(folderPath) ? $"{folderPath}/{fileName}" : fileName,
@@ -170,7 +168,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     try
                     {
                         var file = web.GetFileByServerRelativeUrl(serverRelativeUrl);
-                        string fileName = string.Empty;
+                        var fileName = string.Empty;
                         if (serverRelativeUrl.IndexOf("/") > -1)
                         {
                             fileName = serverRelativeUrl.Substring(serverRelativeUrl.LastIndexOf("/") + 1);
@@ -181,7 +179,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         }
                         web.Context.Load(file);
                         web.Context.ExecuteQueryRetry();
-                        ClientResult<Stream> stream = file.OpenBinaryStream();
+                        var stream = file.OpenBinaryStream();
                         web.Context.ExecuteQueryRetry();
 
                         var baseUri = new Uri(web.Url);
@@ -192,7 +190,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         fileName = HttpUtility.UrlDecode(fullUri.Segments[fullUri.Segments.Count() - 1]);
 
                         // Build up a site relative container URL...might end up empty as well
-                        String container = HttpUtility.UrlDecode(folderPath.Replace(web.ServerRelativeUrl, "")).Trim('/').Replace("/", "\\");
+                        var container = HttpUtility.UrlDecode(folderPath.Replace(web.ServerRelativeUrl, "")).Trim('/').Replace("/", "\\");
 
                         using (Stream memStream = new MemoryStream())
                         {
@@ -244,10 +242,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             return json;
         }
 
-
         private void CopyStream(Stream source, Stream destination)
         {
-            byte[] buffer = new byte[32768];
+            var buffer = new byte[32768];
             int bytesRead;
 
             do
@@ -264,7 +261,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 if (template.WebSettings != null)
                 {
                     // Check if this is not a noscript site as we're not allowed to update some properties
-                    bool isNoScriptSite = web.IsNoScriptSite();
+                    var isNoScriptSite = web.IsNoScriptSite();
 
                     web.EnsureProperties(
 #if !ONPREMISES
@@ -285,7 +282,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                     if (!web.IsSubSite() || (web.IsSubSite() && web.HasUniqueRoleAssignments))
                     {
-                        String requestAccessEmailValue = parser.ParseString(webSettings.RequestAccessEmail);
+                        var requestAccessEmailValue = parser.ParseString(webSettings.RequestAccessEmail);
                         if (!String.IsNullOrEmpty(requestAccessEmailValue) && requestAccessEmailValue.Length >= 255)
                         {
                             requestAccessEmailValue = requestAccessEmailValue.Substring(0, 255);
@@ -387,7 +384,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         {
             return template.WebSettings != null;
         }
-
 
     }
 }

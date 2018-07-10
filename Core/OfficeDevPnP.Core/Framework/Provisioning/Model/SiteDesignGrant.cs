@@ -32,10 +32,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|",
+            return String.Format("{0}|{1}|",
                 this.Principal?.GetHashCode() ?? 0,
                 this.Right.GetHashCode()
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -47,9 +47,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is SiteDesignGrant))
             {
-                return (false);
+                return false;
             }
-            return (Equals((SiteDesignGrant)obj));
+            return Equals((SiteDesignGrant)obj);
         }
 
         /// <summary>
@@ -61,12 +61,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.Principal == other.Principal &&
+            return this.Principal == other.Principal &&
                 this.Right == other.Right
-                );
+                ;
         }
 
         #endregion

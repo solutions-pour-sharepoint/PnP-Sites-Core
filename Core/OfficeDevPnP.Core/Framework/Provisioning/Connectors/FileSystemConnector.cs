@@ -71,9 +71,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
             }
             container = container.Replace('/', '\\');
 
-            List<string> result = new List<string>();
+            var result = new List<string>();
 
-            string path = ConstructPath("", container);
+            var path = ConstructPath("", container);
 
             foreach (string file in Directory.EnumerateFiles(path, "*.*"))
             {
@@ -105,9 +105,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
             }
             container = container.Replace('/', '\\');
 
-            List<string> result = new List<string>();
+            var result = new List<string>();
 
-            string path = ConstructPath("", container);
+            var path = ConstructPath("", container);
 
             foreach (string folder in Directory.EnumerateDirectories(path))
             {
@@ -248,7 +248,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
 
             try
             {
-                string filePath = ConstructPath(fileName, container);
+                var filePath = ConstructPath(fileName, container);
 
                 // Ensure the target path exists
                 Directory.CreateDirectory(Path.GetDirectoryName(filePath));
@@ -297,7 +297,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
 
             try
             {
-                string filePath = ConstructPath(fileName, container);
+                var filePath = ConstructPath(fileName, container);
 
                 if (File.Exists(filePath))
                 {
@@ -322,7 +322,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
         {
             try
             {
-                string filePath = ConstructPath(fileName, container);
+                var filePath = ConstructPath(fileName, container);
 
                 MemoryStream stream;
                 using (FileStream fileStream = File.OpenRead(filePath))
@@ -348,11 +348,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
 
         private string ConstructPath(string fileName, string container)
         {
-            string filePath = "";
+            var filePath = "";
 
             if (container.IndexOf(@"\") > 0)
             {
-                string[] parts = container.Split(new string[] { @"\" }, StringSplitOptions.RemoveEmptyEntries);
+                var parts = container.Split(new string[] { @"\" }, StringSplitOptions.RemoveEmptyEntries);
                 filePath = Path.Combine(GetConnectionString(), parts[0]);
 
                 if (parts.Length > 1)

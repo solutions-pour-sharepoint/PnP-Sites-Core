@@ -42,12 +42,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}|",
-                (this.Title != null ? this.Title.GetHashCode() : 0),
-                (this.Description != null ? this.Description.GetHashCode() : 0),
-                (this.JsonFilePath != null ? this.JsonFilePath.GetHashCode() : 0),
+            return String.Format("{0}|{1}|{2}|{3}|",
+                this.Title != null ? this.Title.GetHashCode() : 0,
+                this.Description != null ? this.Description.GetHashCode() : 0,
+                this.JsonFilePath != null ? this.JsonFilePath.GetHashCode() : 0,
                 this.Overwrite.GetHashCode()
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -59,9 +59,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is SiteScript))
             {
-                return (false);
+                return false;
             }
-            return (Equals((SiteScript)obj));
+            return Equals((SiteScript)obj);
         }
 
         /// <summary>
@@ -73,14 +73,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.Title == other.Title &&
+            return this.Title == other.Title &&
                 this.Description == other.Description &&
                 this.JsonFilePath == other.JsonFilePath &&
                 this.Overwrite == other.Overwrite
-                );
+                ;
         }
 
         #endregion

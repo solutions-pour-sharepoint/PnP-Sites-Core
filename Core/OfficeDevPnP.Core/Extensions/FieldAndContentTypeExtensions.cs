@@ -126,7 +126,7 @@ namespace Microsoft.SharePoint.Client
         /// <param name="fieldId">The id of the field to remove</param>
         public static void RemoveFieldById(this Web web, string fieldId)
         {
-            Guid fieldGuid = new Guid(fieldId);
+            var fieldGuid = new Guid(fieldId);
             var fields = web.Context.LoadQuery(web.Fields.Where(f => f.Id == fieldGuid));
             web.Context.ExecuteQueryRetry();
 
@@ -470,7 +470,6 @@ namespace Microsoft.SharePoint.Client
             field.Context.ExecuteQueryRetry();
         }
 
-
         #endregion
 
         #region List Fields
@@ -553,7 +552,7 @@ namespace Microsoft.SharePoint.Client
         /// <returns></returns>
         public static string FormatFieldXml(FieldCreationInformation fieldCreationInformation)
         {
-            List<string> additionalAttributesList = new List<string>();
+            var additionalAttributesList = new List<string>();
 
             if (fieldCreationInformation.AdditionalAttributes != null)
             {
@@ -580,7 +579,7 @@ namespace Microsoft.SharePoint.Client
             }
 #endif
 
-            string newFieldCAML = string.Format(Constants.FIELD_XML_FORMAT,
+            var newFieldCAML = string.Format(Constants.FIELD_XML_FORMAT,
                 fieldCreationInformation.FieldType,
                 fieldCreationInformation.InternalName,
                 fieldCreationInformation.DisplayName,
@@ -726,7 +725,7 @@ namespace Microsoft.SharePoint.Client
         /// </param>
         public static void SetJsLinkCustomizations(this List list, string fieldName, string jsLink)
         {
-            Field field = list.Fields.GetByInternalNameOrTitle(fieldName);
+            var field = list.Fields.GetByInternalNameOrTitle(fieldName);
             field.SetJsLinkCustomizations(jsLink);
         }
 
@@ -748,8 +747,8 @@ namespace Microsoft.SharePoint.Client
             if (!string.IsNullOrEmpty(xmlAttributes))
             {
                 attributes = new List<KeyValuePair<string, string>>();
-                string parameterXml = string.Format(Constants.FIELD_XML_PARAMETER_WRAPPER_FORMAT, xmlAttributes); // Temporary xml structure
-                XElement xe = XElement.Parse(parameterXml);
+                var parameterXml = string.Format(Constants.FIELD_XML_PARAMETER_WRAPPER_FORMAT, xmlAttributes); // Temporary xml structure
+                var xe = XElement.Parse(parameterXml);
 
                 foreach (var attribute in xe.Attributes())
                 {
@@ -869,7 +868,7 @@ namespace Microsoft.SharePoint.Client
                 list.Context.ExecuteQueryRetry();
             }
 
-            ContentType newContentType = list.ContentTypes.AddExistingContentType(contentType);
+            var newContentType = list.ContentTypes.AddExistingContentType(contentType);
             newContentType.EnsureProperty(ct => ct.Id);
             list.Context.ExecuteQueryRetry();
 
@@ -885,7 +884,7 @@ namespace Microsoft.SharePoint.Client
                 {
                     list.RootFolder.EnsureProperty(rf => rf.UniqueContentTypeOrder);
 
-                    IList<ContentTypeId> uniqueContentTypeOrder = list.RootFolder.UniqueContentTypeOrder;
+                    var uniqueContentTypeOrder = list.RootFolder.UniqueContentTypeOrder;
                     if (uniqueContentTypeOrder != null)
                     {
                         uniqueContentTypeOrder = uniqueContentTypeOrder.ToList();
@@ -1015,7 +1014,7 @@ namespace Microsoft.SharePoint.Client
             var flink = contentType.FieldLinks.FirstOrDefault(fld => fld.Id == field.Id);
             if (flink == null)
             {
-                XElement fieldElement = XElement.Parse(field.SchemaXmlWithResourceTokens);
+                var fieldElement = XElement.Parse(field.SchemaXmlWithResourceTokens);
                 fieldElement.SetAttributeValue("AllowDeletion", "TRUE"); // Default behavior when adding a field to a CT from the UI.
                 field.SchemaXml = fieldElement.ToString();
                 var fldInfo = new FieldLinkCreationInformation();
@@ -1202,8 +1201,8 @@ namespace Microsoft.SharePoint.Client
             list.Context.Load(ctCol, col => col.Include(ct => ct.Id, ct => ct.Parent));
             list.Context.ExecuteQueryRetry();
 
-            return (ctCol.Any(item => item.Id.StringValue.Equals(contentTypeId, StringComparison.OrdinalIgnoreCase)
-             || item.Parent.Id.StringValue.Equals(contentTypeId, StringComparison.OrdinalIgnoreCase)));
+            return ctCol.Any(item => item.Id.StringValue.Equals(contentTypeId, StringComparison.OrdinalIgnoreCase)
+             || item.Parent.Id.StringValue.Equals(contentTypeId, StringComparison.OrdinalIgnoreCase));
         }
 
         /// <summary>
@@ -1285,8 +1284,8 @@ namespace Microsoft.SharePoint.Client
 
             foreach (var ct in contentTypes)
             {
-                string ctid = ct.Attribute("ID").Value;
-                string name = ct.Attribute("Name").Value;
+                var ctid = ct.Attribute("ID").Value;
+                var name = ct.Attribute("Name").Value;
 
                 if (web.ContentTypeExistsByName(name))
                 {
@@ -1589,14 +1588,12 @@ namespace Microsoft.SharePoint.Client
         /// <param name="contentTypeName">The name of the content type</param>
         public static void RemoveContentTypeFromListByName(this Web web, string listTitle, string contentTypeName)
         {
-
             // Get list instances
             var list = web.GetListByTitle(listTitle);
             // Get content type instance
             var contentType = GetContentTypeByName(web, contentTypeName, true);
             // Remove content type from list
             RemoveContentTypeFromList(web, list, contentType);
-
         }
 
         /// <summary>
@@ -1613,7 +1610,6 @@ namespace Microsoft.SharePoint.Client
             var contentType = GetContentTypeByName(web, contentTypeName, true);
             // Remove content type from list
             RemoveContentTypeFromList(web, list, contentType);
-
         }
 
         /// <summary>
@@ -1674,7 +1670,7 @@ namespace Microsoft.SharePoint.Client
         /// <param name="contentTypeId">Id of the list content type to make default.</param>
         public static void SetDefaultContentType(this List list, string contentTypeId)
         {
-            ContentType listContentType = list.ContentTypes.GetById(contentTypeId);
+            var listContentType = list.ContentTypes.GetById(contentTypeId);
             list.Context.Load(listContentType, ct => ct.Id);
             list.Context.ExecuteQueryRetry();
             list.SetDefaultContentType(listContentType.Id);
@@ -1691,7 +1687,7 @@ namespace Microsoft.SharePoint.Client
         /// <param name="contentTypeId">Id of the list content type to make default.</param>
         public static void SetDefaultContentType(this List list, ContentTypeId contentTypeId)
         {
-            Folder rootFolder = list.RootFolder;
+            var rootFolder = list.RootFolder;
             list.Context.Load(list,
                 l => l.RootFolder.ServerRelativeUrl,
                 l => l.ContentTypes.Include(ct => ct.Id)
@@ -1704,7 +1700,7 @@ namespace Microsoft.SharePoint.Client
                 );
             list.Context.ExecuteQueryRetry();
 
-            IList<ContentTypeId> uniqueContentTypeOrder = rootFolder.UniqueContentTypeOrder;
+            var uniqueContentTypeOrder = rootFolder.UniqueContentTypeOrder;
             if (uniqueContentTypeOrder == null)
             {
                 uniqueContentTypeOrder = rootFolder.ContentTypeOrder;
@@ -1723,7 +1719,7 @@ namespace Microsoft.SharePoint.Client
             {
                 // Content Type is already visible
                 // If the index is 0 we don't need to make any changes as the content type is already the default one
-                int contentTypeIndex = uniqueContentTypeOrder.IndexOf(defaultContentTypeId);
+                var contentTypeIndex = uniqueContentTypeOrder.IndexOf(defaultContentTypeId);
 
                 if (contentTypeIndex > 0)
                 {
@@ -1761,7 +1757,7 @@ namespace Microsoft.SharePoint.Client
         public static bool GetIsAllowedInContentTypeOrder(this ContentType contentType)
         {
             contentType.EnsureProperty(ct => ct.Id);
-            string parentContentTypeId = contentType.Id.GetParentIdValue();
+            var parentContentTypeId = contentType.Id.GetParentIdValue();
             if (parentContentTypeId == null)
             {
                 return true;
@@ -1769,7 +1765,7 @@ namespace Microsoft.SharePoint.Client
             else
             {
                 return (!parentContentTypeId.Equals(BuiltInContentTypeId.Folder, StringComparison.OrdinalIgnoreCase))
-                    && !(parentContentTypeId.Equals(BuiltInContentTypeId.UntypedDocument, StringComparison.OrdinalIgnoreCase));
+                    && !parentContentTypeId.Equals(BuiltInContentTypeId.UntypedDocument, StringComparison.OrdinalIgnoreCase);
             }
         }
 
@@ -1786,12 +1782,12 @@ namespace Microsoft.SharePoint.Client
             list.Context.Load(list.RootFolder, rf => rf.UniqueContentTypeOrder);
             list.Context.ExecuteQueryRetry();
 
-            IList<ContentTypeId> uniqueContentTypeOrder = list.RootFolder.UniqueContentTypeOrder;
+            var uniqueContentTypeOrder = list.RootFolder.UniqueContentTypeOrder;
             //If UniqueContentTypeOrder is null then all content types are already visible.
             if (uniqueContentTypeOrder != null)
             {
                 uniqueContentTypeOrder = uniqueContentTypeOrder.ToList();
-                bool isDirty = false;
+                var isDirty = false;
                 foreach (ContentType contentType in contentTypes)
                 {
                     list.EnsureProperty(ct => ct.Id);
@@ -1821,8 +1817,8 @@ namespace Microsoft.SharePoint.Client
         /// <param name="contentTypes">Content types to hide</param>
         public static void HideContentTypesInNewButton(this List list, IList<ContentType> contentTypes)
         {
-            bool isDirty = false;
-            Folder rootFolder = list.RootFolder;
+            var isDirty = false;
+            var rootFolder = list.RootFolder;
 
             list.Context.Load(rootFolder,
                 rf => rf.ContentTypeOrder,
@@ -1830,7 +1826,7 @@ namespace Microsoft.SharePoint.Client
                 );
             list.Context.ExecuteQueryRetry();
 
-            IList<ContentTypeId> uniqueContentTypeOrder = rootFolder.UniqueContentTypeOrder;
+            var uniqueContentTypeOrder = rootFolder.UniqueContentTypeOrder;
             if (uniqueContentTypeOrder == null)
             {
                 uniqueContentTypeOrder = rootFolder.ContentTypeOrder;
@@ -1839,7 +1835,7 @@ namespace Microsoft.SharePoint.Client
             {
                 list.EnsureProperty(ct => ct.Id);
 
-                ContentTypeId contentTypeIdToRemove = uniqueContentTypeOrder.FirstOrDefault(ctId => ctId.StringValue.Equals(contentType.Id.StringValue, StringComparison.OrdinalIgnoreCase));
+                var contentTypeIdToRemove = uniqueContentTypeOrder.FirstOrDefault(ctId => ctId.StringValue.Equals(contentType.Id.StringValue, StringComparison.OrdinalIgnoreCase));
                 if (contentTypeIdToRemove != null)
                 {
                     uniqueContentTypeOrder.Remove(contentTypeIdToRemove);
@@ -1864,7 +1860,7 @@ namespace Microsoft.SharePoint.Client
                 else if (x == null || y == null)
                     return false;
 
-                return (x.StringValue.Equals(y.StringValue, StringComparison.OrdinalIgnoreCase));
+                return x.StringValue.Equals(y.StringValue, StringComparison.OrdinalIgnoreCase);
             }
 
             public override int GetHashCode(ContentTypeId obj)
@@ -1901,9 +1897,9 @@ namespace Microsoft.SharePoint.Client
 
         public static string GetParentIdValue(this ContentTypeId contentTypeId)
         {
-            int length = 0;
+            var length = 0;
             //Exclude the 0x part
-            string contentTypeIdValue = contentTypeId.StringValue.Substring(2);
+            var contentTypeIdValue = contentTypeId.StringValue.Substring(2);
             for (int i = 0; i < contentTypeIdValue.Length; i += 2)
             {
                 length = i;
@@ -1912,7 +1908,7 @@ namespace Microsoft.SharePoint.Client
                     i += 32;
                 }
             }
-            string parentIdValue = string.Empty;
+            var parentIdValue = string.Empty;
             if (length > 0)
             {
                 parentIdValue = "0x" + contentTypeIdValue.Substring(0, length);

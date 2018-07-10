@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Extensions
 {
-
 #if !SP2013
     internal static class UserResourceExtensions
     {
@@ -59,12 +58,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Extensions
                 {
                     foreach (var token in ResourceTokens.Where(t => t.Item2 == language))
                     {
-
                         resx.AddResource(token.Item1, token.Item3);
                     }
                 }
 
-                template.Localizations.Add(new Localization() { LCID = language, Name = culture.NativeName, ResourceFile = $"{creationInfo.ResourceFilePrefix}.{culture.Name}.resx" });
+                template.Localizations.Add(new Localization { LCID = language, Name = culture.NativeName, ResourceFile = $"{creationInfo.ResourceFilePrefix}.{culture.Name}.resx" });
 
                 // Persist the file using the connector
                 using (FileStream stream = System.IO.File.Open(resourceFileName, FileMode.Open))
@@ -79,7 +77,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Extensions
 
         public static bool SetUserResourceValue(this UserResource userResource, string tokenValue, TokenParser parser)
         {
-            bool isDirty = false;
+            var isDirty = false;
 
             if (userResource != null && !String.IsNullOrEmpty(tokenValue))
             {
@@ -108,7 +106,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Extensions
 
         public static bool PersistResourceValue(UserResource userResource, string token, ProvisioningTemplate template, ProvisioningTemplateCreationInformation creationInfo)
         {
-            bool returnValue = false;
+            var returnValue = false;
             foreach (var language in template.SupportedUILanguages)
             {
                 var culture = new CultureInfo(language.LCID);

@@ -27,13 +27,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
         string IXMLSchemaFormatter.NamespaceUri
         {
 #pragma warning disable 618
-            get { return (XMLConstants.PROVISIONING_SCHEMA_NAMESPACE_2015_08); }
+            get { return XMLConstants.PROVISIONING_SCHEMA_NAMESPACE_2015_08; }
 #pragma warning restore 618
         }
 
         string IXMLSchemaFormatter.NamespacePrefix
         {
-            get { return (XMLConstants.PROVISIONING_SCHEMA_PREFIX); }
+            get { return XMLConstants.PROVISIONING_SCHEMA_PREFIX; }
         }
 
         public bool IsValid(Stream template)
@@ -44,28 +44,28 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
             }
 
             // Load the template into an XDocument
-            XDocument xml = XDocument.Load(template);
+            var xml = XDocument.Load(template);
 
             // Load the XSD embedded resource
-            Stream stream = typeof(XMLPnPSchemaV201508Formatter)
+            var stream = typeof(XMLPnPSchemaV201508Formatter)
                 .Assembly
                 .GetManifestResourceStream("OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.ProvisioningSchema-2015-08.xsd");
 
             // Prepare the XML Schema Set
-            XmlSchemaSet schemas = new XmlSchemaSet();
+            var schemas = new XmlSchemaSet();
 #pragma warning disable 618
             schemas.Add(XMLConstants.PROVISIONING_SCHEMA_NAMESPACE_2015_08,
 #pragma warning restore 618
                 new XmlTextReader(stream));
 
-            Boolean result = true;
+            var result = true;
             xml.Validate(schemas, (o, e) =>
             {
                 Diagnostics.Log.Error(e.Exception, "SchemaFormatter", "Template is not valid: {0}", e.Message);
                 result = false;
             });
 
-            return (result);
+            return result;
         }
 
         Stream ITemplateFormatter.ToFormattedTemplate(Model.ProvisioningTemplate template)
@@ -75,9 +75,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                 throw new ArgumentNullException(nameof(template));
             }
 
-            V201508.ProvisioningTemplate result = new V201508.ProvisioningTemplate();
+            var result = new V201508.ProvisioningTemplate();
 
-            V201508.Provisioning wrappedResult = new V201508.Provisioning();
+            var wrappedResult = new V201508.Provisioning();
             wrappedResult.Preferences = new V201508.Preferences
             {
                 Generator = this.GetType().Assembly.FullName
@@ -128,7 +128,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
             {
                 result.PropertyBagEntries =
                     (from bag in template.PropertyBagEntries
-                     select new V201508.PropertyBagEntry()
+                     select new V201508.PropertyBagEntry
                      {
                          Key = bag.Key,
                          Value = bag.Value,
@@ -148,7 +148,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
 
             if (template.RegionalSettings != null)
             {
-                result.RegionalSettings = new V201508.RegionalSettings()
+                result.RegionalSettings = new V201508.RegionalSettings
                 {
                     AdjustHijriDays = template.RegionalSettings.AdjustHijriDays,
                     AdjustHijriDaysSpecified = true,
@@ -745,7 +745,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                     pages.Add(schemaPage);
                 }
 
-                result.Pages = new V201508.Pages()
+                result.Pages = new V201508.Pages
                 {
                     Page = pages.ToArray(),
 #pragma warning disable 618
@@ -987,19 +987,19 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
 #pragma warning restore 618
             #endregion
 
-            XmlSerializerNamespaces ns =
+            var ns =
                 new XmlSerializerNamespaces();
             ns.Add(((IXMLSchemaFormatter)this).NamespacePrefix,
                 ((IXMLSchemaFormatter)this).NamespaceUri);
 
             var output = XMLSerializer.SerializeToStream<V201508.Provisioning>(wrappedResult, ns);
             output.Position = 0;
-            return (output);
+            return output;
         }
 
         public Model.ProvisioningTemplate ToProvisioningTemplate(Stream template)
         {
-            return (this.ToProvisioningTemplate(template, null));
+            return this.ToProvisioningTemplate(template, null);
         }
 
         public Model.ProvisioningTemplate ToProvisioningTemplate(Stream template, String identifier)
@@ -1010,7 +1010,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
             }
 
             // Crate a copy of the source stream
-            MemoryStream sourceStream = new MemoryStream();
+            var sourceStream = new MemoryStream();
             template.CopyTo(sourceStream);
             sourceStream.Position = 0;
 
@@ -1022,7 +1022,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
             }
 
             sourceStream.Position = 0;
-            XDocument xml = XDocument.Load(sourceStream);
+            var xml = XDocument.Load(sourceStream);
 #pragma warning disable 618
             XNamespace pnp = XMLConstants.PROVISIONING_SCHEMA_NAMESPACE_2015_08;
 #pragma warning restore 618
@@ -1031,13 +1031,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
             V201508.ProvisioningTemplate source = null;
 
             // Prepare a variable to hold the resulting ProvisioningTemplate instance
-            Model.ProvisioningTemplate result = new Model.ProvisioningTemplate();
+            var result = new Model.ProvisioningTemplate();
 
             // Determine if we're working on a wrapped SharePointProvisioningTemplate or not
             if (xml.Root.Name == pnp + "Provisioning")
             {
                 // Deserialize the whole wrapper
-                V201508.Provisioning wrappedResult = XMLSerializer.Deserialize<V201508.Provisioning>(xml);
+                var wrappedResult = XMLSerializer.Deserialize<V201508.Provisioning>(xml);
 
                 // Handle the wrapper schema parameters
                 if (wrappedResult.Preferences != null &&
@@ -1061,7 +1061,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                         // Otherwise let's see if we have an external file for the template
                         var externalSource = templates.ProvisioningTemplateFile.FirstOrDefault(sptf => sptf.ID == identifier);
 
-                        Stream externalFileStream = this._provider.Connector.GetFileStream(externalSource.File);
+                        var externalFileStream = this._provider.Connector.GetFileStream(externalSource.File);
                         xml = XDocument.Load(externalFileStream);
 
                         if (xml.Root.Name != pnp + "ProvisioningTemplate")
@@ -1139,7 +1139,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
 
             if (source.RegionalSettings != null)
             {
-                result.RegionalSettings = new Model.RegionalSettings()
+                result.RegionalSettings = new Model.RegionalSettings
                 {
                     AdjustHijriDays = source.RegionalSettings.AdjustHijriDaysSpecified ? source.RegionalSettings.AdjustHijriDays : 0,
                     AlternateCalendarType = source.RegionalSettings.AlternateCalendarTypeSpecified ? source.RegionalSettings.AlternateCalendarType.FromSchemaToTemplateCalendarTypeV201508() : Microsoft.SharePoint.Client.CalendarType.None,
@@ -1308,17 +1308,17 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                         contentType.Sealed,
                         contentType.Hidden,
                         contentType.ReadOnly,
-                        (contentType.DocumentTemplate != null ?
-                            contentType.DocumentTemplate.TargetName : null),
+                        contentType.DocumentTemplate != null ?
+                            contentType.DocumentTemplate.TargetName : null,
                         contentType.Overwrite,
-                        (contentType.FieldRefs != null ?
+                        contentType.FieldRefs != null ?
                             (from fieldRef in contentType.FieldRefs
                              select new Model.FieldRef(fieldRef.Name)
                              {
                                  Id = Guid.Parse(fieldRef.ID),
                                  Hidden = fieldRef.Hidden,
                                  Required = fieldRef.Required
-                             }) : null)
+                             }) : null
                         )
                     {
                         DocumentSetTemplate = contentType.DocumentSetTemplate != null ?
@@ -1359,26 +1359,26 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                 result.Lists.AddRange(
                     from list in source.Lists
                     select new Model.ListInstance(
-                        (list.ContentTypeBindings != null ?
+                        list.ContentTypeBindings != null ?
                                 (from contentTypeBinding in list.ContentTypeBindings
                                  select new Model.ContentTypeBinding
                                  {
                                      ContentTypeId = contentTypeBinding.ContentTypeID,
                                      Default = contentTypeBinding.Default,
-                                 }) : null),
-                        (list.Views != null ?
+                                 }) : null,
+                        list.Views != null ?
                                 (from view in list.Views.Any
                                  select new View
                                  {
                                      SchemaXml = view.OuterXml,
-                                 }) : null),
-                        (list.Fields != null ?
+                                 }) : null,
+                        list.Fields != null ?
                                 (from field in list.Fields.Any
                                  select new Field
                                  {
                                      SchemaXml = field.OuterXml,
-                                 }) : null),
-                        (list.FieldRefs != null ?
+                                 }) : null,
+                        list.FieldRefs != null ?
                                     (from fieldRef in list.FieldRefs
                                      select new Model.FieldRef(fieldRef.Name)
                                      {
@@ -1386,17 +1386,17 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                                          Hidden = fieldRef.Hidden,
                                          Required = fieldRef.Required,
                                          Id = Guid.Parse(fieldRef.ID)
-                                     }) : null),
-                        (list.DataRows != null ?
+                                     }) : null,
+                        list.DataRows != null ?
                                     (from dataRow in list.DataRows
                                      select new Model.DataRow(
                                  (from dataValue in dataRow.DataValue
                                   select dataValue).ToDictionary(k => k.FieldName, v => v.Value),
                                  dataRow.Security.FromSchemaToTemplateObjectSecurityV201508()
-                             )).ToList() : null),
-                        (list.FieldDefaults != null ?
+                             )).ToList() : null,
+                        list.FieldDefaults != null ?
                             (from fd in list.FieldDefaults
-                             select fd).ToDictionary(k => k.FieldName, v => v.Value) : null),
+                             select fd).ToDictionary(k => k.FieldName, v => v.Value) : null,
                         list.Security.FromSchemaToTemplateObjectSecurityV201508()
                         )
                     {
@@ -1544,7 +1544,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
             {
                 foreach (var page in source.Pages.Page)
                 {
-
                     var pageLayout = WikiPageLayout.OneColumn;
                     switch (page.Layout)
                     {
@@ -1576,7 +1575,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
 
 #pragma warning disable 618
                     result.Pages.Add(new Model.Page(page.Url, page.Overwrite, pageLayout,
-                        (page.WebParts != null ?
+                        page.WebParts != null ?
                             (from wp in page.WebParts
                              select new Model.WebPart
                              {
@@ -1585,14 +1584,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                                  Row = (uint)wp.Row,
                                  Contents = wp.Contents
 
-                             }).ToList() : null),
+                             }).ToList() : null,
                         source.Pages.WelcomePage == page.Url,
                         page.Security.FromSchemaToTemplateObjectSecurityV201508()));
                 }
 #pragma warning restore 618
 
             }
-
 
             #endregion
 
@@ -1788,7 +1786,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
 
             #endregion
 
-            return (result);
+            return result;
         }
     }
 
@@ -1796,7 +1794,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
     {
         public static V201508.Term[] FromModelTermsToSchemaTermsV201508(this TermCollection terms)
         {
-            V201508.Term[] result = terms.Count > 0 ? (
+            var result = terms.Count > 0 ? (
                 from term in terms
                 select new V201508.Term
                 {
@@ -1833,12 +1831,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                          }).ToArray() : null,
                 }).ToArray() : null;
 
-            return (result);
+            return result;
         }
 
         public static List<Model.Term> FromSchemaTermsToModelTermsV201508(this V201508.Term[] terms)
         {
-            List<Model.Term> result = new List<Model.Term>(
+            var result = new List<Model.Term>(
                 from term in terms
                 select new Model.Term(
                     !string.IsNullOrEmpty(term.ID) ? Guid.Parse(term.ID) : Guid.Empty,
@@ -1865,7 +1863,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                 }
                 );
 
-            return (result);
+            return result;
         }
 
         public static V201508.CalendarType FromTemplateToSchemaCalendarTypeV201508(this Microsoft.SharePoint.Client.CalendarType calendarType)
@@ -2064,7 +2062,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
 
         public static V201508.AuditSettingsAudit[] FromTemplateToSchemaAuditsV201508(this Microsoft.SharePoint.Client.AuditMaskType audits)
         {
-            List<V201508.AuditSettingsAudit> result = new List<AuditSettingsAudit>();
+            var result = new List<AuditSettingsAudit>();
             if (audits.HasFlag(Microsoft.SharePoint.Client.AuditMaskType.All))
             {
                 result.Add(new AuditSettingsAudit { AuditFlag = AuditSettingsAuditAuditFlag.All });
@@ -2135,7 +2133,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
 
         public static Model.ObjectSecurity FromSchemaToTemplateObjectSecurityV201508(this V201508.ObjectSecurity objectSecurity)
         {
-            return ((objectSecurity != null && objectSecurity.BreakRoleInheritance != null) ?
+            return (objectSecurity != null && objectSecurity.BreakRoleInheritance != null) ?
                 new Model.ObjectSecurity(
                     objectSecurity.BreakRoleInheritance.RoleAssignment != null ?
                         (from ra in objectSecurity.BreakRoleInheritance.RoleAssignment
@@ -2148,12 +2146,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                 {
                     ClearSubscopes = objectSecurity.BreakRoleInheritance.ClearSubscopes,
                     CopyRoleAssignments = objectSecurity.BreakRoleInheritance.CopyRoleAssignments,
-                } : null);
+                } : null;
         }
 
         public static V201508.ObjectSecurity FromTemplateToSchemaObjectSecurityV201508(this Model.ObjectSecurity objectSecurity)
         {
-            return ((objectSecurity != null && (objectSecurity.ClearSubscopes == true || objectSecurity.CopyRoleAssignments == true || objectSecurity.RoleAssignments.Count > 0)) ?
+            return (objectSecurity != null && (objectSecurity.ClearSubscopes == true || objectSecurity.CopyRoleAssignments == true || objectSecurity.RoleAssignments.Count > 0)) ?
                 new V201508.ObjectSecurity
                 {
                     BreakRoleInheritance = new V201508.ObjectSecurityBreakRoleInheritance
@@ -2168,7 +2166,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                                  RoleDefinition = ra.RoleDefinition,
                              }).ToArray() : null,
                     }
-                } : null);
+                } : null;
         }
     }
 }

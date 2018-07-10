@@ -18,6 +18,5 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Extensibility
         /// <param name="template">The Provisioning template</param>
         /// <param name="configurationData">Configuration Data string</param>
         void ProcessRequest(ClientContext ctx, ProvisioningTemplate template, string configurationData);
-
     }
 }

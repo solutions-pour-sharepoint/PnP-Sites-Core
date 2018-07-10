@@ -125,7 +125,7 @@ namespace OfficeDevPnP.Core
         public ClientContext GetAppOnlyAuthenticatedContext(string siteUrl, string realm, string appId, string appSecret, string acsHostUrl = "accesscontrol.windows.net", string globalEndPointPrefix = "accounts")
         {
             EnsureToken(siteUrl, realm, appId, appSecret, acsHostUrl, globalEndPointPrefix);
-            ClientContext clientContext = Utilities.TokenHelper.GetClientContextWithAccessToken(siteUrl, appOnlyAccessToken);
+            var clientContext = Utilities.TokenHelper.GetClientContextWithAccessToken(siteUrl, appOnlyAccessToken);
             return clientContext;
         }
 
@@ -236,7 +236,7 @@ namespace OfficeDevPnP.Core
                         }
 
                         var response = Utilities.TokenHelper.GetAppOnlyAccessToken(SHAREPOINT_PRINCIPAL, new Uri(siteUrl).Authority, realm);
-                        string token = response.AccessToken;
+                        var token = response.AccessToken;
                         ThreadPool.QueueUserWorkItem(obj =>
                         {
                             try
@@ -269,10 +269,10 @@ namespace OfficeDevPnP.Core
         /// <returns>Returns a TimeSpan represents the time interval within which the current access token is valid thru.</returns>
         private TimeSpan GetAccessTokenLease(DateTime expiresOn)
         {
-            DateTime now = DateTime.UtcNow;
-            DateTime expires = expiresOn.Kind == DateTimeKind.Utc ?
+            var now = DateTime.UtcNow;
+            var expires = expiresOn.Kind == DateTimeKind.Utc ?
                 expiresOn : TimeZoneInfo.ConvertTimeToUtc(expiresOn);
-            TimeSpan lease = expires - now;
+            var lease = expires - now;
             return lease;
         }
 
@@ -366,7 +366,7 @@ namespace OfficeDevPnP.Core
         /// <returns>ClientContext to be used by CSOM code</returns>
         public ClientContext GetNetworkCredentialAuthenticatedContext(string siteUrl, string user, string password, string domain)
         {
-            ClientContext clientContext = new ClientContext(siteUrl);
+            var clientContext = new ClientContext(siteUrl);
             clientContext.Credentials = new NetworkCredential(user, password, domain);
             return clientContext;
         }
@@ -381,7 +381,7 @@ namespace OfficeDevPnP.Core
         /// <returns>ClientContext to be used by CSOM code</returns>
         public ClientContext GetNetworkCredentialAuthenticatedContext(string siteUrl, string user, SecureString password, string domain)
         {
-            ClientContext clientContext = new ClientContext(siteUrl);
+            var clientContext = new ClientContext(siteUrl);
             clientContext.Credentials = new NetworkCredential(user, password, domain);
             return clientContext;
         }
@@ -523,10 +523,10 @@ namespace OfficeDevPnP.Core
             var clientContext = new ClientContext(siteUrl);
             clientContext.ExecutingWebRequest += (sender, args) =>
             {
-                Uri resourceUri = new Uri(siteUrl);
+                var resourceUri = new Uri(siteUrl);
                 resourceUri = new Uri(resourceUri.Scheme + "://" + resourceUri.Host + "/");
 
-                String accessToken = accessTokenGetter(resourceUri.ToString());
+                var accessToken = accessTokenGetter(resourceUri.ToString());
                 args.WebRequestExecutor.RequestHeaders["Authorization"] = "Bearer " + accessToken;
             };
 
@@ -577,13 +577,12 @@ namespace OfficeDevPnP.Core
                 }
                 else
                 {
-
                     _authContext = new AuthenticationContext(authContextUrl);
                 }
 
                 if (_authContext.TokenCache.ReadItems().Any())
                 {
-                    string cachedAuthority =
+                    var cachedAuthority =
                         _authContext.TokenCache.ReadItems().First().Authority;
 
                     if (_tokenCache != null)
@@ -607,7 +606,6 @@ namespace OfficeDevPnP.Core
                 try
                 {
                     ar = _authContext.AcquireToken(resourceId, _clientId, _redirectUri, PromptBehavior.Always);
-
                 }
                 catch (Exception acquireEx)
                 {
@@ -701,7 +699,7 @@ namespace OfficeDevPnP.Core
         {
             var clientContext = new ClientContext(siteUrl);
 
-            string authority = string.Format(CultureInfo.InvariantCulture, "{0}/{1}/", GetAzureADLoginEndPoint(environment), tenant);
+            var authority = string.Format(CultureInfo.InvariantCulture, "{0}/{1}/", GetAzureADLoginEndPoint(environment), tenant);
 
             var authContext = new AuthenticationContext(authority);
 
@@ -771,13 +769,12 @@ namespace OfficeDevPnP.Core
         /// <returns>ClientContext to be used by CSOM code</returns>
         public ClientContext GetADFSUserNameMixedAuthenticatedContext(string siteUrl, string user, string password, string domain, string sts, string idpId, int logonTokenCacheExpirationWindow = 10)
         {
-
-            ClientContext clientContext = new ClientContext(siteUrl);
+            var clientContext = new ClientContext(siteUrl);
             clientContext.ExecutingWebRequest += delegate (object oSender, WebRequestEventArgs webRequestEventArgs)
             {
                 if (fedAuth != null)
                 {
-                    Cookie fedAuthCookie = fedAuth.GetCookies(new Uri(siteUrl))["FedAuth"];
+                    var fedAuthCookie = fedAuth.GetCookies(new Uri(siteUrl))["FedAuth"];
                     // If cookie is expired a new fedAuth cookie needs to be requested
                     if (fedAuthCookie == null || fedAuthCookie.Expires < DateTime.Now)
                     {
@@ -826,12 +823,12 @@ namespace OfficeDevPnP.Core
         /// <returns>ClientContext to be used by CSOM code</returns>
         public ClientContext GetADFSCertificateMixedAuthenticationContext(string siteUrl, string serialNumber, string sts, string idpId, int logonTokenCacheExpirationWindow = 10)
         {
-            ClientContext clientContext = new ClientContext(siteUrl);
+            var clientContext = new ClientContext(siteUrl);
             clientContext.ExecutingWebRequest += delegate (object oSender, WebRequestEventArgs webRequestEventArgs)
             {
                 if (fedAuth != null)
                 {
-                    Cookie fedAuthCookie = fedAuth.GetCookies(new Uri(siteUrl))["FedAuth"];
+                    var fedAuthCookie = fedAuth.GetCookies(new Uri(siteUrl))["FedAuth"];
                     // If cookie is expired a new fedAuth cookie needs to be requested
                     if (fedAuthCookie == null || fedAuthCookie.Expires < DateTime.Now)
                     {
@@ -865,9 +862,7 @@ namespace OfficeDevPnP.Core
         public void RefreshADFSCertificateMixedAuthenticationContext(string siteUrl, string serialNumber, string sts, string idpId, int logonTokenCacheExpirationWindow = 10)
         {
             fedAuth = new CertificateMixed().GetFedAuthCookie(siteUrl, serialNumber, new Uri($"https://{sts}/adfs/services/trust/13/certificatemixed"), idpId, logonTokenCacheExpirationWindow);
-
         }
-
 
         #endregion
 #endif

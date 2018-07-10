@@ -19,10 +19,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         /// <returns></returns>
         internal ProvisioningTemplate GetRemoteTemplate(Web web, ProvisioningTemplateCreationInformation creationInfo)
         {
-
             using (var scope = new PnPMonitoredScope(CoreResources.Provisioning_ObjectHandlers_Extraction))
             {
-
                 ProvisioningProgressDelegate progressDelegate = null;
                 ProvisioningMessagesDelegate messagesDelegate = null;
                 if (creationInfo != null)
@@ -62,12 +60,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 }
 
                 // Create empty object
-                ProvisioningTemplate template = new ProvisioningTemplate();
+                var template = new ProvisioningTemplate();
 
                 // Hookup connector, is handy when the generated template object is used to apply to another site
                 template.Connector = creationInfo.FileConnector;
 
-                List<ObjectHandlerBase> objectHandlers = new List<ObjectHandlerBase>();
+                var objectHandlers = new List<ObjectHandlerBase>();
 
                 if (creationInfo.HandlersToProcess.HasFlag(Handlers.RegionalSettings)) objectHandlers.Add(new ObjectRegionalSettings());
                 if (creationInfo.HandlersToProcess.HasFlag(Handlers.SupportedUILanguages)) objectHandlers.Add(new ObjectSupportedUILanguages());
@@ -103,7 +101,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                 objectHandlers.Add(new ObjectRetrieveTemplateInfo());
 
-                int step = 1;
+                var step = 1;
 
                 var count = objectHandlers.Count(o => o.ReportProgress && o.WillExtract(web, template, creationInfo));
 
@@ -182,7 +180,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 var currentCultureInfoValue = System.Threading.Thread.CurrentThread.CurrentCulture.LCID;
                 if (!string.IsNullOrEmpty(template.TemplateCultureInfo))
                 {
-                    int cultureInfoValue = System.Threading.Thread.CurrentThread.CurrentCulture.LCID;
+                    var cultureInfoValue = System.Threading.Thread.CurrentThread.CurrentCulture.LCID;
                     if (int.TryParse(template.TemplateCultureInfo, out cultureInfoValue))
                     {
                         System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo(cultureInfoValue);
@@ -212,8 +210,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 // impact delta scenarions (calling ExecuteQuery before the planned update is called)
                 web.EnsureProperty(w => w.Url);
 
-
-                List<ObjectHandlerBase> objectHandlers = new List<ObjectHandlerBase>();
+                var objectHandlers = new List<ObjectHandlerBase>();
 
                 if (provisioningInfo.HandlersToProcess.HasFlag(Handlers.RegionalSettings)) objectHandlers.Add(new ObjectRegionalSettings());
                 if (provisioningInfo.HandlersToProcess.HasFlag(Handlers.SupportedUILanguages)) objectHandlers.Add(new ObjectSupportedUILanguages());
@@ -282,7 +279,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     extensibilityHandler.AddExtendedTokens(web, template, tokenParser, provisioningInfo);
                 }
 
-                int step = 2;
+                var step = 2;
 
                 // Remove potentially unsupported artifacts
 
@@ -311,7 +308,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 }
 
                 System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo(currentCultureInfoValue);
-
             }
         }
     }

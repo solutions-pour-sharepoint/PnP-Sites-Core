@@ -114,13 +114,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}|{4}|",
+            return String.Format("{0}|{1}|{2}|{3}|{4}|",
                 this.AutoCheckRequirements.GetHashCode(),
                 this.AvailableWebTemplates.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
-                (this.DesignPackage != null ? this.DesignPackage.GetHashCode() : 0),
+                this.DesignPackage != null ? this.DesignPackage.GetHashCode() : 0,
                 this.PageLayouts.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.ImageRenditions.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0))
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -132,9 +132,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is Publishing))
             {
-                return (false);
+                return false;
             }
-            return (Equals((Publishing)obj));
+            return Equals((Publishing)obj);
         }
 
         /// <summary>
@@ -146,16 +146,16 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (
+            return 
                 this.AutoCheckRequirements == other.AutoCheckRequirements &&
                 this.AvailableWebTemplates.DeepEquals(other.AvailableWebTemplates) &&
                 this.DesignPackage == other.DesignPackage &&
                 this.PageLayouts.DeepEquals(other.PageLayouts) &&
                 this.ImageRenditions.DeepEquals(other.ImageRenditions)
-                );
+                ;
         }
 
         #endregion

@@ -115,11 +115,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}",
+            return String.Format("{0}|{1}|{2}",
                 this.Values.Aggregate(0, (acc, next) => acc += next.GetHashCode()),
-                (this.Security != null ? this.Security.GetHashCode() : 0),
-                (this.Key != null ? this.Key.GetHashCode() : 0)
-            ).GetHashCode());
+                this.Security != null ? this.Security.GetHashCode() : 0,
+                this.Key != null ? this.Key.GetHashCode() : 0
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -131,9 +131,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is DataRow))
             {
-                return (false);
+                return false;
             }
-            return (Equals((DataRow)obj));
+            return Equals((DataRow)obj);
         }
 
         /// <summary>
@@ -145,13 +145,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.Values.DeepEquals(other.Values) &&
+            return this.Values.DeepEquals(other.Values) &&
                     (this.Security != null ? this.Security.Equals(other.Security) : true) &&
                     (this.Key != null ? this.Key.Equals(other.Key) : true)
-                );
+                ;
         }
 
         #endregion

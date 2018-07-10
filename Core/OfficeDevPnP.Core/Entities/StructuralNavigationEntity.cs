@@ -44,6 +44,5 @@ namespace OfficeDevPnP.Core.Entities
         /// Display the current site, the nav items below the current site, and the site's siblings
         /// </summary>
         public bool ShowSiblings { get; set; }
-
     }
 }

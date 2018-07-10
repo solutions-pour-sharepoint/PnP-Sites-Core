@@ -15,11 +15,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
             {
                 if (this.ParentTemplate != null && this.ParentTemplate.WebSettings != null)
                 {
-                    return (this.Url == this.ParentTemplate.WebSettings.WelcomePage);
+                    return this.Url == this.ParentTemplate.WebSettings.WelcomePage;
                 }
                 else
                 {
-                    return (false);
+                    return false;
                 }
             }
             set

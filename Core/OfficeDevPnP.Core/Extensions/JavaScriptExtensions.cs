@@ -42,7 +42,6 @@ namespace Microsoft.SharePoint.Client
             return AddJsLinkImplementation(site, key, new List<string>(scriptLinks.Split(";".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)), sequence);
         }
 
-
         /// <summary>
         /// Injects links to javascript files via a adding a custom action to the site
         /// </summary>
@@ -147,7 +146,6 @@ if (scriptsSrc.indexOf('{1}') === -1)  {
     scriptsSrc.push('{1}');
 }".Replace("{0}", key).Replace("{1}", link));
                         }
-
                     }
 
                     ret = AddJsBlockImplementation(clientObject, key, scripts.ToString(), sequence);
@@ -186,7 +184,6 @@ if (scriptsSrc.indexOf('{1}') === -1)  {
             else
             {
                 throw new ArgumentException("Only Site or Web supported as clientObject");
-
             }
             return ret;
         }
@@ -218,7 +215,7 @@ if (scriptsSrc.indexOf('{1}') === -1)  {
             bool ret;
             if (clientObject is Web || clientObject is Site)
             {
-                var jsAction = new CustomActionEntity()
+                var jsAction = new CustomActionEntity
                 {
                     Name = key,
                     Location = SCRIPT_LOCATION,
@@ -232,7 +229,6 @@ if (scriptsSrc.indexOf('{1}') === -1)  {
                 {
                     ret = ((Site)clientObject).AddCustomAction(jsAction);
                 }
-
             }
             else
             {
@@ -252,7 +248,6 @@ if (scriptsSrc.indexOf('{1}') === -1)  {
         public static bool AddJsBlock(this Web web, string key, string scriptBlock, int sequence = 0)
         {
             return AddJsBlockImplementation(web, key, scriptBlock, sequence);
-
         }
 
         /// <summary>
@@ -273,7 +268,7 @@ if (scriptsSrc.indexOf('{1}') === -1)  {
             bool ret;
             if (clientObject is Web || clientObject is Site)
             {
-                var jsAction = new CustomActionEntity()
+                var jsAction = new CustomActionEntity
                 {
                     Name = key,
                     Location = SCRIPT_LOCATION,
@@ -304,7 +299,7 @@ if (scriptsSrc.indexOf('{1}') === -1)  {
         /// <returns></returns>
         public static Boolean ExistsJsLink(this Web web, String key)
         {
-            return (ExistsJsLinkImplementation(web, key));
+            return ExistsJsLinkImplementation(web, key);
         }
 
         /// <summary>
@@ -315,7 +310,7 @@ if (scriptsSrc.indexOf('{1}') === -1)  {
         /// <returns>True if custom JsLink exists, false otherwise</returns>
         public static Boolean ExistsJsLink(this Site site, String key)
         {
-            return (ExistsJsLinkImplementation(site, key));
+            return ExistsJsLinkImplementation(site, key);
         }
 
         /// <summary>
@@ -345,11 +340,11 @@ if (scriptsSrc.indexOf('{1}') === -1)  {
                 if (action.Name == key &&
                     action.Location == "ScriptLink")
                 {
-                    return (true);
+                    return true;
                 }
             }
 
-            return (false);
+            return false;
         }
     }
 }

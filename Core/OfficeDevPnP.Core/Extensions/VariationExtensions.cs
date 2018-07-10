@@ -29,12 +29,12 @@ namespace Microsoft.SharePoint.Client
             }
 
             // Get current web
-            Web web = context.Web;
+            var web = context.Web;
             context.Load(web, w => w.ServerRelativeUrl);
             context.ExecuteQueryRetry();
 
             // Try to get _VarRelationshipsListId property from web property bag
-            string variationListId = web.GetPropertyBagValueString(VARIATIONRELATIONSHIPSLISTID, string.Empty);
+            var variationListId = web.GetPropertyBagValueString(VARIATIONRELATIONSHIPSLISTID, string.Empty);
 
             if (!string.IsNullOrEmpty(variationListId))
             {
@@ -44,13 +44,13 @@ namespace Microsoft.SharePoint.Client
                 context.ExecuteQueryRetry();
 
                 // Get the "Variation RelationShips" List by id
-                Guid varRelationshipsListId = new Guid(variationListId);
+                var varRelationshipsListId = new Guid(variationListId);
                 var variationRelationshipList = lists.GetById(varRelationshipsListId);
 
                 if (variationRelationshipList != null)
                 {
                     // Get the root folder
-                    Folder rootFolder = variationRelationshipList.RootFolder;
+                    var rootFolder = variationRelationshipList.RootFolder;
                     context.Load(rootFolder);
                     context.Load(variationRelationshipList);
                     context.ExecuteQueryRetry();
@@ -77,14 +77,14 @@ namespace Microsoft.SharePoint.Client
                     context.ExecuteQueryRetry();
 
                     // Get the variationRelationshipList list items
-                    ListItemCollection collListItems = variationRelationshipList.GetItems(CamlQuery.CreateAllItemsQuery());
+                    var collListItems = variationRelationshipList.GetItems(CamlQuery.CreateAllItemsQuery());
                     context.Load(collListItems);
                     context.ExecuteQueryRetry();
 
                     if (collListItems.Count > 0)
                     {
                         // Update the first item
-                        ListItem item = collListItems[0];
+                        var item = collListItems[0];
                         item["Deleted"] = false;
                         item["ObjectID"] = web.ServerRelativeUrl;
                         item["ParentAreaID"] = String.Empty;
@@ -95,8 +95,8 @@ namespace Microsoft.SharePoint.Client
                     else
                     {
                         // Create the new item
-                        ListItemCreationInformation itemCreateInfo = new ListItemCreationInformation();
-                        ListItem olistItem = variationRelationshipList.AddItem(itemCreateInfo);
+                        var itemCreateInfo = new ListItemCreationInformation();
+                        var olistItem = variationRelationshipList.AddItem(itemCreateInfo);
 
                         // Root web relationship which should always have this guid 
                         olistItem["GroupGuid"] = new Guid("F68A02C8-2DCC-4894-B67D-BBAED5A066F9");
@@ -124,7 +124,7 @@ namespace Microsoft.SharePoint.Client
             }
 
             // Compose the parameters
-            List<VariationLabelEntity> sourceVariations = new List<VariationLabelEntity>();
+            var sourceVariations = new List<VariationLabelEntity>();
             sourceVariations.Add(sourceVariationLabel);
 
             // Create source variation label
@@ -146,7 +146,7 @@ namespace Microsoft.SharePoint.Client
             }
 
             // Get the target variation labels
-            List<VariationLabelEntity> targetVariations = variationLabels.Where(x => x.IsSource == false).ToList();
+            var targetVariations = variationLabels.Where(x => x.IsSource == false).ToList();
 
             // Create target variation labels
             if (targetVariations.Any())
@@ -183,12 +183,12 @@ namespace Microsoft.SharePoint.Client
         {
             var variationLabels = new List<VariationLabelEntity>();
             // Get current web
-            Web web = context.Web;
+            var web = context.Web;
             context.Load(web, w => w.ServerRelativeUrl);
             context.ExecuteQueryRetry();
 
             // Try to get _VarLabelsListId property from web property bag
-            string variationLabelsListId = web.GetPropertyBagValueString(VARIATIONLABELSLISTID, string.Empty);
+            var variationLabelsListId = web.GetPropertyBagValueString(VARIATIONLABELSLISTID, string.Empty);
 
             if (!string.IsNullOrEmpty(variationLabelsListId))
             {
@@ -198,11 +198,11 @@ namespace Microsoft.SharePoint.Client
                 context.ExecuteQueryRetry();
 
                 // Get the "Variation Labels" List by id
-                Guid varRelationshipsListId = new Guid(variationLabelsListId);
+                var varRelationshipsListId = new Guid(variationLabelsListId);
                 var variationLabelsList = lists.GetById(varRelationshipsListId);
 
                 // Get the variationLabelsList list items
-                ListItemCollection collListItems = variationLabelsList.GetItems(CamlQuery.CreateAllItemsQuery());
+                var collListItems = variationLabelsList.GetItems(CamlQuery.CreateAllItemsQuery());
                 context.Load(collListItems);
                 context.ExecuteQueryRetry();
 
@@ -233,12 +233,12 @@ namespace Microsoft.SharePoint.Client
         private static void CreateVariationLabels(this ClientContext context, List<VariationLabelEntity> variationLabels)
         {
             // Get current web
-            Web web = context.Web;
+            var web = context.Web;
             context.Load(web, w => w.ServerRelativeUrl);
             context.ExecuteQueryRetry();
 
             // Try to get _VarLabelsListId property from web property bag
-            string variationLabelsListId = web.GetPropertyBagValueString(VARIATIONLABELSLISTID, string.Empty);
+            var variationLabelsListId = web.GetPropertyBagValueString(VARIATIONLABELSLISTID, string.Empty);
 
             if (!string.IsNullOrEmpty(variationLabelsListId))
             {
@@ -248,11 +248,11 @@ namespace Microsoft.SharePoint.Client
                 context.ExecuteQueryRetry();
 
                 // Get the "Variation Labels" List by id
-                Guid varRelationshipsListId = new Guid(variationLabelsListId);
+                var varRelationshipsListId = new Guid(variationLabelsListId);
                 var variationLabelsList = lists.GetById(varRelationshipsListId);
 
                 // Get the variationLabelsList list items
-                ListItemCollection collListItems = variationLabelsList.GetItems(CamlQuery.CreateAllItemsQuery());
+                var collListItems = variationLabelsList.GetItems(CamlQuery.CreateAllItemsQuery());
                 context.Load(collListItems);
                 context.ExecuteQueryRetry();
 
@@ -264,8 +264,8 @@ namespace Microsoft.SharePoint.Client
                     if (varLabel == null)
                     {
                         // Create the new item
-                        ListItemCreationInformation itemCreateInfo = new ListItemCreationInformation();
-                        ListItem olistItem = variationLabelsList.AddItem(itemCreateInfo);
+                        var itemCreateInfo = new ListItemCreationInformation();
+                        var olistItem = variationLabelsList.AddItem(itemCreateInfo);
 
                         olistItem["Title"] = label.Title;
                         olistItem["Description"] = label.Description;
@@ -292,15 +292,15 @@ namespace Microsoft.SharePoint.Client
         /// <returns>True, if hierarchy is created for the variation label</returns>
         private static bool CheckForHierarchyCreation(this ClientContext context, VariationLabelEntity variationLabel)
         {
-            bool hierarchyIsCreated = false;
+            var hierarchyIsCreated = false;
 
             // Get current web
-            Web web = context.Web;
+            var web = context.Web;
             context.Load(web, w => w.ServerRelativeUrl);
             context.ExecuteQueryRetry();
 
             // Try to get _VarLabelsListId property from web property bag
-            string variationLabelsListId = web.GetPropertyBagValueString(VARIATIONLABELSLISTID, string.Empty);
+            var variationLabelsListId = web.GetPropertyBagValueString(VARIATIONLABELSLISTID, string.Empty);
 
             if (!string.IsNullOrEmpty(variationLabelsListId))
             {
@@ -310,16 +310,16 @@ namespace Microsoft.SharePoint.Client
                 context.ExecuteQueryRetry();
 
                 // Get the "Variation Labels" List by id
-                Guid varRelationshipsListId = new Guid(variationLabelsListId);
+                var varRelationshipsListId = new Guid(variationLabelsListId);
                 var variationLabelsList = lists.GetById(varRelationshipsListId);
 
                 // Get the variationLabelsList list items
-                ListItemCollection collListItems = variationLabelsList.GetItems(CamlQuery.CreateAllItemsQuery());
+                var collListItems = variationLabelsList.GetItems(CamlQuery.CreateAllItemsQuery());
                 context.Load(collListItems);
                 context.ExecuteQueryRetry();
 
                 // Check hierarchy is created
-                ListItem varLabel = collListItems.First(x => x["Language"].ToString() == variationLabel.Language);
+                var varLabel = collListItems.First(x => x["Language"].ToString() == variationLabel.Language);
                 variationLabel.IsCreated = hierarchyIsCreated = (bool)varLabel["Hierarchy_x0020_Is_x0020_Created"];
             }
 

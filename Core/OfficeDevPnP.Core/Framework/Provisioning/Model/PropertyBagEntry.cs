@@ -33,12 +33,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}|",
-                (this.Key != null ? this.Key.GetHashCode() : 0),
-                (this.Value != null ? this.Value.GetHashCode() : 0),
+            return String.Format("{0}|{1}|{2}|{3}|",
+                this.Key != null ? this.Key.GetHashCode() : 0,
+                this.Value != null ? this.Value.GetHashCode() : 0,
                 this.Indexed.GetHashCode(),
                 this.Overwrite.GetHashCode()
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -50,9 +50,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is PropertyBagEntry))
             {
-                return (false);
+                return false;
             }
-            return (Equals((PropertyBagEntry)obj));
+            return Equals((PropertyBagEntry)obj);
         }
 
         /// <summary>
@@ -64,13 +64,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.Key == other.Key &&
+            return this.Key == other.Key &&
                 this.Value == other.Value &&
                 this.Indexed == other.Indexed &&
-                this.Overwrite == other.Overwrite);
+                this.Overwrite == other.Overwrite;
         }
 
         #endregion

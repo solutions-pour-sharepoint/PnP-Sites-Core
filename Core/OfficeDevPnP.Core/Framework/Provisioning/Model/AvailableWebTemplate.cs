@@ -33,10 +33,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|",
+            return String.Format("{0}|{1}|",
                 this.LanguageCode.GetHashCode(),
-                (this.TemplateName != null ? this.TemplateName.GetHashCode() : 0)
-            ).GetHashCode());
+                this.TemplateName != null ? this.TemplateName.GetHashCode() : 0
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -48,9 +48,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is AvailableWebTemplate))
             {
-                return (false);
+                return false;
             }
-            return (Equals((AvailableWebTemplate)obj));
+            return Equals((AvailableWebTemplate)obj);
         }
 
         /// <summary>
@@ -62,13 +62,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (
+            return 
                 this.LanguageCode == other.LanguageCode &&
                 this.TemplateName == other.TemplateName
-                );
+                ;
         }
 
         #endregion

@@ -42,7 +42,7 @@ namespace OfficeDevPnP.Core.Framework.Graph
                             }
                         }), new PnPHttpProvider(retryCount, delay));
 
-            return (result);
+            return result;
         }
 
         /// <summary>
@@ -88,8 +88,7 @@ namespace OfficeDevPnP.Core.Framework.Graph
                             }
                         }
                     }
-                    return (siteUrl);
-
+                    return siteUrl;
                 }).GetAwaiter().GetResult();
             }
             catch (ServiceException ex)
@@ -97,7 +96,7 @@ namespace OfficeDevPnP.Core.Framework.Graph
                 Log.Error(Constants.LOGGING_SOURCE, CoreResources.GraphExtensions_ErrorOccured, ex.Error.Message);
                 throw;
             }
-            return (result);
+            return result;
         }
 
         /// <summary>
@@ -177,7 +176,7 @@ namespace OfficeDevPnP.Core.Framework.Graph
                             group.Mail = addedGroup.Mail;
                             group.MailNickname = addedGroup.MailNickname;
 
-                            int imageRetryCount = retryCount;
+                            var imageRetryCount = retryCount;
 
                             if (groupLogo != null)
                             {
@@ -187,7 +186,7 @@ namespace OfficeDevPnP.Core.Framework.Graph
 
                                     while (imageRetryCount > 0)
                                     {
-                                        bool groupLogoUpdated = false;
+                                        var groupLogoUpdated = false;
                                         memGroupLogo.Position = 0;
 
                                         using (var tempGroupLogo = new MemoryStream())
@@ -220,7 +219,7 @@ namespace OfficeDevPnP.Core.Framework.Graph
                                 }
                             }
 
-                            int driveRetryCount = retryCount;
+                            var driveRetryCount = retryCount;
 
                             while (driveRetryCount > 0 && String.IsNullOrEmpty(modernSiteUrl))
                             {
@@ -263,8 +262,7 @@ namespace OfficeDevPnP.Core.Framework.Graph
 
                     #endregion
 
-                    return (group);
-
+                    return group;
                 }).GetAwaiter().GetResult();
             }
             catch (ServiceException ex)
@@ -272,7 +270,7 @@ namespace OfficeDevPnP.Core.Framework.Graph
                 Log.Error(Constants.LOGGING_SOURCE, CoreResources.GraphExtensions_ErrorOccured, ex.Error.Message);
                 throw;
             }
-            return (result);
+            return result;
         }
 
         private static async Task UpdateMembers(string[] members, GraphServiceClient graphClient, Group targetGroup)
@@ -478,7 +476,7 @@ namespace OfficeDevPnP.Core.Framework.Graph
                     }
 
                     // Check if visibility has changed for the Group
-                    bool existingIsPrivate = groupToUpdate.Visibility == "Private";
+                    var existingIsPrivate = groupToUpdate.Visibility == "Private";
                     if (existingIsPrivate != isPrivate)
                     {
                         groupToUpdate.Visibility = isPrivate == true ? "Private" : "Public";
@@ -526,8 +524,7 @@ namespace OfficeDevPnP.Core.Framework.Graph
                     #endregion
 
                     // If any of the previous update actions has been completed
-                    return (groupUpdated || logoUpdated);
-
+                    return groupUpdated || logoUpdated;
                 }).GetAwaiter().GetResult();
             }
             catch (ServiceException ex)
@@ -535,7 +532,7 @@ namespace OfficeDevPnP.Core.Framework.Graph
                 Log.Error(Constants.LOGGING_SOURCE, CoreResources.GraphExtensions_ErrorOccured, ex.Error.Message);
                 throw;
             }
-            return (result);
+            return result;
         }
 
         /// <summary>
@@ -564,18 +561,18 @@ namespace OfficeDevPnP.Core.Framework.Graph
             {
                 using (var groupLogoStream = new FileStream(groupLogoPath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    return (CreateUnifiedGroup(displayName, description,
+                    return CreateUnifiedGroup(displayName, description,
                         mailNickname, accessToken, owners, members,
                         groupLogo: groupLogoStream, isPrivate: isPrivate,
-                        retryCount: retryCount, delay: delay));
+                        retryCount: retryCount, delay: delay);
                 }
             }
             else
             {
-                return (CreateUnifiedGroup(displayName, description,
+                return CreateUnifiedGroup(displayName, description,
                     mailNickname, accessToken, owners, members,
                     groupLogo: null, isPrivate: isPrivate,
-                    retryCount: retryCount, delay: delay));
+                    retryCount: retryCount, delay: delay);
             }
         }
 
@@ -596,10 +593,10 @@ namespace OfficeDevPnP.Core.Framework.Graph
             string accessToken, string[] owners = null, string[] members = null,
             bool isPrivate = false, int retryCount = 10, int delay = 500)
         {
-            return (CreateUnifiedGroup(displayName, description,
+            return CreateUnifiedGroup(displayName, description,
                 mailNickname, accessToken, owners, members,
                 groupLogo: null, isPrivate: isPrivate,
-                retryCount: retryCount, delay: delay));
+                retryCount: retryCount, delay: delay);
         }
 
         /// <summary>
@@ -626,10 +623,8 @@ namespace OfficeDevPnP.Core.Framework.Graph
                 // Use a synchronous model to invoke the asynchronous process
                 Task.Run(async () =>
                 {
-
                     var graphClient = CreateGraphClient(accessToken, retryCount, delay);
                     await graphClient.Groups[groupId].Request().DeleteAsync();
-
                 }).GetAwaiter().GetResult();
             }
             catch (ServiceException ex)
@@ -697,8 +692,7 @@ namespace OfficeDevPnP.Core.Framework.Graph
                         group.Classification = GetGroupClassification(groupId, accessToken);
                     }
 
-                    return (group);
-
+                    return group;
                 }).GetAwaiter().GetResult();
             }
             catch (ServiceException ex)
@@ -706,7 +700,7 @@ namespace OfficeDevPnP.Core.Framework.Graph
                 Log.Error(Constants.LOGGING_SOURCE, CoreResources.GraphExtensions_ErrorOccured, ex.Error.Message);
                 throw;
             }
-            return (result);
+            return result;
         }
 
         /// <summary>
@@ -737,7 +731,7 @@ namespace OfficeDevPnP.Core.Framework.Graph
                 // Use a synchronous model to invoke the asynchronous process
                 result = Task.Run(async () =>
                 {
-                    List<UnifiedGroupEntity> groups = new List<UnifiedGroupEntity>();
+                    var groups = new List<UnifiedGroupEntity>();
 
                     var graphClient = CreateGraphClient(accessToken, retryCount, delay);
 
@@ -751,8 +745,8 @@ namespace OfficeDevPnP.Core.Framework.Graph
                         .Top(endIndex)
                         .GetAsync();
 
-                    Int32 pageCount = 0;
-                    Int32 currentIndex = 0;
+                    var pageCount = 0;
+                    var currentIndex = 0;
 
                     while (true)
                     {
@@ -804,7 +798,7 @@ namespace OfficeDevPnP.Core.Framework.Graph
                         }
                     }
 
-                    return (groups);
+                    return groups;
                 }).GetAwaiter().GetResult();
             }
             catch (ServiceException ex)
@@ -812,7 +806,7 @@ namespace OfficeDevPnP.Core.Framework.Graph
                 Log.Error(Constants.LOGGING_SOURCE, CoreResources.GraphExtensions_ErrorOccured, ex.Error.Message);
                 throw;
             }
-            return (result);
+            return result;
         }
 
         /// <summary>
@@ -869,14 +863,13 @@ namespace OfficeDevPnP.Core.Framework.Graph
                         unifiedGroupUsers = new List<UnifiedGroupUser>();
                         foreach (User usr in unifiedGroupGraphUsers)
                         {
-                            UnifiedGroupUser groupUser = new UnifiedGroupUser();
+                            var groupUser = new UnifiedGroupUser();
                             groupUser.UserPrincipalName = usr.UserPrincipalName != null ? usr.UserPrincipalName : string.Empty;
                             groupUser.DisplayName = usr.DisplayName != null ? usr.DisplayName : string.Empty;
                             unifiedGroupUsers.Add(groupUser);
                         }
                     }
                     return unifiedGroupUsers;
-
                 }).GetAwaiter().GetResult();
             }
             catch (ServiceException ex)
@@ -936,14 +929,13 @@ namespace OfficeDevPnP.Core.Framework.Graph
                         unifiedGroupUsers = new List<UnifiedGroupUser>();
                         foreach (User usr in unifiedGroupGraphUsers)
                         {
-                            UnifiedGroupUser groupUser = new UnifiedGroupUser();
+                            var groupUser = new UnifiedGroupUser();
                             groupUser.UserPrincipalName = usr.UserPrincipalName != null ? usr.UserPrincipalName : string.Empty;
                             groupUser.DisplayName = usr.DisplayName != null ? usr.DisplayName : string.Empty;
                             unifiedGroupUsers.Add(groupUser);
                         }
                     }
                     return unifiedGroupUsers;
-
                 }).GetAwaiter().GetResult();
             }
             catch (ServiceException ex)
@@ -992,23 +984,22 @@ namespace OfficeDevPnP.Core.Framework.Graph
                 throw new ArgumentNullException(nameof(accessToken));
             }
 
-            string classification = string.Empty;
+            var classification = string.Empty;
 
             try
             {
-                string getGroupUrl = $"{GraphHttpClient.MicrosoftGraphV1BaseUri}groups/{groupId}";
+                var getGroupUrl = $"{GraphHttpClient.MicrosoftGraphV1BaseUri}groups/{groupId}";
 
                 var getGroupResult = GraphHttpClient.MakeGetRequestForString(
                     getGroupUrl,
                     accessToken: accessToken);
 
-                JObject groupObject = JObject.Parse(getGroupResult);
+                var groupObject = JObject.Parse(getGroupResult);
 
                 if (groupObject["classification"] != null)
                 {
                     classification = Convert.ToString(groupObject["classification"]);
                 }
-
             }
             catch (ServiceException e)
             {

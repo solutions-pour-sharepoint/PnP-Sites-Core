@@ -19,7 +19,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors.OpenXML
         /// <returns>Returns MemoryStream</returns>
         public static MemoryStream PackTemplateAsStream(this PnPInfo pnpInfo)
         {
-            MemoryStream stream = new MemoryStream();
+            var stream = new MemoryStream();
             using (PnPPackage package = PnPPackage.Open(stream, FileMode.OpenOrCreate, FileAccess.ReadWrite))
             {
                 SavePnPPackage(pnpInfo, package);
@@ -84,7 +84,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors.OpenXML
 
         private static PnPInfo LoadPnPPackage(PnPPackage package)
         {
-            PnPInfo pnpInfo = new PnPInfo();
+            var pnpInfo = new PnPInfo();
             pnpInfo.Manifest = package.Manifest;
             pnpInfo.Properties = package.Properties;
             pnpInfo.FilesMap = package.FilesMap;

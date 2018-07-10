@@ -1,10 +1,7 @@
 ﻿using OfficeDevPnP.Core.Diagnostics;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,9 +12,9 @@ namespace OfficeDevPnP.Core.Utilities
     /// </summary>
     public class PnPHttpProvider : HttpClient
     {
-        readonly int retryCount;
-        readonly int delay;
-        private string userAgent;
+        private readonly int retryCount;
+        private readonly int delay;
+        private readonly string userAgent;
 
         /// <summary>
         /// Constructor without HttpMessageHandler
@@ -52,8 +49,8 @@ namespace OfficeDevPnP.Core.Utilities
         public override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             // Retry logic variables
-            int retryAttempts = 0;
-            int backoffInterval = this.delay;
+            var retryAttempts = 0;
+            var backoffInterval = this.delay;
 
             // Loop until we need to retry
             while (retryAttempts < this.retryCount)
@@ -64,10 +61,10 @@ namespace OfficeDevPnP.Core.Utilities
                     request.Headers.UserAgent.TryParseAdd(string.IsNullOrEmpty(userAgent) ? $"{PnPCoreUtilities.PnPCoreUserAgent}" : userAgent);
 
                     // Make the request
-                    Task<HttpResponseMessage> result = base.SendAsync(request, cancellationToken);
+                    var result = base.SendAsync(request, cancellationToken);
 
                     // And return the response in case of success
-                    return (result);
+                    return result;
                 }
                 // Or handle any ServiceException
                 catch (Exception ex)
@@ -106,4 +103,3 @@ namespace OfficeDevPnP.Core.Utilities
         }
     }
 }
-   

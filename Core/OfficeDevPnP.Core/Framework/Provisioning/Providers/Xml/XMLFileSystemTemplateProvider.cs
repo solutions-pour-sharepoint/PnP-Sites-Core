@@ -4,7 +4,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
 {
     public class XMLFileSystemTemplateProvider : XMLTemplateProvider
     {
-
         public XMLFileSystemTemplateProvider(): base()
         {
         }

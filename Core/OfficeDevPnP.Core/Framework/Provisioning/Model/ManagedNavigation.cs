@@ -32,10 +32,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}",
-                (this.TermStoreId != null ? this.TermStoreId.GetHashCode() : 0),
-                (this.TermSetId != null ? this.TermSetId.GetHashCode() : 0)
-            ).GetHashCode());
+            return String.Format("{0}|{1}",
+                this.TermStoreId != null ? this.TermStoreId.GetHashCode() : 0,
+                this.TermSetId != null ? this.TermSetId.GetHashCode() : 0
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -47,9 +47,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is ManagedNavigation))
             {
-                return (false);
+                return false;
             }
-            return (Equals((ManagedNavigation)obj));
+            return Equals((ManagedNavigation)obj);
         }
 
         /// <summary>
@@ -61,12 +61,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.TermStoreId == other.TermStoreId &&
+            return this.TermStoreId == other.TermStoreId &&
                 this.TermSetId == other.TermSetId
-                );
+                ;
         }
 
         #endregion

@@ -79,6 +79,5 @@ namespace OfficeDevPnP.Core.WebAPI
         {
             return CacheProvider.Get<WebAPIContexCacheItem>(cacheKey);
         }
-
     }
 }

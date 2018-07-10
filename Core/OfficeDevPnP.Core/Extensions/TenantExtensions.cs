@@ -57,7 +57,7 @@ namespace Microsoft.SharePoint.Client
                 }
             }
 
-            SiteCreationProperties newsite = new SiteCreationProperties();
+            var newsite = new SiteCreationProperties();
             newsite.Url = properties.Url;
             newsite.Owner = properties.SiteOwnerLogin;
             newsite.Template = properties.Template;
@@ -69,13 +69,13 @@ namespace Microsoft.SharePoint.Client
             newsite.UserCodeWarningLevel = properties.UserCodeWarningLevel;
             newsite.Lcid = properties.Lcid;
 
-            SpoOperation op = tenant.CreateSite(newsite);
+            var op = tenant.CreateSite(newsite);
             tenant.Context.Load(tenant);
             tenant.Context.Load(op, i => i.IsComplete, i => i.PollingInterval);
             tenant.Context.ExecuteQueryRetry();
 
             // Get site guid and return. If we create the site asynchronously, return an empty guid as we cannot retrieve the site by URL yet.
-            Guid siteGuid = Guid.Empty;
+            var siteGuid = Guid.Empty;
             if (timeoutFunction != null)
             {
                 wait = true;
@@ -132,7 +132,7 @@ namespace Microsoft.SharePoint.Client
                                                         int timeZoneId, int userCodeMaximumLevel, int userCodeWarningLevel,
                                                         uint lcid, bool removeFromRecycleBin = false, bool wait = true, Func<TenantOperationMessage, bool> timeoutFunction = null)
         {
-            SiteEntity siteCol = new SiteEntity()
+            var siteCol = new SiteEntity
             {
                 Url = siteFullUrl,
                 Title = title,
@@ -160,11 +160,11 @@ namespace Microsoft.SharePoint.Client
         /// <returns>True if in status, false if not in status</returns>
         public static bool CheckIfSiteExists(this Tenant tenant, string siteFullUrl, string status)
         {
-            bool ret = false;
+            var ret = false;
             //Get the site name
             var url = new Uri(siteFullUrl);
             var siteDomainUrl = url.GetLeftPart(UriPartial.Authority);
-            int siteNameIndex = url.AbsolutePath.IndexOf('/', 1) + 1;
+            var siteNameIndex = url.AbsolutePath.IndexOf('/', 1) + 1;
             var managedPath = url.AbsolutePath.Substring(0, siteNameIndex);
             var siteRelativePath = url.AbsolutePath.Substring(siteNameIndex);
             var isSiteCollection = siteRelativePath.IndexOf('/') == -1;
@@ -324,11 +324,11 @@ namespace Microsoft.SharePoint.Client
         public static bool DeleteSiteCollection(this Tenant tenant, string siteFullUrl, bool useRecycleBin, Func<TenantOperationMessage, bool> timeoutFunction = null)
         {
             var succeeded = false;
-            bool ret = false;
+            var ret = false;
 
             try
             {
-                SpoOperation op = tenant.RemoveSite(siteFullUrl);
+                var op = tenant.RemoveSite(siteFullUrl);
                 tenant.Context.Load(tenant);
                 tenant.Context.Load(op, i => i.IsComplete, i => i.PollingInterval);
                 tenant.Context.ExecuteQueryRetry();
@@ -356,7 +356,7 @@ namespace Microsoft.SharePoint.Client
             if (succeeded)
             {
                 // To delete Site collection completely, (may take a longer time)
-                SpoOperation op2 = tenant.RemoveDeletedSite(siteFullUrl);
+                var op2 = tenant.RemoveDeletedSite(siteFullUrl);
                 tenant.Context.Load(op2, i => i.IsComplete, i => i.PollingInterval);
                 tenant.Context.ExecuteQueryRetry();
 
@@ -435,7 +435,6 @@ namespace Microsoft.SharePoint.Client
         /// <returns>Returns collection of SPTenantWebTemplate</returns>
         public static SPOTenantWebTemplateCollection GetWebTemplates(this Tenant tenant, uint lcid, int compatibilityLevel)
         {
-
             var templates = tenant.GetSPOTenantWebTemplates(lcid, compatibilityLevel);
 
             tenant.Context.Load(templates);
@@ -527,7 +526,7 @@ namespace Microsoft.SharePoint.Client
             if (siteProps.LockState != lockState.ToString())
             {
                 siteProps.LockState = lockState.ToString();
-                SpoOperation op = siteProps.Update();
+                var op = siteProps.Update();
                 tenant.Context.Load(op, i => i.IsComplete, i => i.PollingInterval);
                 tenant.Context.ExecuteQueryRetry();
                 if (timeoutFunction != null)
@@ -538,7 +537,6 @@ namespace Microsoft.SharePoint.Client
                 {
                     WaitForIsComplete(tenant, op, timeoutFunction, TenantOperationMessage.SettingSiteLockState);
                 }
-
             }
         }
         #endregion
@@ -596,9 +594,8 @@ namespace Microsoft.SharePoint.Client
 
             while (props == null || props.NextStartIndexFromSharePoint != null)
             {
-
                 // approach to be used as of Feb 2017
-                SPOSitePropertiesEnumerableFilter filter = new SPOSitePropertiesEnumerableFilter()
+                var filter = new SPOSitePropertiesEnumerableFilter
                 {
                     IncludePersonalSite = includeOD4BSites ? PersonalSiteFilter.Include : PersonalSiteFilter.UseServerDefault,
                     StartIndex = props == null ? null : props.NextStartIndexFromSharePoint,
@@ -732,7 +729,7 @@ namespace Microsoft.SharePoint.Client
         #region Private helper methods
         private static bool WaitForIsComplete(Tenant tenant, SpoOperation op, Func<TenantOperationMessage, bool> timeoutFunction = null, TenantOperationMessage operationMessage = TenantOperationMessage.None)
         {
-            bool succeeded = true;
+            var succeeded = true;
             while (!op.IsComplete)
             {
                 if (timeoutFunction != null && timeoutFunction(operationMessage))
@@ -927,7 +924,7 @@ namespace Microsoft.SharePoint.Client
                 throw new ArgumentException("DisplayName is required", "DisplayName");
             }
 
-            GroupCreationParams optionalParams = new GroupCreationParams(tenant.Context);
+            var optionalParams = new GroupCreationParams(tenant.Context);
             if (!String.IsNullOrEmpty(siteCollectionGroupifyInformation.Description))
             {
                 optionalParams.Description = siteCollectionGroupifyInformation.Description;

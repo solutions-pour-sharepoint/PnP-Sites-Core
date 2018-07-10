@@ -12,7 +12,6 @@ namespace OfficeDevPnP.Core.Entities
     /// </summary>
     public class AreaNavigationEntity
     {
-
         /// <summary>
         /// Default Constructor
         /// </summary>

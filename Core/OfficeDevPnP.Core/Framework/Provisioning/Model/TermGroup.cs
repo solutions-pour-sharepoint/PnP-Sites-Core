@@ -43,7 +43,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// </summary>
         public UserCollection Contributors
         {
-            get { return (this._contributors); }
+            get { return this._contributors; }
             private set { this._contributors = value; }
         }
 
@@ -52,7 +52,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// </summary>
         public UserCollection Managers
         {
-            get { return (this._managers); }
+            get { return this._managers; }
             private set { this._managers = value; }
         }
 
@@ -115,12 +115,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}",
-                (this.Id != null ? this.Id.GetHashCode() : 0),
-                (this.Name != null ? this.Name.GetHashCode() : 0),
-                (this.Description != null ? this.Description.GetHashCode() : 0),
+            return String.Format("{0}|{1}|{2}|{3}",
+                this.Id != null ? this.Id.GetHashCode() : 0,
+                this.Name != null ? this.Name.GetHashCode() : 0,
+                this.Description != null ? this.Description.GetHashCode() : 0,
                 this.TermSets.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0))
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -132,9 +132,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is TermGroup))
             {
-                return (false);
+                return false;
             }
-            return (Equals((TermGroup)obj));
+            return Equals((TermGroup)obj);
         }
 
         /// <summary>
@@ -146,13 +146,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.Id == other.Id &&
+            return this.Id == other.Id &&
                 this.Name == other.Name &&
                 this.Description == other.Description &&
-                this.TermSets.DeepEquals(other.TermSets));
+                this.TermSets.DeepEquals(other.TermSets);
         }
 
         #endregion

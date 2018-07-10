@@ -135,15 +135,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|",
-                (this.Folder != null ? this.Folder.GetHashCode() : 0),
+            return String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|",
+                this.Folder != null ? this.Folder.GetHashCode() : 0,
                 this.Overwrite.GetHashCode(),
-                (this.Src != null ? this.Src.GetHashCode() : 0),
+                this.Src != null ? this.Src.GetHashCode() : 0,
                 this.WebParts.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.Properties.Aggregate(0, (acc, next) => acc += next.GetHashCode()),
-                (this.Security != null ? this.Security.GetHashCode() : 0),
+                this.Security != null ? this.Security.GetHashCode() : 0,
                 this.TargetFileName?.GetHashCode()
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -155,9 +155,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is File))
             {
-                return (false);
+                return false;
             }
-            return (Equals((File)obj));
+            return Equals((File)obj);
         }
 
         /// <summary>
@@ -169,17 +169,17 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.Folder == other.Folder &&
+            return this.Folder == other.Folder &&
                 this.Overwrite == other.Overwrite &&
                 this.Src == other.Src &&
                 this.WebParts.DeepEquals(other.WebParts) &&
                 this.Properties.DeepEquals(other.Properties) &&
                 (this.Security != null ? this.Security.Equals(other.Security) : true) &&
                 this.TargetFileName == other.TargetFileName
-            );
+            ;
         }
 
         #endregion

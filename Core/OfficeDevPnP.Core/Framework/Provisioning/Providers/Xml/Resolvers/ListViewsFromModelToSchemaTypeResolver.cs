@@ -13,7 +13,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers
         public string Name => this.GetType().Name;
         public bool CustomCollectionResolver => false;
 
-
         public ListViewsFromModelToSchemaTypeResolver()
         {
         }
@@ -23,7 +22,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers
             Object result = null;
 
             var list = source as Model.ListInstance;
-            Boolean anyView = false;
+            var anyView = false;
 
             if (null != list)
             {
@@ -48,7 +47,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers
                 }
             }
 
-            return (anyView ? result : null);
+            return anyView ? result : null;
         }
     }
 }

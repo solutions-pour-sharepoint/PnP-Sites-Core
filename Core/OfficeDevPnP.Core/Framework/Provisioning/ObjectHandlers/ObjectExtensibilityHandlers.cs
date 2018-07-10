@@ -17,7 +17,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         public override string Name
         {
             get { return "Extensibility Providers"; }
-
         }
 
         public TokenParser AddExtendedTokens(Web web, ProvisioningTemplate template, TokenParser parser, ProvisioningTemplateApplyingInformation applyingInformation)
@@ -122,7 +121,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
         private ProvisioningTemplate CleanupEntities(ProvisioningTemplate template, ProvisioningTemplate baseTemplate)
         {
-
             return template;
         }
 

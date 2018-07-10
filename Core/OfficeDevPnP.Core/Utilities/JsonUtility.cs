@@ -28,6 +28,5 @@ namespace OfficeDevPnP.Core.Utilities
         {
             return JsonConvert.DeserializeObject<T>(json);
         }
-
     }
 }

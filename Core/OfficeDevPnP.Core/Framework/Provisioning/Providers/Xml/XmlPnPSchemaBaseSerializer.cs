@@ -50,22 +50,22 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
             }
 
             // Load the template into an XDocument
-            XDocument xml = XDocument.Load(template);
+            var xml = XDocument.Load(template);
 
             // Prepare the XML Schema Set
-            XmlSchemaSet schemas = new XmlSchemaSet();
+            var schemas = new XmlSchemaSet();
             this._referenceSchema.Seek(0, SeekOrigin.Begin);
             schemas.Add(((IXMLSchemaFormatter)this).NamespaceUri,
                 new XmlTextReader(this._referenceSchema));
                         
-            Boolean result = true;
+            var result = true;
             xml.Validate(schemas, (o, e) =>
             {
                 Diagnostics.Log.Error(e.Exception, "SchemaFormatter", "Template is not valid: {0}", e.Message);
                 result = false;
             });
 
-            return (result);
+            return result;
         }
 
         protected Object ProcessInputStream(Stream template, string identifier, ProvisioningTemplate result)
@@ -76,7 +76,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
             }
 
             // Crate a copy of the source stream
-            MemoryStream sourceStream = new MemoryStream();
+            var sourceStream = new MemoryStream();
             template.CopyTo(sourceStream);
             sourceStream.Position = 0;
 
@@ -88,11 +88,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
             }
 
             sourceStream.Position = 0;
-            XDocument xml = XDocument.Load(sourceStream);
+            var xml = XDocument.Load(sourceStream);
             XNamespace pnp = this.NamespaceUri;
 
             // Prepare a variable to hold the single source formatted template
-            TSchemaTemplate source = default(TSchemaTemplate);
+            var source = default(TSchemaTemplate);
 
             // Determine if we're working on a wrapped ProvisioningTemplate or not
             if (xml.Root.Name == pnp + "Provisioning")
@@ -100,7 +100,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                 // Deserialize the whole wrapper
                 Object wrapper = null;
                 var wrapperType = Type.GetType($"{PnPSerializationScope.Current?.BaseSchemaNamespace}.Provisioning, {PnPSerializationScope.Current?.BaseSchemaAssemblyName}", true);
-                XmlSerializer xmlSerializer = new XmlSerializer(wrapperType);
+                var xmlSerializer = new XmlSerializer(wrapperType);
                 using (var reader = xml.Root.CreateReader())
                 {
                     wrapper = xmlSerializer.Deserialize(reader);
@@ -177,7 +177,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                                                 System.Reflection.BindingFlags.Public |
                                                 System.Reflection.BindingFlags.IgnoreCase).GetValue(f);
 
-                                            Stream externalFileStream = this.Provider.Connector.GetFileStream(externalFile);
+                                            var externalFileStream = this.Provider.Connector.GetFileStream(externalFile);
                                             xml = XDocument.Load(externalFileStream);
 
                                             if (xml.Root.Name != pnp + "ProvisioningTemplate")
@@ -219,12 +219,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                 }
             }
 
-            return (source);
+            return source;
         }
 
         public ProvisioningTemplate ToProvisioningTemplate(Stream template)
         {
-            return (this.ToProvisioningTemplate(template, null));
+            return this.ToProvisioningTemplate(template, null);
         }
 
         public ProvisioningTemplate ToProvisioningTemplate(Stream template, string identifier)
@@ -239,7 +239,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
 
                 DeserializeTemplate(source, result);
 
-                return (result);
+                return result;
             }
         }
 
@@ -248,7 +248,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
             // Get all serializers to run in automated mode, ordered by DeserializationSequence
             var currentAssembly = this.GetType().Assembly;
 
-            XMLPnPSchemaVersion currentSchemaVersion = GetCurrentSchemaVersion();
+            var currentSchemaVersion = GetCurrentSchemaVersion();
 
             var serializers = currentAssembly.GetTypes()
                 .Where(t => t.GetInterface(typeof(IPnPSchemaSerializer).FullName) != null
@@ -256,12 +256,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                 .Where(t => 
                 {
                     var a = t.GetCustomAttributes<TemplateSchemaSerializerAttribute>(false).FirstOrDefault();
-                    return (a.MinimalSupportedSchemaVersion <= currentSchemaVersion && a.DeserializationSequence >= 0);
+                    return a.MinimalSupportedSchemaVersion <= currentSchemaVersion && a.DeserializationSequence >= 0;
                 })
                 .OrderByDescending(s =>
                 {
                     var a = s.GetCustomAttributes<TemplateSchemaSerializerAttribute>(false).FirstOrDefault();
-                    return (a.MinimalSupportedSchemaVersion);
+                    return a.MinimalSupportedSchemaVersion;
                 }
                 )
                 .GroupBy(t => t.BaseType.GenericTypeArguments.FirstOrDefault()?.FullName)
@@ -270,10 +270,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                     var maxInGroup = g.OrderByDescending(s =>
                     {
                         var a = s.GetCustomAttributes<TemplateSchemaSerializerAttribute>(false).FirstOrDefault();
-                        return (a.MinimalSupportedSchemaVersion);
+                        return a.MinimalSupportedSchemaVersion;
                     }
                     ).FirstOrDefault();
-                    return (maxInGroup.GetCustomAttributes<TemplateSchemaSerializerAttribute>(false).FirstOrDefault()?.SerializationSequence);
+                    return maxInGroup.GetCustomAttributes<TemplateSchemaSerializerAttribute>(false).FirstOrDefault()?.SerializationSequence;
                 });
 
             foreach (var group in serializers)
@@ -303,11 +303,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
 
                 // Create the wrapper
                 var wrapperType = Type.GetType($"{PnPSerializationScope.Current?.BaseSchemaNamespace}.Provisioning, {PnPSerializationScope.Current?.BaseSchemaAssemblyName}", true);
-                Object wrapper = Activator.CreateInstance(wrapperType);
+                var wrapper = Activator.CreateInstance(wrapperType);
 
                 // Create the Preferences
                 var preferencesType = Type.GetType($"{PnPSerializationScope.Current?.BaseSchemaNamespace}.Preferences, {PnPSerializationScope.Current?.BaseSchemaAssemblyName}", true);
-                Object preferences = Activator.CreateInstance(preferencesType);
+                var preferences = Activator.CreateInstance(preferencesType);
 
                 wrapper.GetType().GetProperty("Preferences",
                     System.Reflection.BindingFlags.Instance |
@@ -359,13 +359,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
 
                 SerializeTemplate(template, result);
 
-                XmlSerializerNamespaces ns =
+                var ns =
                     new XmlSerializerNamespaces();
                 ns.Add(((IXMLSchemaFormatter)this).NamespacePrefix,
                     ((IXMLSchemaFormatter)this).NamespaceUri);
 
-                MemoryStream output = new MemoryStream();
-                XmlSerializer xmlSerializer = new XmlSerializer(wrapperType);
+                var output = new MemoryStream();
+                var xmlSerializer = new XmlSerializer(wrapperType);
                 if (ns != null)
                 {
                     xmlSerializer.Serialize(output, wrapper, ns);
@@ -376,7 +376,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                 }
 
                 output.Position = 0;
-                return (output);
+                return output;
             }
         }
 
@@ -385,7 +385,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
             // Get all serializers to run in automated mode, ordered by DeserializationSequence
             var currentAssembly = this.GetType().Assembly;
 
-            XMLPnPSchemaVersion currentSchemaVersion = GetCurrentSchemaVersion();
+            var currentSchemaVersion = GetCurrentSchemaVersion();
 
             var serializers = currentAssembly.GetTypes()
                 .Where(t => t.GetInterface(typeof(IPnPSchemaSerializer).FullName) != null
@@ -393,12 +393,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                 .Where(t =>
                 {
                     var a = t.GetCustomAttributes<TemplateSchemaSerializerAttribute>(false).FirstOrDefault();
-                    return (a.MinimalSupportedSchemaVersion <= currentSchemaVersion && a.SerializationSequence >= 0);
+                    return a.MinimalSupportedSchemaVersion <= currentSchemaVersion && a.SerializationSequence >= 0;
                 })
                 .OrderByDescending(s =>
                 {
                     var a = s.GetCustomAttributes<TemplateSchemaSerializerAttribute>(false).FirstOrDefault();
-                    return (a.MinimalSupportedSchemaVersion);
+                    return a.MinimalSupportedSchemaVersion;
                 }
                 )
                 .GroupBy(t => t.BaseType.GenericTypeArguments.FirstOrDefault()?.FullName)
@@ -407,10 +407,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                     var maxInGroup = g.OrderByDescending(s =>
                     {
                         var a = s.GetCustomAttributes<TemplateSchemaSerializerAttribute>(false).FirstOrDefault();
-                        return (a.MinimalSupportedSchemaVersion);
+                        return a.MinimalSupportedSchemaVersion;
                     }
                     ).FirstOrDefault();
-                    return (maxInGroup.GetCustomAttributes<TemplateSchemaSerializerAttribute>(false).FirstOrDefault()?.DeserializationSequence);
+                    return maxInGroup.GetCustomAttributes<TemplateSchemaSerializerAttribute>(false).FirstOrDefault()?.DeserializationSequence;
                 });
 
             foreach (var group in serializers)

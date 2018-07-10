@@ -26,10 +26,10 @@ namespace OfficeDevPnP.Core.Framework.Graph
         public static String MakeGetRequestForString(String requestUrl,
             String accessToken = null)
         {
-            return (MakeHttpRequest<String>("GET",
+            return MakeHttpRequest<String>("GET",
                 requestUrl,
                 accessToken: accessToken,
-                resultPredicate: r => r.Content.ReadAsStringAsync().Result));
+                resultPredicate: r => r.Content.ReadAsStringAsync().Result);
         }
 
         /// <summary>
@@ -42,10 +42,10 @@ namespace OfficeDevPnP.Core.Framework.Graph
         public static System.IO.Stream MakeGetRequestForStream(String requestUrl,
             String accept, String accessToken = null)
         {
-            return (MakeHttpRequest<System.IO.Stream>("GET",
+            return MakeHttpRequest<System.IO.Stream>("GET",
                 requestUrl,
                 accessToken: accessToken,
-                resultPredicate: r => r.Content.ReadAsStreamAsync().Result));
+                resultPredicate: r => r.Content.ReadAsStreamAsync().Result);
         }
 
         /// <summary>
@@ -80,12 +80,12 @@ namespace OfficeDevPnP.Core.Framework.Graph
             String contentType = null,
             String accessToken = null)
         {
-            return (MakeHttpRequest<String>("POST",
+            return MakeHttpRequest<String>("POST",
                 requestUrl,
                 content: content,
                 contentType: contentType,
                 accessToken: accessToken,
-                resultPredicate: r => r.Content.ReadAsStringAsync().Result));
+                resultPredicate: r => r.Content.ReadAsStringAsync().Result);
         }
 
         /// <summary>
@@ -120,12 +120,12 @@ namespace OfficeDevPnP.Core.Framework.Graph
             String contentType = null,
             String accessToken = null)
         {
-            return (MakeHttpRequest<String>("PATCH",
+            return MakeHttpRequest<String>("PATCH",
                 requestUrl,
                 content: content,
                 contentType: contentType,
                 accessToken: accessToken,
-                resultPredicate: r => r.Content.ReadAsStringAsync().Result));
+                resultPredicate: r => r.Content.ReadAsStringAsync().Result);
         }
 
         /// <summary>
@@ -162,7 +162,7 @@ namespace OfficeDevPnP.Core.Framework.Graph
             Func<HttpResponseMessage, TResult> resultPredicate = null)
         {
             // Prepare the variable to hold the result, if any
-            TResult result = default(TResult);
+            var result = default(TResult);
 
             // Get the OAuth Access Token
             if (String.IsNullOrEmpty(accessToken))
@@ -175,7 +175,7 @@ namespace OfficeDevPnP.Core.Framework.Graph
                 using (HttpClientHandler handler = new HttpClientHandler())
                 {
                     handler.AllowAutoRedirect = true;
-                    HttpClient httpClient = new HttpClient(handler, true);
+                    var httpClient = new HttpClient(handler, true);
 
                     // Set the Authorization Bearer token
                     httpClient.DefaultRequestHeaders.Authorization =
@@ -191,7 +191,7 @@ namespace OfficeDevPnP.Core.Framework.Graph
 
                     // Prepare the content of the request, if any
                     HttpContent requestContent = null;
-                    System.IO.Stream streamContent = content as System.IO.Stream;
+                    var streamContent = content as System.IO.Stream;
                     if (streamContent != null)
                     {
                         requestContent = new StreamContent(streamContent);
@@ -213,7 +213,7 @@ namespace OfficeDevPnP.Core.Framework.Graph
                     }
 
                     // Prepare the HTTP request message with the proper HTTP method
-                    HttpRequestMessage request = new HttpRequestMessage(
+                    var request = new HttpRequestMessage(
                         new HttpMethod(httpMethod), requestUrl);
 
                     // Set the request content, if any
@@ -223,7 +223,7 @@ namespace OfficeDevPnP.Core.Framework.Graph
                     }
 
                     // Fire the HTTP request
-                    HttpResponseMessage response = httpClient.SendAsync(request).Result;
+                    var response = httpClient.SendAsync(request).Result;
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -249,7 +249,7 @@ namespace OfficeDevPnP.Core.Framework.Graph
                 }
             }
 
-            return (result);
+            return result;
         }
     }
 }

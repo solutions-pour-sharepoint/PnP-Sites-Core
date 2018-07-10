@@ -440,10 +440,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|{13}|{14}|{15}|{16}|{17}|{18}|{19}|{20}|{21}|{22}|{23}|{24}|{25}|{26}|{27}|{28}|{29}|{30}|{31}|{32}|{33}|{34}|{35}|{36}|{37}|{38}|{39}|{40}|{41}|{42}|{43}|",
+            return String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|{13}|{14}|{15}|{16}|{17}|{18}|{19}|{20}|{21}|{22}|{23}|{24}|{25}|{26}|{27}|{28}|{29}|{30}|{31}|{32}|{33}|{34}|{35}|{36}|{37}|{38}|{39}|{40}|{41}|{42}|{43}|",
                 this.ContentTypesEnabled.GetHashCode(),
-                (this.Description != null ? this.Description.GetHashCode() : 0),
-                (this.DocumentTemplate != null ? this.DocumentTemplate.GetHashCode() : 0),
+                this.Description != null ? this.Description.GetHashCode() : 0,
+                this.DocumentTemplate != null ? this.DocumentTemplate.GetHashCode() : 0,
                 this.EnableVersioning.GetHashCode(),
                 this.Hidden.GetHashCode(),
                 this.MaxVersionLimit.GetHashCode(),
@@ -454,9 +454,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                 this.ForceCheckout.GetHashCode(),
                 this.RemoveExistingContentTypes.GetHashCode(),
                 this.TemplateType.GetHashCode(),
-                (this.Title != null ? this.Title.GetHashCode() : 0),
-                (this.Url != null ? this.Url.GetHashCode() : 0),
-                (this.TemplateFeatureID != null ? this.TemplateFeatureID.GetHashCode() : 0),
+                this.Title != null ? this.Title.GetHashCode() : 0,
+                this.Url != null ? this.Url.GetHashCode() : 0,
+                this.TemplateFeatureID != null ? this.TemplateFeatureID.GetHashCode() : 0,
                 this.RemoveExistingViews.GetHashCode(),
                 this.EnableMinorVersions.GetHashCode(),
                 this.EnableModeration.GetHashCode(),
@@ -465,11 +465,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                 this.Fields.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.FieldRefs.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.FieldDefaults.Aggregate(0, (acc, next) => acc += next.GetHashCode()),
-                (this.Security != null ? this.Security.GetHashCode() : 0),
+                this.Security != null ? this.Security.GetHashCode() : 0,
                 this.Folders.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.UserCustomActions.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.Webhooks.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
-                (this.IRMSettings != null ? this.IRMSettings.GetHashCode() : 0),
+                this.IRMSettings != null ? this.IRMSettings.GetHashCode() : 0,
                 this.NoCrawl.GetHashCode(),
                 this.ListExperience.GetHashCode(),
                 this.DefaultDisplayFormUrl?.GetHashCode() ?? 0,
@@ -485,7 +485,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                 this.ValidationMessage?.GetHashCode() ?? 0,
                 this.DataSource.Aggregate(0, (acc, next) => acc += next.GetHashCode()),
                 this.WriteSecurity.GetHashCode()
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -497,9 +497,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is ListInstance))
             {
-                return (false);
+                return false;
             }
-            return (Equals((ListInstance)obj));
+            return Equals((ListInstance)obj);
         }
 
         /// <summary>
@@ -515,10 +515,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.ContentTypesEnabled == other.ContentTypesEnabled &&
+            return this.ContentTypesEnabled == other.ContentTypesEnabled &&
                 this.Description == other.Description &&
                 this.DocumentTemplate == other.DocumentTemplate &&
                 this.EnableVersioning == other.EnableVersioning &&
@@ -564,7 +564,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                 this.ValidationMessage == other.ValidationMessage &&
                 this.DataSource.DeepEquals(other.DataSource) &&
                 this.WriteSecurity == other.WriteSecurity
-            );
+            ;
         }
 
         #endregion

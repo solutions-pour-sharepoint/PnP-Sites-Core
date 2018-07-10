@@ -41,5 +41,4 @@
         /// </summary>
         public string RootWebTemplate { get; set; }
     }
-
 }

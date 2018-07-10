@@ -39,7 +39,7 @@ namespace OfficeDevPnP.Core.WebAPI
             if (httpControllerContext == null)
                 throw new ArgumentNullException("httpControllerContext");
 
-            string cacheKey = GetCacheKeyValue(httpControllerContext);
+            var cacheKey = GetCacheKeyValue(httpControllerContext);
 
             if (!String.IsNullOrEmpty(cacheKey))
             {
@@ -53,14 +53,14 @@ namespace OfficeDevPnP.Core.WebAPI
 
         private static string GetCacheKeyValue(HttpControllerContext httpControllerContext)
         {
-            CookieHeaderValue cookie = httpControllerContext.Request.Headers.GetCookies(SERVICES_TOKEN).FirstOrDefault();
+            var cookie = httpControllerContext.Request.Headers.GetCookies(SERVICES_TOKEN).FirstOrDefault();
             if (cookie != null)
             {
                 return cookie[SERVICES_TOKEN].Value;
             }
             else
             {
-                NameValueCollection queryParams = httpControllerContext.Request.RequestUri.ParseQueryString();
+                var queryParams = httpControllerContext.Request.RequestUri.ParseQueryString();
                 return queryParams.Get(SERVICES_TOKEN);
             }
         }
@@ -79,17 +79,17 @@ namespace OfficeDevPnP.Core.WebAPI
             if (httpControllerContext == null)
                 throw new ArgumentNullException("httpControllerContext");
 
-            string cacheKey = GetCacheKeyValue(httpControllerContext);
+            var cacheKey = GetCacheKeyValue(httpControllerContext);
 
             if (!String.IsNullOrEmpty(cacheKey))
             {
-                WebAPIContexCacheItem cacheItem = WebAPIContextCache.Instance.Get(cacheKey);
+                var cacheItem = WebAPIContextCache.Instance.Get(cacheKey);
 
                 //request a new access token from ACS whenever our current access token will expire in less than 1 hour
                 if (cacheItem.AccessToken.ExpiresOn.ToUniversalTime() < (DateTime.UtcNow.AddHours(1)))
                 {
-                    Uri targetUri = new Uri(cacheItem.SharePointServiceContext.HostWebUrl);
-                    OAuth2AccessTokenResponse accessToken = TokenHelper.GetAccessToken(cacheItem.RefreshToken, TokenHelper.SharePointPrincipal, targetUri.Authority, TokenHelper.GetRealmFromTargetUrl(targetUri));
+                    var targetUri = new Uri(cacheItem.SharePointServiceContext.HostWebUrl);
+                    var accessToken = TokenHelper.GetAccessToken(cacheItem.RefreshToken, TokenHelper.SharePointPrincipal, targetUri.Authority, TokenHelper.GetRealmFromTargetUrl(targetUri));
                     cacheItem.AccessToken = accessToken;
                     //update the cache
                     WebAPIContextCache.Instance.Put(cacheKey, cacheItem);
@@ -118,9 +118,9 @@ namespace OfficeDevPnP.Core.WebAPI
             TokenHelper.ClientId = sharePointServiceContext.ClientId;
             TokenHelper.ClientSecret = sharePointServiceContext.ClientSecret;
             TokenHelper.HostedAppHostName = sharePointServiceContext.HostedAppHostName;
-            SharePointContextToken sharePointContextToken = TokenHelper.ReadAndValidateContextToken(sharePointServiceContext.Token);
-            OAuth2AccessTokenResponse accessToken = TokenHelper.GetAccessToken(sharePointContextToken, new Uri(sharePointServiceContext.HostWebUrl).Authority);
-            WebAPIContexCacheItem cacheItem = new WebAPIContexCacheItem()
+            var sharePointContextToken = TokenHelper.ReadAndValidateContextToken(sharePointServiceContext.Token);
+            var accessToken = TokenHelper.GetAccessToken(sharePointContextToken, new Uri(sharePointServiceContext.HostWebUrl).Authority);
+            var cacheItem = new WebAPIContexCacheItem
             {
                 RefreshToken = sharePointContextToken.RefreshToken,
                 AccessToken = accessToken,
@@ -154,16 +154,16 @@ namespace OfficeDevPnP.Core.WebAPI
                 if (page.Request.QueryString.AsString(SERVICES_TOKEN, string.Empty).Equals(string.Empty))
                 {
                     // Construct a JsonWebSecurityToken so we can fetch the cachekey...implementation is copied from tokenhelper approach
-                    string cacheKey = string.Empty;
-                    string contextToken = TokenHelper.GetContextTokenFromRequest(page.Request);
-                    JsonWebSecurityTokenHandler tokenHandler = TokenHelper.CreateJsonWebSecurityTokenHandler();
-                    SecurityToken securityToken = tokenHandler.ReadToken(contextToken);
-                    JsonWebSecurityToken jsonToken = securityToken as JsonWebSecurityToken;
-                    string appctx = GetClaimValue(jsonToken, "appctx");
+                    var cacheKey = string.Empty;
+                    var contextToken = TokenHelper.GetContextTokenFromRequest(page.Request);
+                    var tokenHandler = TokenHelper.CreateJsonWebSecurityTokenHandler();
+                    var securityToken = tokenHandler.ReadToken(contextToken);
+                    var jsonToken = securityToken as JsonWebSecurityToken;
+                    var appctx = GetClaimValue(jsonToken, "appctx");
                     if (appctx != null)
                     {
-                        ClientContext ctx = new ClientContext("http://tempuri.org");
-                        Dictionary<string, object> dict = (Dictionary<string, object>)ctx.ParseObjectFromJsonString(appctx);
+                        var ctx = new ClientContext("http://tempuri.org");
+                        var dict = (Dictionary<string, object>)ctx.ParseObjectFromJsonString(appctx);
                         cacheKey = (string)dict["CacheKey"];
                     }
 
@@ -171,7 +171,7 @@ namespace OfficeDevPnP.Core.WebAPI
                     // cookie is read. This flaw replaces special chars with a space.
                     cacheKey = RemoveSpecialCharacters(cacheKey);
 
-                    bool httpOnly = true;
+                    var httpOnly = true;
                     if (serviceEndPoint != null)
                     {
                         if (!serviceEndPoint.Host.Equals(page.Request.Url.Host, StringComparison.InvariantCultureIgnoreCase))
@@ -185,7 +185,7 @@ namespace OfficeDevPnP.Core.WebAPI
                     }
 
                     // Write the cachekey in a cookie
-                    HttpCookie cookie = new HttpCookie(SERVICES_TOKEN)
+                    var cookie = new HttpCookie(SERVICES_TOKEN)
                     {
                         Value = cacheKey,
                         Secure = true,
@@ -195,7 +195,7 @@ namespace OfficeDevPnP.Core.WebAPI
                     page.Response.AppendCookie(cookie);
 
                     //Register the ClientContext
-                    WebAPIContext sharePointServiceContext = new WebAPIContext()
+                    var sharePointServiceContext = new WebAPIContext
                     {
                         CacheKey = cacheKey,
                         ClientId = TokenHelper.ClientId,
@@ -212,7 +212,7 @@ namespace OfficeDevPnP.Core.WebAPI
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-                        HttpResponseMessage response = await client.PutAsJsonAsync(apiRequest, sharePointServiceContext);
+                        var response = await client.PutAsJsonAsync(apiRequest, sharePointServiceContext);
 
                         if (!response.IsSuccessStatusCode)
                         {
@@ -221,7 +221,6 @@ namespace OfficeDevPnP.Core.WebAPI
                         }
 
                         Log.Info(CoreResources.Services_Registered, apiRequest, serviceEndPoint.ToString(), cacheKey);
-
                     }
                 }
             }
@@ -245,24 +244,24 @@ namespace OfficeDevPnP.Core.WebAPI
             if (string.IsNullOrEmpty(apiRequest))
                 throw new ArgumentNullException("apiRequest");
 
-            HttpRequestBase request = context.Request;
+            var request = context.Request;
 
             try
             {
                 if (request.QueryString.AsString(SERVICES_TOKEN, string.Empty).Equals(string.Empty))
                 {
                     // Construct a JsonWebSecurityToken so we can fetch the cachekey...implementation is copied from tokenhelper approach
-                    string cacheKey = string.Empty;
-                    string contextToken = TokenHelper.GetContextTokenFromRequest(request);
-                    JsonWebSecurityTokenHandler tokenHandler = TokenHelper.CreateJsonWebSecurityTokenHandler();
-                    SecurityToken securityToken = tokenHandler.ReadToken(contextToken);
-                    JsonWebSecurityToken jsonToken = securityToken as JsonWebSecurityToken;
+                    var cacheKey = string.Empty;
+                    var contextToken = TokenHelper.GetContextTokenFromRequest(request);
+                    var tokenHandler = TokenHelper.CreateJsonWebSecurityTokenHandler();
+                    var securityToken = tokenHandler.ReadToken(contextToken);
+                    var jsonToken = securityToken as JsonWebSecurityToken;
 
-                    string appctx = GetClaimValue(jsonToken, "appctx");
+                    var appctx = GetClaimValue(jsonToken, "appctx");
                     if (appctx != null)
                     {
-                        ClientContext ctx = new ClientContext("http://tempuri.org");
-                        Dictionary<string, object> dict = (Dictionary<string, object>)ctx.ParseObjectFromJsonString(appctx);
+                        var ctx = new ClientContext("http://tempuri.org");
+                        var dict = (Dictionary<string, object>)ctx.ParseObjectFromJsonString(appctx);
                         cacheKey = (string)dict["CacheKey"];
                     }
 
@@ -270,7 +269,7 @@ namespace OfficeDevPnP.Core.WebAPI
                     // cookie is read. This flaw replaces special chars with a space.
                     cacheKey = RemoveSpecialCharacters(cacheKey);
 
-                    bool httpOnly = true;
+                    var httpOnly = true;
                     if (serviceEndPoint != null)
                     {
                         if (!serviceEndPoint.Host.Equals(context.Request.Url.Host, StringComparison.InvariantCultureIgnoreCase))
@@ -284,7 +283,7 @@ namespace OfficeDevPnP.Core.WebAPI
                     }
 
                     // Write the cachekey in a cookie
-                    HttpCookie cookie = new HttpCookie(SERVICES_TOKEN)
+                    var cookie = new HttpCookie(SERVICES_TOKEN)
                     {
                         Value = cacheKey,
                         Secure = true,
@@ -294,7 +293,7 @@ namespace OfficeDevPnP.Core.WebAPI
                     context.Response.AppendCookie(cookie);
 
                     //Register the ClientContext
-                    WebAPIContext sharePointServiceContext = new WebAPIContext()
+                    var sharePointServiceContext = new WebAPIContext
                     {
                         CacheKey = cacheKey,
                         ClientId = TokenHelper.ClientId,
@@ -316,7 +315,7 @@ namespace OfficeDevPnP.Core.WebAPI
 
         private static T GetQueryString<T>(this NameValueCollection queryString, string parameterName, Func<string, T> operation, T defaultValue)
         {
-            T returnValue = defaultValue;
+            var returnValue = defaultValue;
             if (!string.IsNullOrEmpty(queryString[parameterName]))
             {
                 return operation(queryString[parameterName]);
@@ -349,7 +348,7 @@ namespace OfficeDevPnP.Core.WebAPI
 
         private static string RemoveSpecialCharacters(string str)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             foreach (char c in str)
             {
                 if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '.' || c == '_')
@@ -359,6 +358,5 @@ namespace OfficeDevPnP.Core.WebAPI
             }
             return sb.ToString();
         }
-
     }
 }

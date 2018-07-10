@@ -111,9 +111,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             web.Context.Load(existingField, f => f.SchemaXml);
             web.Context.ExecuteQueryRetry();
 
-            XElement existingFieldElement = XElement.Parse(existingField.SchemaXml);
+            var existingFieldElement = XElement.Parse(existingField.SchemaXml);
 
-            XNodeEqualityComparer equalityComparer = new XNodeEqualityComparer();
+            var equalityComparer = new XNodeEqualityComparer();
 
             if (equalityComparer.GetHashCode(existingFieldElement) != equalityComparer.GetHashCode(templateFieldElement)) // Is field different in template?
             {
@@ -173,7 +173,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         {
                             if (se.ServerErrorTypeName == "Microsoft.SharePoint.Client.ClientServiceTimeoutException")
                             {
-                                string fieldName = existingFieldElement.Attribute("Name") != null ? existingFieldElement.Attribute("Name").Value : existingFieldElement.Attribute("StaticName").Value;
+                                var fieldName = existingFieldElement.Attribute("Name") != null ? existingFieldElement.Attribute("Name").Value : existingFieldElement.Attribute("StaticName").Value;
                                 WriteMessage(string.Format(CoreResources.Provisioning_ObjectHandlers_Fields_Updating_field__0__timeout, fieldName), ProvisioningMessageType.Warning);
                                 scope.LogWarning(CoreResources.Provisioning_ObjectHandlers_Fields_Updating_field__0__timeout, fieldName);
 
@@ -184,7 +184,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                 throw;
                         }
 
-                        bool isDirty = false;
+                        var isDirty = false;
 #if !SP2013
                         if (originalFieldXml.ContainsResourceToken())
                         {
@@ -208,7 +208,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                             existingField.Update();
                             web.Context.ExecuteQueryRetry();
                         }
-                        if ((existingField.TypeAsString == "TaxonomyFieldType" || existingField.TypeAsString == "TaxonomyFieldTypeMulti"))
+                        if (existingField.TypeAsString == "TaxonomyFieldType" || existingField.TypeAsString == "TaxonomyFieldTypeMulti")
                         {
                             var taxField = web.Context.CastTo<TaxonomyField>(existingField);
                             if (!string.IsNullOrEmpty(existingField.DefaultValue))
@@ -321,7 +321,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 // Add newly created field to token set, this allows to create a field + use it in a formula in the same provisioning template
                 parser.AddToken(new FieldTitleToken(web, field.InternalName, field.Title));
 
-                bool isDirty = false;
+                var isDirty = false;
 #if !SP2013
                 if (originalFieldXml.ContainsResourceToken())
                 {
@@ -364,8 +364,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 throw new Exception($"The field was found invalid: {tokenString}");
             }
         }
-
-
 
         private static void SetTaxonomyFieldOpenValue(TaxonomyField field, string taxonomyFieldXml)
         {
@@ -420,12 +418,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
         private static bool TryParseTaxonomyFieldValue(string value, out TaxonomyFieldValue taxValue)
         {
-            bool res = false;
+            var res = false;
             taxValue = new TaxonomyFieldValue();
             if (!string.IsNullOrEmpty(value))
             {
-                string[] split = value.Split(new string[] { ";#" }, StringSplitOptions.None);
-                int wssId = 0;
+                var split = value.Split(new string[] { ";#" }, StringSplitOptions.None);
+                var wssId = 0;
 
                 if (split.Length > 0 && int.TryParse(split[0], out wssId))
                 {
@@ -436,8 +434,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 if (res && split.Length == 2)
                 {
                     var term = split[1];
-                    string[] splitTerm = term.Split(new string[] { "|" }, StringSplitOptions.None);
-                    Guid termId = Guid.Empty;
+                    var splitTerm = term.Split(new string[] { "|" }, StringSplitOptions.None);
+                    var termId = Guid.Empty;
                     if (splitTerm.Length > 0)
                     {
                         res = Guid.TryParse(splitTerm[splitTerm.Length - 1], out termId);
@@ -491,7 +489,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     if (!BuiltInFieldId.Contains(field.Id))
                     {
                         var fieldXml = field.SchemaXml;
-                        XElement element = XElement.Parse(fieldXml);
+                        var element = XElement.Parse(fieldXml);
 
                         // Check if the field contains a reference to a list. If by Guid, rewrite the value of the attribute to use web relative paths
                         var listIdentifier = element.Attribute("List") != null ? element.Attribute("List").Value : null;
@@ -528,10 +526,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         {
 #if !SP2013
                             // only persist language values for fields we actually will keep...no point in spending time on this is we clean the field afterwards
-                            bool persistLanguages = true;
+                            var persistLanguages = true;
                             if (creationInfo.BaseTemplate != null)
                             {
-                                int index = creationInfo.BaseTemplate.SiteFields.FindIndex(f => Guid.Parse(XElement.Parse(f.SchemaXml).Attribute("ID").Value).Equals(field.Id));
+                                var index = creationInfo.BaseTemplate.SiteFields.FindIndex(f => Guid.Parse(XElement.Parse(f.SchemaXml).Attribute("ID").Value).Equals(field.Id));
 
                                 if (index > -1)
                                 {
@@ -559,7 +557,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 #endif
                         }
 
-                        template.SiteFields.Add(new Field() { SchemaXml = fieldXml });
+                        template.SiteFields.Add(new Field { SchemaXml = fieldXml });
                     }
                 }
                 // move hidden taxonomy text fields to the top of the list
@@ -592,11 +590,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         {
             foreach (var field in baseTemplate.SiteFields)
             {
-                XDocument xDoc = XDocument.Parse(field.SchemaXml);
+                var xDoc = XDocument.Parse(field.SchemaXml);
                 var id = xDoc.Root.Attribute("ID") != null ? xDoc.Root.Attribute("ID").Value : null;
                 if (id != null)
                 {
-                    int index = template.SiteFields.FindIndex(f => Guid.Parse(XElement.Parse(f.SchemaXml).Attribute("ID").Value).Equals(Guid.Parse(id)));
+                    var index = template.SiteFields.FindIndex(f => Guid.Parse(XElement.Parse(f.SchemaXml).Attribute("ID").Value).Equals(Guid.Parse(id)));
 
                     if (index > -1)
                     {

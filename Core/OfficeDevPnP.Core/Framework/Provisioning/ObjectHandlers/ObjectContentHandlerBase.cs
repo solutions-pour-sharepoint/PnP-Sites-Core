@@ -97,7 +97,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     {
                         var field = fields.FirstOrDefault(fs => fs.InternalName == fieldValue.Key);
 
-                        string value = string.Empty;
+                        var value = string.Empty;
 
                         switch (field.TypeAsString)
                         {
@@ -169,8 +169,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             if (creationInfo.FileConnector != null)
             {
                 var fileConnector = creationInfo.FileConnector;
-                SharePointConnector connector = new SharePointConnector(web.Context, web.Url, "dummy");
-                Uri u = new Uri(web.Url);
+                var connector = new SharePointConnector(web.Context, web.Url, "dummy");
+                var u = new Uri(web.Url);
 
                 if (u.PathAndQuery != "/")
                 {
@@ -180,8 +180,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     }
                 }
 
-                String container = folderPath.Trim('/').Replace("%20", " ").Replace("/", "\\");
-                String persistenceFileName = (decodeFileName ? HttpUtility.UrlDecode(fileName) : fileName).Replace("%20", " ");
+                var container = folderPath.Trim('/').Replace("%20", " ").Replace("/", "\\");
+                var persistenceFileName = (decodeFileName ? HttpUtility.UrlDecode(fileName) : fileName).Replace("%20", " ");
 
                 if (fileConnector.Parameters.ContainsKey(FileConnectorBase.CONTAINER))
                 {

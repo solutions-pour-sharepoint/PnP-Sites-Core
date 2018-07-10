@@ -58,7 +58,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                             //var webParts = web.GetWebParts(welcomePageUrl);
 
-                            var page = new Page()
+                            var page = new Page
                             {
                                 Layout = WikiPageLayout.Custom,
                                 Overwrite = true,
@@ -66,12 +66,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                             };
                             var pageContents = listItem.FieldValues["WikiField"].ToString();
 
-                            Regex regexClientIds = new Regex(@"id=\""div_(?<ControlId>(\w|\-)+)");
+                            var regexClientIds = new Regex(@"id=\""div_(?<ControlId>(\w|\-)+)");
                             if (regexClientIds.IsMatch(pageContents))
                             {
                                 foreach (Match webPartMatch in regexClientIds.Matches(pageContents))
                                 {
-                                    String serverSideControlId = webPartMatch.Groups["ControlId"].Value;
+                                    var serverSideControlId = webPartMatch.Groups["ControlId"].Value;
 
                                     try
                                     {
@@ -88,7 +88,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                                         var webPartxml = TokenizeWebPartXml(web, web.GetWebPartXml(webPart.Id, welcomePageUrl));
 
-                                        page.WebParts.Add(new Model.WebPart()
+                                        page.WebParts.Add(new Model.WebPart
                                         {
                                             Title = webPart.WebPart.Title,
                                             Contents = webPartxml,
@@ -115,7 +115,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                 template.WebSettings = new WebSettings();
                             }
                             template.WebSettings.WelcomePage = homepageUrl;
-
 
                         }
                         else if (listItem.FieldValues.ContainsKey("ClientSideApplicationId") && listItem.FieldValues["ClientSideApplicationId"] != null && listItem.FieldValues["ClientSideApplicationId"].ToString().ToLower() == "b6917cb1-93a0-4b97-a84d-7cf49975d4ec")
@@ -145,7 +144,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 }
                 catch (ServerException ex)
                 {
-                    
                     //ignore this error. The default page is not a page but a list view.
                     if (ex.ServerErrorCode != -2146232832 && ex.HResult != -2146233088)
                     {
@@ -208,7 +206,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 : folderPath;
             var container = containerPath.Trim('/').Replace("%20", " ").Replace("/", "\\");
 
-            var homeFile = new Model.File()
+            var homeFile = new Model.File
             {
                 Folder = Tokenize(folderPath, web.Url),
                 Src = !string.IsNullOrEmpty(container) ? $"{container}\\{fileName}" : fileName,
@@ -225,7 +223,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             {
                 var webPartxml = TokenizeWebPartXml(web, web.GetWebPartXml(webPart.Id, welcomePageUrl));
 
-                Model.WebPart newWp = new Model.WebPart()
+                var newWp = new Model.WebPart
                 {
                     Title = webPart.WebPart.Title,
                     Row = (uint)webPart.WebPart.ZoneIndex,
@@ -268,7 +266,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             {
                 var xmlDoc = new System.Xml.XmlDocument();
                 xmlDoc.LoadXml(xml);
-                XmlNamespaceManager ns = new XmlNamespaceManager(xmlDoc.NameTable);
+                var ns = new XmlNamespaceManager(xmlDoc.NameTable);
                 ns.AddNamespace("ns", "http://schemas.microsoft.com/WebPart/v3");
                 webpartType = xmlDoc.SelectSingleNode("//webParts/ns:webPart/ns:metaData/ns:type[@name]", ns)?.Attributes["name"]?.Value;
             }
@@ -318,6 +316,5 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             }
             return _willExtract.Value;
         }
-
     }
 }

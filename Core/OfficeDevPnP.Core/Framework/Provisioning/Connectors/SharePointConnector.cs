@@ -10,7 +10,6 @@ using OfficeDevPnP.Core.Utilities;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
 {
-
     /// <summary>
     /// Connector for files in SharePoint
     /// </summary>
@@ -85,14 +84,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
             }
             container = container.Replace('\\', '/');
 
-            List<string> result = new List<string>();
+            var result = new List<string>();
 
             using (ClientContext cc = GetClientContext().Clone(GetConnectionString()))
             {
-                List list = cc.Web.GetListByUrl(GetDocumentLibrary(container));
-                string folders = GetUrlFolders(container);
+                var list = cc.Web.GetListByUrl(GetDocumentLibrary(container));
+                var folders = GetUrlFolders(container);
 
-                CamlQuery camlQuery = new CamlQuery();
+                var camlQuery = new CamlQuery();
                 camlQuery.ViewXml = @"<View Scope='FilesOnly'><Query></Query></View>";
 
                 if (folders.Length > 0)
@@ -100,7 +99,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
                     camlQuery.FolderServerRelativeUrl = $"{list.RootFolder.ServerRelativeUrl}{folders}";
                 }
 
-                ListItemCollection listItems = list.GetItems(camlQuery);
+                var listItems = list.GetItems(camlQuery);
                 cc.Load(listItems);
                 cc.ExecuteQueryRetry();
 
@@ -135,14 +134,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
             }
             container = container.Replace('\\', '/');
 
-            List<string> result = new List<string>();
+            var result = new List<string>();
 
             using (ClientContext cc = GetClientContext().Clone(GetConnectionString()))
             {
-                List list = cc.Web.GetListByUrl(GetDocumentLibrary(container));
-                string folders = GetUrlFolders(container);
+                var list = cc.Web.GetListByUrl(GetDocumentLibrary(container));
+                var folders = GetUrlFolders(container);
 
-                CamlQuery camlQuery = new CamlQuery();
+                var camlQuery = new CamlQuery();
                 camlQuery.ViewXml = @"<View><Query><Where><Eq><FieldRef Name='ContentType' /><Value Type='Text'>Folder</Value></Eq></Where></Query></View>";
 
                 if (folders.Length > 0)
@@ -150,7 +149,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
                     camlQuery.FolderServerRelativeUrl = $"{list.RootFolder.ServerRelativeUrl}{folders}";
                 }
 
-                ListItemCollection listItems = list.GetItems(camlQuery);
+                var listItems = list.GetItems(camlQuery);
                 cc.Load(listItems);
                 cc.ExecuteQueryRetry();
 
@@ -277,9 +276,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
 
                     if (!string.IsNullOrEmpty(container))
                     {
-                        List list = cc.Web.GetListByUrl(GetDocumentLibrary(container));
+                        var list = cc.Web.GetListByUrl(GetDocumentLibrary(container));
 
-                        string folders = GetUrlFolders(container);
+                        var folders = GetUrlFolders(container);
 
                         if (folders.Length == 0)
                         {
@@ -288,7 +287,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
                         else
                         {
                             spFolder = list.RootFolder;
-                            string[] parts = container.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
+                            var parts = container.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
                             for (int i = 1; i < parts.Length; i++)
                             {
                                 var prevFolder = spFolder;
@@ -342,8 +341,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
             {
                 using (ClientContext cc = GetClientContext().Clone(GetConnectionString()))
                 {
-                    string fileServerRelativeUrl = GetFileServerRelativeUrl(cc, fileName, container);
-                    File file = cc.Web.GetFileByServerRelativeUrl(fileServerRelativeUrl);
+                    var fileServerRelativeUrl = GetFileServerRelativeUrl(cc, fileName, container);
+                    var file = cc.Web.GetFileByServerRelativeUrl(fileServerRelativeUrl);
                     cc.Load(file);
                     cc.ExecuteQueryRetry();
 
@@ -384,8 +383,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
             Folder spFolder;
             if (!string.IsNullOrEmpty(container))
             {
-                List list = cc.Web.GetListByUrl(GetDocumentLibrary(container));
-                string folders = GetUrlFolders(container);
+                var list = cc.Web.GetListByUrl(GetDocumentLibrary(container));
+                var folders = GetUrlFolders(container);
 
                 if (folders.Length == 0)
                 {
@@ -394,9 +393,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
                 else
                 {
                     spFolder = list.RootFolder;
-                    string[] parts = container.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
+                    var parts = container.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
 
-                    int startFrom = 1;
+                    var startFrom = 1;
                     if (parts[0].Equals("_catalogs", StringComparison.InvariantCultureIgnoreCase))
                     {
                         startFrom = 2;
@@ -420,18 +419,17 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
 
         private MemoryStream GetFileFromStorage(string fileName, string container)
         {
-
             try
             {
                 using (ClientContext cc = GetClientContext().Clone(GetConnectionString()))
                 {
-                    string fileServerRelativeUrl = GetFileServerRelativeUrl(cc, fileName, container);
+                    var fileServerRelativeUrl = GetFileServerRelativeUrl(cc, fileName, container);
                     var file = cc.Web.GetFileByServerRelativeUrl(fileServerRelativeUrl);
                     cc.Load(file);
                     cc.ExecuteQueryRetry();
                     if (file.Exists)
                     {
-                        MemoryStream stream = new MemoryStream();
+                        var stream = new MemoryStream();
                         var streamResult = file.OpenBinaryStream();
                         cc.ExecuteQueryRetry();
 
@@ -456,7 +454,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
 
         private string GetDocumentLibrary(string container)
         {
-            string[] parts = container.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
+            var parts = container.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
 
             if (parts.Length > 1)
             {
@@ -471,17 +469,17 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
 
         private string GetUrlFolders(string container)
         {
-            string[] parts = container.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
+            var parts = container.Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
 
             if (parts.Length > 1)
             {
-                int startFrom = 1;
+                var startFrom = 1;
                 if (parts[0].Equals("_catalogs", StringComparison.InvariantCultureIgnoreCase))
                 {
                     startFrom = 2;
                 }
 
-                string folder = "";
+                var folder = "";
                 for (int i = startFrom; i < parts.Length; i++)
                 {
                     folder = folder + "/" + parts[i];
@@ -517,6 +515,5 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
             }
             return string.Empty;
         }
-
     }
 }

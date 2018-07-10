@@ -20,14 +20,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         {
             using (var scope = new PnPMonitoredScope(this.Name))
             {
-
                 web.Context.Load(web, w => w.SupportedUILanguageIds);
                 web.Context.ExecuteQueryRetry();
 
-                SupportedUILanguageCollection supportedUILanguageCollection = new SupportedUILanguageCollection(template);
+                var supportedUILanguageCollection = new SupportedUILanguageCollection(template);
                 foreach (var id in web.SupportedUILanguageIds)
                 {
-                    supportedUILanguageCollection.Add(new SupportedUILanguage() { LCID = id });
+                    supportedUILanguageCollection.Add(new SupportedUILanguage { LCID = id });
                 }
 
                 if (creationInfo.BaseTemplate != null)
@@ -41,7 +40,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 {
                     template.SupportedUILanguages = supportedUILanguageCollection;
                 }
-
             }
 
             return template;

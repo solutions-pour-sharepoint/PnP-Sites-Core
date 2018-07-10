@@ -138,5 +138,4 @@ namespace OfficeDevPnP.Core.Entities
         public string ClientSideComponentProperties { get; set; }
 #endif
     }
-
 }

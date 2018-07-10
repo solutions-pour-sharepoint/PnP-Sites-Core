@@ -153,7 +153,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             var folderPath = fullUri.Segments.Take(fullUri.Segments.Count() - 1).ToArray().Aggregate((i, x) => i + x).TrimEnd('/');
             var fileName = fullUri.Segments[fullUri.Segments.Count() - 1];
 
-            var formFile = new Model.File()
+            var formFile = new Model.File
             {
                 Folder = Tokenize(folderPath, web.Url),
                 Src = formUrl,
@@ -196,12 +196,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     foreach (var templateDefinition in template.Workflows.WorkflowDefinitions)
                     {
                         // Load the Workflow Definition XAML
-                        Stream xamlStream = template.Connector.GetFileStream(templateDefinition.XamlPath);
-                        XElement xaml = XElement.Load(xamlStream);
+                        var xamlStream = template.Connector.GetFileStream(templateDefinition.XamlPath);
+                        var xaml = XElement.Load(xamlStream);
 
-                        int retryCount = 5;
-                        int retryAttempts = 1;
-                        int delay = 2000;
+                        var retryCount = 5;
+                        var retryAttempts = 1;
+                        var delay = 2000;
 
                         while (retryAttempts <= retryCount)
                         {
@@ -297,7 +297,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         }
                     }
 
-
                     // get existing subscriptions
                     var existingWorkflowSubscriptions = web.GetWorkflowSubscriptions();
 
@@ -314,7 +313,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         {
                             // Thus, delete it before adding it again!
                             WriteMessage($"Workflow Subscription '{subscription.Name}' already exists. It will be updated.", ProvisioningMessageType.Warning);
-                            workflowSubscription = existingWorkflowSubscriptions.FirstOrDefault((s => s.PropertyDefinitions["SharePointWorkflowContext.Subscription.Name"] == subscriptionName && s.DefinitionId == subscription.DefinitionId));
+                            workflowSubscription = existingWorkflowSubscriptions.FirstOrDefault(s => s.PropertyDefinitions["SharePointWorkflowContext.Subscription.Name"] == subscriptionName && s.DefinitionId == subscription.DefinitionId);
                         }
 
                         if (workflowSubscription != null)
@@ -359,7 +358,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         if (!String.IsNullOrEmpty(subscription.ListId))
                         {
                             // It is a List Workflow
-                            Guid targetListId = Guid.Parse(parser.ParseString(subscription.ListId));
+                            var targetListId = Guid.Parse(parser.ParseString(subscription.ListId));
                             subscriptionService.PublishSubscriptionForList(workflowSubscription, targetListId);
                         }
                         else
@@ -383,9 +382,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
         public override bool WillProvision(Web web, ProvisioningTemplate template, ProvisioningTemplateApplyingInformation applyingInformation)
         {
-            return (template.Workflows != null &&
+            return template.Workflows != null &&
                 (template.Workflows.WorkflowDefinitions.Count > 0 ||
-                template.Workflows.WorkflowSubscriptions.Count > 0));
+                template.Workflows.WorkflowSubscriptions.Count > 0);
         }
     }
 
@@ -394,7 +393,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         public static String SaveXamlToFile(this String xaml, Guid id, OfficeDevPnP.Core.Framework.Provisioning.Connectors.FileConnectorBase connector, ListCollection lists)
         {
             // Tokenize XAML to replace any ListId or ToListId attribute with the corresponding token
-            XElement xamlDocument = XElement.Parse(xaml);
+            var xamlDocument = XElement.Parse(xaml);
             string[] listIdAttributes = {"ListId", "ToListId"};
             
             var elements = (IEnumerable)xamlDocument.XPathEvaluate($"//child::*[@{listIdAttributes[0]}|@{listIdAttributes[1]}]");
@@ -424,15 +423,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 }
                 mem.Position = 0;
 
-                String xamlFileName = $"{id.ToString()}.xaml";
+                var xamlFileName = $"{id.ToString()}.xaml";
                 connector.SaveFileStream(xamlFileName, mem);
-                return (xamlFileName);
+                return xamlFileName;
             }
         }
 
         public static Dictionary<String, String> TokenizeWorkflowDefinitionProperties(this IDictionary<String, String> properties, ListCollection lists)
         {
-            Dictionary<String, String> result = new Dictionary<String, String>();
+            var result = new Dictionary<String, String>();
             foreach (var p in properties)
             {
                 switch (p.Key)
@@ -458,7 +457,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         break;
                 }
             }
-            return (result);
+            return result;
         }
 
         public static string TokenizeListIdProperty(string listId, ListCollection lists)
@@ -475,7 +474,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
         public static Dictionary<String, String> TokenizeWorkflowSubscriptionProperties(this IDictionary<String, String> properties, ListCollection lists)
         {
-            Dictionary<String, String> result = new Dictionary<String, String>();
+            var result = new Dictionary<String, String>();
             foreach (var p in properties)
             {
                 switch (p.Key)
@@ -504,7 +503,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         break;
                 }
             }
-            return (result);
+            return result;
         }
     }
 }

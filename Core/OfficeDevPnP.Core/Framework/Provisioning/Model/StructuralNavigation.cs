@@ -44,10 +44,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}",
+            return String.Format("{0}|{1}",
                 this.NavigationNodes.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.RemoveExistingNodes.GetHashCode()
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -59,9 +59,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is StructuralNavigation))
             {
-                return (false);
+                return false;
             }
-            return (Equals((StructuralNavigation)obj));
+            return Equals((StructuralNavigation)obj);
         }
 
         /// <summary>
@@ -73,12 +73,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.NavigationNodes.DeepEquals(other.NavigationNodes) &&
+            return this.NavigationNodes.DeepEquals(other.NavigationNodes) &&
                 this.RemoveExistingNodes == other.RemoveExistingNodes
-                );
+                ;
         }
 
         #endregion

@@ -63,7 +63,7 @@ namespace OfficeDevPnP.Core.Diagnostics
                         // Something went wrong, fall back to the built-in PnPTraceLogger
                         _logger = new TraceLogger();
                         _logger.Error(
-                            new LogEntry()
+                            new LogEntry
                             {
                                 Exception = ex,
                                 Message = "Logger registration failed. Falling back to TraceLogger.",
@@ -100,7 +100,7 @@ namespace OfficeDevPnP.Core.Diagnostics
             InitializeLogger();
             if (_logLevel == LogLevel.Error || _logLevel == LogLevel.Debug)
             {
-                _logger.Error(new LogEntry()
+                _logger.Error(new LogEntry
                 {
                     Message = string.Format(message, args),
                     Source = source
@@ -119,7 +119,7 @@ namespace OfficeDevPnP.Core.Diagnostics
             InitializeLogger();
             if (_logLevel == LogLevel.Error || _logLevel == LogLevel.Debug)
             {
-                _logger.Error(new LogEntry()
+                _logger.Error(new LogEntry
                 {
                     Message = string.Format(message, args),
                     Source = source,
@@ -153,7 +153,7 @@ namespace OfficeDevPnP.Core.Diagnostics
             InitializeLogger();
             if (_logLevel == LogLevel.Information || _logLevel == LogLevel.Debug || _logLevel == LogLevel.Error || _logLevel == LogLevel.Warning)
             {
-                _logger.Info(new LogEntry()
+                _logger.Info(new LogEntry
                 {
                     Message = string.Format(message, args),
                     Source = source
@@ -172,7 +172,7 @@ namespace OfficeDevPnP.Core.Diagnostics
             InitializeLogger();
             if (_logLevel == LogLevel.Information || _logLevel == LogLevel.Debug || _logLevel == LogLevel.Error || _logLevel == LogLevel.Warning)
             {
-                _logger.Info(new LogEntry()
+                _logger.Info(new LogEntry
                 {
                     Message = string.Format(message, args),
                     Source = source,
@@ -206,7 +206,7 @@ namespace OfficeDevPnP.Core.Diagnostics
             InitializeLogger();
             if (_logLevel == LogLevel.Warning || _logLevel == LogLevel.Information || _logLevel == LogLevel.Debug)
             {
-                _logger.Warning(new LogEntry()
+                _logger.Warning(new LogEntry
                 {
                     Message = string.Format(message, args),
                     Source = source,
@@ -225,7 +225,7 @@ namespace OfficeDevPnP.Core.Diagnostics
             InitializeLogger();
             if (_logLevel == LogLevel.Warning || _logLevel == LogLevel.Information || _logLevel == LogLevel.Debug)
             {
-                _logger.Warning(new LogEntry()
+                _logger.Warning(new LogEntry
                 {
                     Message = string.Format(message, args),
                     Source = source,
@@ -260,14 +260,13 @@ namespace OfficeDevPnP.Core.Diagnostics
             InitializeLogger();
             if (_logLevel == LogLevel.Debug)
             {
-                _logger.Debug(new LogEntry()
+                _logger.Debug(new LogEntry
                 {
                     Message = string.Format(message, args),
                     Source = source,
                 });
             }
         }
-
 
         /// <summary>
         /// Debug Log
@@ -281,7 +280,7 @@ namespace OfficeDevPnP.Core.Diagnostics
             InitializeLogger();
             if (_logLevel == LogLevel.Debug)
             {
-                _logger.Debug(new LogEntry()
+                _logger.Debug(new LogEntry
                 {
                     Message = string.Format(message, args),
                     Source = source,

@@ -22,7 +22,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors.OpenXML.Model
         /// </summary>
         public String Version
         {
-            get { return ("1.0"); }
+            get { return "1.0"; }
         }
     }
 

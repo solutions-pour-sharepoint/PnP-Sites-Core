@@ -27,7 +27,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers.V2018
                 PnPObjectsMapper.MapProperties(header, result, resolvers, recursive);
             }
 
-            return (result);
+            return result;
         }
     }
 }

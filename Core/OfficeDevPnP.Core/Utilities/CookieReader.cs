@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
 
-
-
 namespace OfficeDevPnP.Core.Utilities
 {
     //Taken from "Remote Authentication in SharePoint Online Using the Client Object Model"
@@ -34,9 +32,8 @@ namespace OfficeDevPnP.Core.Utilities
         /// <returns>Returns Cookie contents as a string</returns>
         public static string GetCookie(string url)
         {
-
-            int size = 512;
-            StringBuilder sb = new StringBuilder(size);
+            var size = 512;
+            var sb = new StringBuilder(size);
             if (!NativeMethods.InternetGetCookieEx(url, null, sb, ref size, INTERNET_COOKIE_HTTPONLY, IntPtr.Zero))
             {
                 if (size < 0)
@@ -54,7 +51,6 @@ namespace OfficeDevPnP.Core.Utilities
 
         private static class NativeMethods
         {
-
             [DllImport("wininet.dll", EntryPoint = "InternetGetCookieEx", CharSet = CharSet.Unicode, SetLastError = true)]
             public static extern bool InternetGetCookieEx(
                 string url,

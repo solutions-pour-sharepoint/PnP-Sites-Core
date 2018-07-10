@@ -24,9 +24,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|",
+            return String.Format("{0}|",
                 this.LCID.GetHashCode()
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -38,9 +38,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is SupportedUILanguage))
             {
-                return (false);
+                return false;
             }
-            return (Equals((SupportedUILanguage)obj));
+            return Equals((SupportedUILanguage)obj);
         }
 
         /// <summary>
@@ -52,10 +52,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.LCID == other.LCID);
+            return this.LCID == other.LCID;
         }
 
         #endregion

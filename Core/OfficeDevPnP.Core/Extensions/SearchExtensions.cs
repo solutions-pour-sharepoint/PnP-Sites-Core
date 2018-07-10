@@ -65,10 +65,10 @@ namespace Microsoft.SharePoint.Client
         /// <returns>Returns search configuration</returns>
         private static string GetSearchConfigurationImplementation(ClientRuntimeContext context, SearchObjectLevel searchSettingsObjectLevel)
         {
-            SearchConfigurationPortability sconfig = new SearchConfigurationPortability(context);
-            SearchObjectOwner owner = new SearchObjectOwner(context, searchSettingsObjectLevel);
+            var sconfig = new SearchConfigurationPortability(context);
+            var owner = new SearchObjectOwner(context, searchSettingsObjectLevel);
 
-            ClientResult<string> configresults = sconfig.ExportSearchConfiguration(owner);
+            var configresults = sconfig.ExportSearchConfiguration(owner);
             context.ExecuteQueryRetry();
 
             return configresults.Value;
@@ -90,7 +90,6 @@ namespace Microsoft.SharePoint.Client
             }
 
             SetSearchConfigurationImplementation(context, searchSettingsImportLevel, System.IO.File.ReadAllText(searchSchemaImportFilePath));
-
         }
 
         /// <summary>
@@ -113,7 +112,6 @@ namespace Microsoft.SharePoint.Client
             SetSearchConfigurationImplementation(site.Context, SearchObjectLevel.SPSite, searchConfiguration);
         }
 
-
         /// <summary>
         /// Sets the search configuration at the specified object level
         /// </summary>
@@ -129,8 +127,8 @@ namespace Microsoft.SharePoint.Client
                 throw new Exception("You cannot import customized search configuration settings to a Search service application (SSA).");
             }
 #endif
-            SearchConfigurationPortability searchConfig = new SearchConfigurationPortability(context);
-            SearchObjectOwner owner = new SearchObjectOwner(context, searchObjectLevel);
+            var searchConfig = new SearchConfigurationPortability(context);
+            var owner = new SearchObjectOwner(context, searchObjectLevel);
 
             // Import search configuration
             searchConfig.ImportSearchConfiguration(owner, searchConfiguration);
@@ -217,7 +215,6 @@ namespace Microsoft.SharePoint.Client
             // Get search results page URL of the current web
             return web.GetPropertyBagValueString("SRCH_SB_SET_WEB", string.Empty);
         }
-
 
     }
 }

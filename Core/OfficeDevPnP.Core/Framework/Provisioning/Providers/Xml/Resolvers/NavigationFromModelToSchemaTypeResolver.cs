@@ -112,7 +112,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers
                 }
             }
 
-            return (target);
+            return target;
         }
     }
 }

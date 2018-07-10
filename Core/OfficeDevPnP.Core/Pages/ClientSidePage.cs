@@ -305,7 +305,6 @@ namespace OfficeDevPnP.Core.Pages
             }
 
             this.sections.Clear();
-
         }
 
         /// <summary>
@@ -509,7 +508,7 @@ namespace OfficeDevPnP.Core.Pages
         /// <returns>Html representation</returns>
         public string ToHtml()
         {
-            StringBuilder html = new StringBuilder(100);
+            var html = new StringBuilder(100);
 #if NETSTANDARD2_0
             html.Append($@"<div>");
             // Normalize section order by starting from 1, users could have started from 0 or left gaps in the numbering
@@ -538,7 +537,7 @@ namespace OfficeDevPnP.Core.Pages
 
                 // Normalize section order by starting from 1, users could have started from 0 or left gaps in the numbering
                 var sectionsToOrder = this.sections.OrderBy(p => p.Order).ToList();
-                int i = 1;
+                var i = 1;
                 foreach (var section in sectionsToOrder)
                 {
                     section.Order = i;
@@ -574,7 +573,7 @@ namespace OfficeDevPnP.Core.Pages
                 throw new ArgumentException("Passed pageName object cannot be null or empty");
             }
 
-            ClientSidePage page = new ClientSidePage(cc)
+            var page = new ClientSidePage(cc)
             {
                 pageName = pageName
             };
@@ -707,12 +706,12 @@ namespace OfficeDevPnP.Core.Pages
             this.Context.ExecuteQueryRetry();
 
             // Try to set the page banner image url if not yet set
-            bool isDirty = false;
+            var isDirty = false;
             if (this.layoutType == ClientSidePageLayoutType.Article && item[ClientSidePage.BannerImageUrl] != null)
             {
                 if (string.IsNullOrEmpty((item[ClientSidePage.BannerImageUrl] as FieldUrlValue).Url) || (item[ClientSidePage.BannerImageUrl] as FieldUrlValue).Url.IndexOf("/_layouts/15/images/sitepagethumbnail.png", StringComparison.InvariantCultureIgnoreCase) >= 0)
                 {
-                    string previewImageServerRelativeUrl = "";
+                    var previewImageServerRelativeUrl = "";
                     if (this.pageHeader.Type == ClientSidePageHeaderType.Custom && !string.IsNullOrEmpty(this.pageHeader.ImageServerRelativeUrl))
                     {
                         previewImageServerRelativeUrl = this.pageHeader.ImageServerRelativeUrl;
@@ -760,7 +759,7 @@ namespace OfficeDevPnP.Core.Pages
             {
                 if (item[ClientSidePage.DescriptionField] == null || string.IsNullOrEmpty(item[ClientSidePage.DescriptionField].ToString()))
                 {
-                    string previewText = "";
+                    var previewText = "";
                     foreach (var control in this.Controls)
                     {
                         if (control is ClientSideText)
@@ -779,7 +778,6 @@ namespace OfficeDevPnP.Core.Pages
                     item[ClientSidePage.DescriptionField] = previewText.Length > 300 ? previewText.Substring(0, 300) : previewText;
                     isDirty = true;
                 }
-
             }
 
             if (isDirty)
@@ -803,7 +801,7 @@ namespace OfficeDevPnP.Core.Pages
                 throw new ArgumentException("Passed html cannot be null or empty");
             }
 
-            ClientSidePage page = new ClientSidePage();
+            var page = new ClientSidePage();
             page.LoadFromHtml(html, null);
             return page;
         }
@@ -952,7 +950,7 @@ namespace OfficeDevPnP.Core.Pages
             }
 
             // Request information about the available client side components from SharePoint
-            Task<String> availableClientSideComponentsJson = Task.Run(() => GetClientSideWebPartsAsync(this.accessToken, this.Context).GetAwaiter().GetResult());
+            var availableClientSideComponentsJson = Task.Run(() => GetClientSideWebPartsAsync(this.accessToken, this.Context).GetAwaiter().GetResult());
 
             if (String.IsNullOrEmpty(availableClientSideComponentsJson.Result))
             {
@@ -960,7 +958,7 @@ namespace OfficeDevPnP.Core.Pages
             }
 
             // Deserialize the returned data
-            var jsonSerializerSettings = new JsonSerializerSettings()
+            var jsonSerializerSettings = new JsonSerializerSettings
             {
                 MissingMemberHandling = MissingMemberHandling.Ignore
             };
@@ -994,7 +992,7 @@ namespace OfficeDevPnP.Core.Pages
             }
 
             // Request information about the available client side components from SharePoint
-            string availableClientSideComponentsJson = await GetClientSideWebPartsAsync(this.accessToken, this.Context);
+            var availableClientSideComponentsJson = await GetClientSideWebPartsAsync(this.accessToken, this.Context);
 
             if (String.IsNullOrEmpty(availableClientSideComponentsJson))
             {
@@ -1002,7 +1000,7 @@ namespace OfficeDevPnP.Core.Pages
             }
 
             // Deserialize the returned data
-            var jsonSerializerSettings = new JsonSerializerSettings()
+            var jsonSerializerSettings = new JsonSerializerSettings
             {
                 MissingMemberHandling = MissingMemberHandling.Ignore
             };
@@ -1177,7 +1175,7 @@ namespace OfficeDevPnP.Core.Pages
 
         private void ValidateOneColumnFullWidthSectionUsage()
         {
-            bool hasOneColumnFullWidthSection = false;
+            var hasOneColumnFullWidthSection = false;
             foreach (var section in this.sections)
             {
                 if (section.Type == CanvasSectionTemplate.OneColumnFullWidth)
@@ -1256,7 +1254,7 @@ namespace OfficeDevPnP.Core.Pages
                 throw new ArgumentException("Passed html cannot be null or empty");
             }
 
-            HtmlParser parser = new HtmlParser(new HtmlParserOptions() { IsEmbedded = true });
+            var parser = new HtmlParser(new HtmlParserOptions { IsEmbedded = true });
             using (var document = parser.Parse(html))
             {
                 // select all control div's
@@ -1265,7 +1263,7 @@ namespace OfficeDevPnP.Core.Pages
                 // clear sections as we're constructing them from the loaded html
                 this.sections.Clear();
 
-                int controlOrder = 0;
+                var controlOrder = 0;
                 foreach (var clientSideControl in clientSideControls)
                 {
                     var controlData = clientSideControl.GetAttribute(CanvasControl.ControlDataAttribute);
@@ -1273,7 +1271,7 @@ namespace OfficeDevPnP.Core.Pages
 
                     if (controlType == typeof(ClientSideText))
                     {
-                        var control = new ClientSideText()
+                        var control = new ClientSideText
                         {
                             Order = controlOrder
                         };
@@ -1286,7 +1284,7 @@ namespace OfficeDevPnP.Core.Pages
                     }
                     else if (controlType == typeof(ClientSideWebPart))
                     {
-                        var control = new ClientSideWebPart()
+                        var control = new ClientSideWebPart
                         {
                             Order = controlOrder
                         };
@@ -1299,7 +1297,7 @@ namespace OfficeDevPnP.Core.Pages
                     }
                     else if (controlType == typeof(CanvasColumn))
                     {
-                        var jsonSerializerSettings = new JsonSerializerSettings()
+                        var jsonSerializerSettings = new JsonSerializerSettings
                         {
                             MissingMemberHandling = MissingMemberHandling.Ignore
                         };
@@ -1420,8 +1418,8 @@ namespace OfficeDevPnP.Core.Pages
                 {
                     //GET https://bertonline.sharepoint.com/sites/130023/_api/web/GetClientSideWebParts HTTP/1.1
 
-                    string requestUrl = String.Format("{0}/_api/web/GetClientSideWebParts", context.Web.Url);
-                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
+                    var requestUrl = String.Format("{0}/_api/web/GetClientSideWebParts", context.Web.Url);
+                    var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
                     request.Headers.Add("accept", "application/json;odata.metadata=minimal");
                     request.Headers.Add("odata-version", "4.0");
 
@@ -1431,7 +1429,7 @@ namespace OfficeDevPnP.Core.Pages
                         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                     }
 
-                    HttpResponseMessage response = await httpClient.SendAsync(request, new System.Threading.CancellationToken());
+                    var response = await httpClient.SendAsync(request, new System.Threading.CancellationToken());
 
                     if (response.IsSuccessStatusCode)
                     {

@@ -19,7 +19,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers
         public object Resolve(object source, Dictionary<string, IResolver> resolvers = null, bool recursive = false)
         {
             Object result = null;
-            Boolean anySecurity = false;
+            var anySecurity = false;
             var security = source.GetPublicInstancePropertyValue("Security") as Model.ObjectSecurity;
             
             if (security != null)
@@ -30,7 +30,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers
                 var breakRoleInheritanceType = Type.GetType(breakRoleInheritanceTypeName, true);
                 var roleAssignmentTypeName = $"{PnPSerializationScope.Current?.BaseSchemaNamespace}.RoleAssignment, {PnPSerializationScope.Current?.BaseSchemaAssemblyName}";
                 var roleAssignmentType = Type.GetType(roleAssignmentTypeName, true);
-
 
                 result = Activator.CreateInstance(securityType);
                 var breakRoleInheritance = Activator.CreateInstance(breakRoleInheritanceType);
@@ -48,7 +47,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers
                 result.SetPublicInstancePropertyValue("BreakRoleInheritance", breakRoleInheritance);
             }
 
-            return (anySecurity ? result : null);
+            return anySecurity ? result : null;
         }
     }
 }

@@ -144,19 +144,19 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|",
-                (this.Id != null ? this.Id.GetHashCode() : 0),
-                (this.Name != null ? this.Name.GetHashCode() : 0),
-                (this.Description != null ? this.Description.GetHashCode() : 0),
-                (this.Group != null ? this.Group.GetHashCode() : 0),
+            return String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|",
+                this.Id != null ? this.Id.GetHashCode() : 0,
+                this.Name != null ? this.Name.GetHashCode() : 0,
+                this.Description != null ? this.Description.GetHashCode() : 0,
+                this.Group != null ? this.Group.GetHashCode() : 0,
                 this.Hidden.GetHashCode(),
                 this.ReadOnly.GetHashCode(),
                 this.Overwrite.GetHashCode(),
                 this.Sealed.GetHashCode(),
-                (this.DocumentTemplate != null ? this.DocumentTemplate.GetHashCode() : 0),
-                (this.DocumentSetTemplate != null ? this.DocumentSetTemplate.GetHashCode() : 0),
+                this.DocumentTemplate != null ? this.DocumentTemplate.GetHashCode() : 0,
+                this.DocumentSetTemplate != null ? this.DocumentSetTemplate.GetHashCode() : 0,
                 this.FieldRefs.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0))
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -168,9 +168,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is ContentType))
             {
-                return (false);
+                return false;
             }
-            return (Equals((ContentType)obj));
+            return Equals((ContentType)obj);
         }
 
         /// <summary>
@@ -182,10 +182,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.Id == other.Id &&
+            return this.Id == other.Id &&
                     this.Name == other.Name &&
                     this.Description == other.Description &&
                     this.Group == other.Group &&
@@ -196,8 +196,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                     this.DocumentTemplate == other.DocumentTemplate &&
                     this.DocumentSetTemplate == other.DocumentSetTemplate &&
                     this.FieldRefs.DeepEquals(other.FieldRefs)
-                );
-
+                ;
         }
 
         #endregion

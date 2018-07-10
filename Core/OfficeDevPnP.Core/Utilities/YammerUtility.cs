@@ -62,11 +62,11 @@ namespace OfficeDevPnP.Core.Utilities
         public static List<YammerGroup> GetYammerGroups(string accessToken)
         {
             // Get user
-            YammerUser user = GetYammerUser(accessToken);
+            var user = GetYammerUser(accessToken);
 
             //get the users groups to check for the group
             var response = GetYammerJson($"https://www.yammer.com/api/v1/groups/for_user/{user.id}.json", accessToken);
-            List<YammerGroup> groups = JsonUtility.Deserialize<List<YammerGroup>>(response);
+            var groups = JsonUtility.Deserialize<List<YammerGroup>>(response);
 
             // Updated network information to the group data
             foreach (var item in groups)
@@ -100,11 +100,11 @@ namespace OfficeDevPnP.Core.Utilities
         public static YammerGroup CreateYammerGroup(string groupName, bool isPrivate, string accessToken)
         {
             //Get reference existing group if exists
-            YammerGroup yamGroup = GetYammerGroupByName(groupName, accessToken);
+            var yamGroup = GetYammerGroupByName(groupName, accessToken);
             if (yamGroup == null)
             {
                 //Create yammer group
-                string url = $"https://www.yammer.com/api/v1/groups.json?name={groupName}&private={isPrivate.ToString().ToLower()}";
+                var url = $"https://www.yammer.com/api/v1/groups.json?name={groupName}&private={isPrivate.ToString().ToLower()}";
                 PostYammerJson(url, accessToken);
                 yamGroup = GetYammerGroupByName(groupName, accessToken);
             }
@@ -121,7 +121,7 @@ namespace OfficeDevPnP.Core.Utilities
         /// <returns>Returns created WebPartEntity</returns>
         public static WebPartEntity GetYammerGroupDiscussionPart(string yammerNetworkName, int yammerGroupId, bool showHeader, bool showFooter)
         {
-            WebPartEntity wpYammer = new WebPartEntity();
+            var wpYammer = new WebPartEntity();
             wpYammer.WebPartXml = CreateYammerGroupDiscussionPartXml(yammerNetworkName, yammerGroupId, showHeader, showFooter);
             wpYammer.WebPartIndex = 0;
             wpYammer.WebPartTitle = "Yammer";
@@ -141,7 +141,7 @@ namespace OfficeDevPnP.Core.Utilities
         /// <returns>Returns created WebPartEntity</returns>
         public static WebPartEntity GetYammerOpenGraphDiscussionPart(string yammerNetworkName, string url, bool showHeader, bool showFooter, string postTitle = "", string postImageUrl = "", string defaultGroupId = "")
         {
-            WebPartEntity wpYammer = new WebPartEntity();
+            var wpYammer = new WebPartEntity();
             wpYammer.WebPartXml = CreateYammerOpenGraphDiscussionPartXml(yammerNetworkName, url, showHeader, showFooter, postTitle, postImageUrl, true, defaultGroupId);
             wpYammer.WebPartIndex = 0;
             wpYammer.WebPartTitle = "Yammer";
@@ -173,7 +173,7 @@ namespace OfficeDevPnP.Core.Utilities
         /// <returns>The constructed web part XML</returns>
         public static string CreateYammerGroupDiscussionPartXml(string yammerNetworkName, int yammerGroupId, bool showHeader, bool showFooter, bool useSSO = true)
         {
-            StringBuilder wp = new StringBuilder(100);
+            var wp = new StringBuilder(100);
             wp.Append("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
             wp.Append("<webParts>");
             wp.Append("	<webPart xmlns='http://schemas.microsoft.com/WebPart/v3'>");
@@ -226,7 +226,7 @@ namespace OfficeDevPnP.Core.Utilities
                                                                     bool showFooter, string postTitle = "", string postImageUrl = "",
                                                                     bool useSso = true, string groupId = "")
         {
-            StringBuilder wp = new StringBuilder(100);
+            var wp = new StringBuilder(100);
             wp.Append("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
             wp.Append("<webParts>");
             wp.Append("	<webPart xmlns='http://schemas.microsoft.com/WebPart/v3'>");
@@ -287,12 +287,12 @@ namespace OfficeDevPnP.Core.Utilities
         {
             //make the request
             string json = null;
-            HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+            var request = WebRequest.Create(url) as HttpWebRequest;
             request.Headers.Add("Authorization", "Bearer" + " " + accessToken);
             using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
             {
-                Encoding encode = Encoding.GetEncoding("utf-8");
-                StreamReader reader = new StreamReader(response.GetResponseStream(), encode);
+                var encode = Encoding.GetEncoding("utf-8");
+                var reader = new StreamReader(response.GetResponseStream(), encode);
                 json = reader.ReadToEnd();
             }
             return json;
@@ -302,14 +302,14 @@ namespace OfficeDevPnP.Core.Utilities
         {
             //make the request
             string json = null;
-            HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+            var request = WebRequest.Create(url) as HttpWebRequest;
             request.Method = "POST";
             request.ContentLength = 0;
             request.Headers.Add("Authorization", "Bearer" + " " + accessToken);
             using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
             {
-                Encoding encode = Encoding.GetEncoding("utf-8");
-                StreamReader reader = new StreamReader(response.GetResponseStream(), encode);
+                var encode = Encoding.GetEncoding("utf-8");
+                var reader = new StreamReader(response.GetResponseStream(), encode);
                 json = reader.ReadToEnd();
             }
             return json;

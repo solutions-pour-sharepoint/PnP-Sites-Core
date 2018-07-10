@@ -133,17 +133,17 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}",
-                (this.ExcludedExtensions != null ? this.ExcludedExtensions.GetHashCode() : 0),
-                (this.Folder != null ? this.Folder.GetHashCode() : 0),
-                (this.IncludedExtensions != null ? this.IncludedExtensions.GetHashCode() : 0),
+            return String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}",
+                this.ExcludedExtensions != null ? this.ExcludedExtensions.GetHashCode() : 0,
+                this.Folder != null ? this.Folder.GetHashCode() : 0,
+                this.IncludedExtensions != null ? this.IncludedExtensions.GetHashCode() : 0,
                 this.Level.GetHashCode(),
-                (this.MetadataMappingFile != null ? this.MetadataMappingFile.GetHashCode() : 0),
+                this.MetadataMappingFile != null ? this.MetadataMappingFile.GetHashCode() : 0,
                 this.Overwrite.GetHashCode(),
                 this.Recursive.GetHashCode(),
-                (this.Src != null ? this.Src.GetHashCode() : 0),
-                (this.Security != null ? this.Security.GetHashCode() : 0)
-            ).GetHashCode());
+                this.Src != null ? this.Src.GetHashCode() : 0,
+                this.Security != null ? this.Security.GetHashCode() : 0
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -155,9 +155,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is Directory))
             {
-                return (false);
+                return false;
             }
-            return (Equals((Directory)obj));
+            return Equals((Directory)obj);
         }
 
         /// <summary>
@@ -169,10 +169,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.ExcludedExtensions == other.ExcludedExtensions &&
+            return this.ExcludedExtensions == other.ExcludedExtensions &&
                 this.Folder == other.Folder &&
                 this.IncludedExtensions == other.IncludedExtensions &&
                 this.Level == other.Level &&
@@ -181,7 +181,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                 this.Recursive == other.Recursive &&
                 this.Src == other.Src &&
                 (this.Security != null ? this.Security.Equals(other.Security) : true)
-            );
+            ;
         }
 
         #endregion

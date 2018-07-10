@@ -29,8 +29,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            XElement element = PrepareViewForCompare(this.SchemaXml);
-            return (element != null ? element.ToString().GetHashCode() : 0);
+            var element = PrepareViewForCompare(this.SchemaXml);
+            return element != null ? element.ToString().GetHashCode() : 0;
         }
 
         /// <summary>
@@ -42,9 +42,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is View))
             {
-                return (false);
+                return false;
             }
-            return (Equals((View)obj));
+            return Equals((View)obj);
         }
 
         /// <summary>
@@ -56,20 +56,20 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            XElement currentXml = PrepareViewForCompare(this.SchemaXml);
-            XElement otherXml = PrepareViewForCompare(other.SchemaXml);
-            return (XNode.DeepEquals(currentXml, otherXml));
+            var currentXml = PrepareViewForCompare(this.SchemaXml);
+            var otherXml = PrepareViewForCompare(other.SchemaXml);
+            return XNode.DeepEquals(currentXml, otherXml);
         }
 
         private XElement PrepareViewForCompare(string schemaXML)
         {
-            XElement element = XElement.Parse(schemaXML);
+            var element = XElement.Parse(schemaXML);
             if (element.Attribute("Name") != null)
             {
-                Guid nameGuid = Guid.Empty;
+                var nameGuid = Guid.Empty;
                 if (Guid.TryParse(element.Attribute("Name").Value, out nameGuid))
                 {
                     // Temporary remove guid
@@ -87,7 +87,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                 if (index > -1)
                 {
                     // Remove ?rev=23 in URL
-                    Regex regex = new Regex("\\?rev=([0-9])\\w+");
+                    var regex = new Regex("\\?rev=([0-9])\\w+");
                     element.SetAttributeValue("ImageUrl", regex.Replace(element.Attribute("ImageUrl").Value, ""));
                 }
             }

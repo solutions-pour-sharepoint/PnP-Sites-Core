@@ -32,13 +32,13 @@ namespace Microsoft.SharePoint.Client
             web.Context.Load(users);
             web.Context.ExecuteQueryRetry();
 
-            List<UserEntity> admins = new List<UserEntity>();
+            var admins = new List<UserEntity>();
 
             foreach (var u in users)
             {
                 if (u.IsSiteAdmin)
                 {
-                    admins.Add(new UserEntity()
+                    admins.Add(new UserEntity
                     {
                         Title = u.Title,
                         LoginName = u.LoginName,
@@ -63,11 +63,11 @@ namespace Microsoft.SharePoint.Client
 
             foreach (var admin in adminLogins)
             {
-                UserCreationInformation newAdmin = new UserCreationInformation();
+                var newAdmin = new UserCreationInformation();
 
                 newAdmin.LoginName = admin.LoginName;
                 //User addedAdmin = users.Add(newAdmin);
-                User addedAdmin = web.EnsureUser(newAdmin.LoginName);
+                var addedAdmin = web.EnsureUser(newAdmin.LoginName);
                 web.Context.Load(addedAdmin);
                 web.Context.ExecuteQueryRetry();
 
@@ -102,9 +102,7 @@ namespace Microsoft.SharePoint.Client
                 adminToRemove.Update();
                 web.Context.ExecuteQueryRetry();
             }
-
         }
-
 
         #endregion
 
@@ -135,7 +133,7 @@ namespace Microsoft.SharePoint.Client
                 case BuiltInIdentity.Everyone:
                     {
                         const string userIdentity = "c:0(.s|true";
-                        User spReader = web.EnsureUser(userIdentity);
+                        var spReader = web.EnsureUser(userIdentity);
                         web.Context.Load(spReader);
                         web.Context.ExecuteQueryRetry();
 
@@ -151,7 +149,7 @@ namespace Microsoft.SharePoint.Client
                         try
                         {
                             // New tenant
-                            string userIdentity =
+                            var userIdentity =
                                 $"c:0-.f|rolemanager|spo-grid-all-users/{web.GetAuthenticationRealm()}";
                             spReader = web.EnsureUser(userIdentity);
                             web.Context.Load(spReader);
@@ -160,7 +158,7 @@ namespace Microsoft.SharePoint.Client
                         catch (ServerException)
                         {
                             // old tenant?
-                            string userIdentity = string.Empty;
+                            var userIdentity = string.Empty;
 
                             web.Context.Load(web, w => w.Language);
                             web.Context.ExecuteQueryRetry();
@@ -339,8 +337,8 @@ namespace Microsoft.SharePoint.Client
             if (siteUrl == null)
                 throw new ArgumentNullException("siteUrl");
 
-            Tenant tenant = new Tenant(web.Context);
-            SiteProperties site = tenant.GetSitePropertiesByUrl(siteUrl.OriginalString, true);
+            var tenant = new Tenant(web.Context);
+            var site = tenant.GetSitePropertiesByUrl(siteUrl.OriginalString, true);
             web.Context.Load(site);
             web.Context.ExecuteQueryRetry();
             return site.SharingCapability.ToString();
@@ -353,12 +351,12 @@ namespace Microsoft.SharePoint.Client
         /// <returns>A list of <see cref="OfficeDevPnP.Core.Entities.ExternalUserEntity"/> objects</returns>
         public static List<ExternalUserEntity> GetExternalUsersTenant(this Web web)
         {
-            Tenant tenantAdmin = new Tenant(web.Context);
-            Office365Tenant tenant = new Office365Tenant(web.Context);
+            var tenantAdmin = new Tenant(web.Context);
+            var tenant = new Office365Tenant(web.Context);
 
-            List<ExternalUserEntity> externalUsers = new List<ExternalUserEntity>();
+            var externalUsers = new List<ExternalUserEntity>();
             const int pageSize = 50;
-            int position = 0;
+            var position = 0;
 
             while (true)
             {
@@ -368,7 +366,7 @@ namespace Microsoft.SharePoint.Client
 
                 foreach (var externalUser in results.ExternalUserCollection)
                 {
-                    externalUsers.Add(new ExternalUserEntity()
+                    externalUsers.Add(new ExternalUserEntity
                     {
                         DisplayName = externalUser.DisplayName,
                         AcceptedAs = externalUser.AcceptedAs,
@@ -390,7 +388,6 @@ namespace Microsoft.SharePoint.Client
             return externalUsers;
         }
 
-
         /// <summary>
         /// Returns a list all external users for a given site that have at least the viewpages permission
         /// </summary>
@@ -402,14 +399,14 @@ namespace Microsoft.SharePoint.Client
             if (siteUrl == null)
                 throw new ArgumentNullException("siteUrl");
 
-            Tenant tenantAdmin = new Tenant(web.Context);
-            Office365Tenant tenant = new Office365Tenant(web.Context);
-            Site site = tenantAdmin.GetSiteByUrl(siteUrl.OriginalString);
+            var tenantAdmin = new Tenant(web.Context);
+            var tenant = new Office365Tenant(web.Context);
+            var site = tenantAdmin.GetSiteByUrl(siteUrl.OriginalString);
             web = site.RootWeb;
 
-            List<ExternalUserEntity> externalUsers = new List<ExternalUserEntity>();
+            var externalUsers = new List<ExternalUserEntity>();
             const int pageSize = 50;
-            int position = 0;
+            var position = 0;
 
             while (true)
             {
@@ -419,8 +416,7 @@ namespace Microsoft.SharePoint.Client
 
                 foreach (var externalUser in results.ExternalUserCollection)
                 {
-
-                    User user = web.SiteUsers.GetByEmail(externalUser.AcceptedAs);
+                    var user = web.SiteUsers.GetByEmail(externalUser.AcceptedAs);
                     web.Context.Load(user);
                     web.Context.ExecuteQueryRetry();
 
@@ -429,7 +425,7 @@ namespace Microsoft.SharePoint.Client
                     var doesUserHavePermission = permission.Value.Has(PermissionKind.ViewPages);
                     if (doesUserHavePermission)
                     {
-                        externalUsers.Add(new ExternalUserEntity()
+                        externalUsers.Add(new ExternalUserEntity
                         {
                             DisplayName = externalUser.DisplayName,
                             AcceptedAs = externalUser.AcceptedAs,
@@ -439,7 +435,6 @@ namespace Microsoft.SharePoint.Client
                             WhenCreated = externalUser.WhenCreated,
                         });
                     }
-
                 }
 
                 position = results.UserCollectionPosition;
@@ -468,7 +463,7 @@ namespace Microsoft.SharePoint.Client
             if (string.IsNullOrEmpty(groupName))
                 throw new ArgumentNullException("groupName");
 
-            int groupID = 0;
+            var groupID = 0;
 
             var manageMessageGroup = web.SiteGroups.GetByName(groupName);
             web.Context.Load(manageMessageGroup);
@@ -496,10 +491,10 @@ namespace Microsoft.SharePoint.Client
             if (string.IsNullOrEmpty(groupName))
                 throw new ArgumentNullException("groupName");
 
-            GroupCreationInformation groupCreationInformation = new GroupCreationInformation();
+            var groupCreationInformation = new GroupCreationInformation();
             groupCreationInformation.Title = groupName;
             groupCreationInformation.Description = groupDescription;
-            Group group = web.SiteGroups.Add(groupCreationInformation);
+            var group = web.SiteGroups.Add(groupCreationInformation);
             if (groupIsOwner)
             {
                 group.Owner = group;
@@ -561,9 +556,9 @@ namespace Microsoft.SharePoint.Client
                 throw new ArgumentNullException("userLoginName");
 
             //Ensure the user is known
-            UserCreationInformation userToAdd = new UserCreationInformation();
+            var userToAdd = new UserCreationInformation();
             userToAdd.LoginName = userLoginName;
-            User user = web.EnsureUser(userToAdd.LoginName);
+            var user = web.EnsureUser(userToAdd.LoginName);
             web.Context.Load(user);
             //web.Context.ExecuteQueryRetry();
 
@@ -588,9 +583,9 @@ namespace Microsoft.SharePoint.Client
             if (string.IsNullOrEmpty(userLoginName))
                 throw new ArgumentNullException("userLoginName");
 
-            Group group = web.SiteGroups.GetById(groupId);
+            var group = web.SiteGroups.GetById(groupId);
             web.Context.Load(group);
-            User user = web.EnsureUser(userLoginName);
+            var user = web.EnsureUser(userLoginName);
             web.Context.ExecuteQueryRetry();
 
             if (user != null && group != null)
@@ -631,7 +626,7 @@ namespace Microsoft.SharePoint.Client
             if (string.IsNullOrEmpty(userLoginName))
                 throw new ArgumentNullException("userLoginName");
 
-            User user = web.EnsureUser(userLoginName);
+            var user = web.EnsureUser(userLoginName);
             web.Context.ExecuteQueryRetry();
             if (user != null)
             {
@@ -652,9 +647,9 @@ namespace Microsoft.SharePoint.Client
             if (string.IsNullOrEmpty(userLoginName))
                 throw new ArgumentNullException("userLoginName");
 
-            Web web = securableObject.GetAssociatedWeb();
+            var web = securableObject.GetAssociatedWeb();
 
-            User user = web.EnsureUser(userLoginName);
+            var user = web.EnsureUser(userLoginName);
             securableObject.AddPermissionLevelToPrincipal(user, permissionLevel, removeExistingPermissionLevels);
         }
 
@@ -673,9 +668,9 @@ namespace Microsoft.SharePoint.Client
             if (string.IsNullOrEmpty(userLoginName))
                 throw new ArgumentNullException("roleDefinitionName");
 
-            Web web = securableObject.GetAssociatedWeb();
+            var web = securableObject.GetAssociatedWeb();
 
-            User user = web.EnsureUser(userLoginName);
+            var user = web.EnsureUser(userLoginName);
             securableObject.AddPermissionLevelToPrincipal(user, roleDefinitionName, removeExistingPermissionLevels);
         }
 
@@ -691,7 +686,7 @@ namespace Microsoft.SharePoint.Client
             if (string.IsNullOrEmpty(groupName))
                 throw new ArgumentNullException("groupName");
 
-            Web web = securableObject.GetAssociatedWeb();
+            var web = securableObject.GetAssociatedWeb();
 
             var group = web.SiteGroups.GetByName(groupName);
 
@@ -710,11 +705,11 @@ namespace Microsoft.SharePoint.Client
             if (principal == null)
                 throw new ArgumentNullException("principal");
 
-            Web web = securableObject.GetAssociatedWeb();
+            var web = securableObject.GetAssociatedWeb();
 
             securableObject.Context.Load(principal);
             securableObject.Context.ExecuteQueryRetry();
-            RoleDefinition roleDefinition = web.RoleDefinitions.GetByType(permissionLevel);
+            var roleDefinition = web.RoleDefinitions.GetByType(permissionLevel);
             securableObject.AddPermissionLevelImplementation(principal, roleDefinition, removeExistingPermissionLevels);
         }
 
@@ -733,7 +728,7 @@ namespace Microsoft.SharePoint.Client
             if (string.IsNullOrEmpty(roleDefinitionName))
                 throw new ArgumentNullException("roleDefinitionName");
 
-            Web web = securableObject.GetAssociatedWeb();
+            var web = securableObject.GetAssociatedWeb();
 
             var group = web.SiteGroups.GetByName(groupName);
 
@@ -755,11 +750,11 @@ namespace Microsoft.SharePoint.Client
             if (string.IsNullOrEmpty(roleDefinitionName))
                 throw new ArgumentNullException("roleDefinitionName");
 
-            Web web = securableObject.GetAssociatedWeb();
+            var web = securableObject.GetAssociatedWeb();
 
             securableObject.Context.Load(principal);
             securableObject.Context.ExecuteQueryRetry();
-            RoleDefinition roleDefinition = web.RoleDefinitions.GetByName(roleDefinitionName);
+            var roleDefinition = web.RoleDefinitions.GetByName(roleDefinitionName);
             securableObject.AddPermissionLevelImplementation(principal, roleDefinition, removeExistingPermissionLevels);
         }
 
@@ -821,9 +816,9 @@ namespace Microsoft.SharePoint.Client
             if (string.IsNullOrEmpty(userLoginName))
                 throw new ArgumentNullException("userLoginName");
 
-            Web web = securableObject.GetAssociatedWeb();
+            var web = securableObject.GetAssociatedWeb();
 
-            User user = web.EnsureUser(userLoginName);
+            var user = web.EnsureUser(userLoginName);
 
             securableObject.RemovePermissionLevelFromPrincipal(user, permissionLevel, removeAllPermissionLevels);
         }
@@ -840,11 +835,11 @@ namespace Microsoft.SharePoint.Client
             if (principal == null)
                 throw new ArgumentNullException("principal");
 
-            Web web = securableObject.GetAssociatedWeb();
+            var web = securableObject.GetAssociatedWeb();
 
             securableObject.Context.Load(principal);
             securableObject.Context.ExecuteQueryRetry();
-            RoleDefinition roleDefinition = web.RoleDefinitions.GetByType(permissionLevel);
+            var roleDefinition = web.RoleDefinitions.GetByType(permissionLevel);
 
             securableObject.RemovePermissionLevelImplementation(principal, roleDefinition, removeAllPermissionLevels);
         }
@@ -861,9 +856,9 @@ namespace Microsoft.SharePoint.Client
             if (string.IsNullOrEmpty(userLoginName))
                 throw new ArgumentNullException("userLoginName");
 
-            Web web = securableObject.GetAssociatedWeb();
+            var web = securableObject.GetAssociatedWeb();
 
-            User user = web.EnsureUser(userLoginName);
+            var user = web.EnsureUser(userLoginName);
 
             securableObject.RemovePermissionLevelFromPrincipal(user, roleDefinitionName, removeAllPermissionLevels);
         }
@@ -880,11 +875,11 @@ namespace Microsoft.SharePoint.Client
             if (principal == null)
                 throw new ArgumentNullException("principal");
 
-            Web web = securableObject.GetAssociatedWeb();
+            var web = securableObject.GetAssociatedWeb();
 
             securableObject.Context.Load(principal);
             securableObject.Context.ExecuteQueryRetry();
-            RoleDefinition roleDefinition = web.RoleDefinitions.GetByName(roleDefinitionName);
+            var roleDefinition = web.RoleDefinitions.GetByName(roleDefinitionName);
 
             securableObject.RemovePermissionLevelImplementation(principal, roleDefinition, removeAllPermissionLevels);
         }
@@ -901,12 +896,12 @@ namespace Microsoft.SharePoint.Client
             if (string.IsNullOrEmpty(groupName))
                 throw new ArgumentNullException("groupName");
 
-            Web web = securableObject.GetAssociatedWeb();
+            var web = securableObject.GetAssociatedWeb();
 
             var group = web.SiteGroups.GetByName(groupName);
             securableObject.Context.Load(group);
             securableObject.Context.ExecuteQueryRetry();
-            RoleDefinition roleDefinition = web.RoleDefinitions.GetByType(permissionLevel);
+            var roleDefinition = web.RoleDefinitions.GetByType(permissionLevel);
             securableObject.RemovePermissionLevelImplementation(group, roleDefinition, removeAllPermissionLevels);
         }
 
@@ -922,12 +917,12 @@ namespace Microsoft.SharePoint.Client
             if (string.IsNullOrEmpty(groupName))
                 throw new ArgumentNullException("groupName");
 
-            Web web = securableObject.GetAssociatedWeb();
+            var web = securableObject.GetAssociatedWeb();
 
             var group = web.SiteGroups.GetByName(groupName);
             securableObject.Context.Load(group);
             securableObject.Context.ExecuteQueryRetry();
-            RoleDefinition roleDefinition = web.RoleDefinitions.GetByName(roleDefinitionName);
+            var roleDefinition = web.RoleDefinitions.GetByName(roleDefinitionName);
             securableObject.RemovePermissionLevelImplementation(group, roleDefinition, removeAllPermissionLevels);
         }
 
@@ -1015,7 +1010,7 @@ namespace Microsoft.SharePoint.Client
             web.Context.ExecuteQueryRetry();
             if (group != null)
             {
-                User user = group.Users.GetByLoginName(userLoginName);
+                var user = group.Users.GetByLoginName(userLoginName);
                 web.Context.Load(user);
                 web.Context.ExecuteQueryRetry();
                 if (!user.ServerObjectIsNull.Value)
@@ -1073,7 +1068,7 @@ namespace Microsoft.SharePoint.Client
             if (group == null)
                 throw new ArgumentNullException("group");
 
-            GroupCollection groups = web.SiteGroups;
+            var groups = web.SiteGroups;
             groups.Remove(group);
             web.Context.ExecuteQueryRetry();
         }
@@ -1093,7 +1088,7 @@ namespace Microsoft.SharePoint.Client
             if (string.IsNullOrEmpty(userLoginName))
                 throw new ArgumentNullException("userLoginName");
 
-            bool result = false;
+            var result = false;
 
             var group = web.SiteGroups.GetByName(groupName);
             var users = group.Users;
@@ -1122,7 +1117,7 @@ namespace Microsoft.SharePoint.Client
             if (string.IsNullOrEmpty(groupName))
                 throw new ArgumentNullException("groupName");
 
-            bool result = false;
+            var result = false;
 
             try
             {
@@ -1169,7 +1164,6 @@ namespace Microsoft.SharePoint.Client
             }
         }
         #endregion
-
 
         #region Authentication Realm
         /// <summary>
@@ -1219,7 +1213,6 @@ namespace Microsoft.SharePoint.Client
 #endif
         }
         #endregion
-
 
         #region SecurableObject traversal
 
@@ -1332,7 +1325,7 @@ namespace Microsoft.SharePoint.Client
                 throw new ArgumentNullException("obj");
             if (action == null)
                 throw new ArgumentNullException("action");
-            string path = string.Empty;
+            var path = string.Empty;
             var stack = new Stack<SecurableObject>();
             stack.Push(obj);
             while (stack.Count != 0)
@@ -1406,7 +1399,7 @@ namespace Microsoft.SharePoint.Client
             {
                 var users = context.LoadQuery(obj.RoleAssignments.Groups.First(g => g.LoginName == groupLoginName).Users);
                 context.ExecuteQueryRetry();
-                MockupGroupCache[groupLoginName] = (from u in users select new UserEntity()
+                MockupGroupCache[groupLoginName] = (from u in users select new UserEntity
                                                     {
                                                         Title = u.Title,
                                                         Email = u.Email,
@@ -1447,7 +1440,7 @@ namespace Microsoft.SharePoint.Client
                             {
                                 MockupUserEmailCache[user.LoginName] = user.Email;
                             }
-                            result.Add(new RoleAssignmentEntity()
+                            result.Add(new RoleAssignmentEntity
                             {
                                 Path = path,
                                 User = user,
@@ -1462,10 +1455,10 @@ namespace Microsoft.SharePoint.Client
                         {
                             MockupUserEmailCache[assignment.Member.LoginName] = web.GetUserEmail(assignment.Member.Id);
                         }
-                        result.Add(new RoleAssignmentEntity()
+                        result.Add(new RoleAssignmentEntity
                         {
                             Path = path,
-                            User = new UserEntity()
+                            User = new UserEntity
                             {
                                 Title = assignment.Member.Title,
                                 Email = MockupUserEmailCache[assignment.Member.LoginName],
@@ -1518,7 +1511,7 @@ namespace Microsoft.SharePoint.Client
                                 {
                                     MockupUserEmailCache[user.LoginName] = user.Email;
                                 }
-                                result.Add(new RoleAssignmentEntity()
+                                result.Add(new RoleAssignmentEntity
                                 {
                                     Path = path,
                                     User = user,
@@ -1533,10 +1526,10 @@ namespace Microsoft.SharePoint.Client
                             {
                                 MockupUserEmailCache[assignment.Member.LoginName] = web.GetUserEmail(assignment.Member.Id);
                             }
-                            result.Add(new RoleAssignmentEntity()
+                            result.Add(new RoleAssignmentEntity
                             {
                                 Path = path,
-                                User = new UserEntity()
+                                User = new UserEntity
                                 {
                                     Title = assignment.Member.Title,
                                     Email = MockupUserEmailCache[assignment.Member.LoginName],

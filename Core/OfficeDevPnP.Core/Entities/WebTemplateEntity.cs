@@ -5,7 +5,6 @@
     /// </summary>
     public class WebTemplateEntity
     {
-
         /// <summary>
         /// Language code, use 'all' or leave empty when not relevant
         /// </summary>

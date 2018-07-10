@@ -14,7 +14,6 @@ using System.Threading.Tasks;
 
 namespace OfficeDevPnP.Core.Sites
 {
-
     /// <summary>
     /// This class can be used to create modern site collections
     /// </summary>
@@ -45,11 +44,11 @@ namespace OfficeDevPnP.Core.Sites
 
                 using (var httpClient = new PnPHttpProvider(handler))
                 {
-                    string requestUrl = String.Format("{0}/_api/sitepages/communicationsite/create", clientContext.Web.Url);
+                    var requestUrl = String.Format("{0}/_api/sitepages/communicationsite/create", clientContext.Web.Url);
 
                     var siteDesignId = GetSiteDesignId(siteCollectionCreationInformation);
 
-                    Dictionary<string, object> payload = new Dictionary<string, object>();
+                    var payload = new Dictionary<string, object>();
                     payload.Add("__metadata", new { type = "SP.Publishing.CommunicationSiteCreationRequest" });
                     payload.Add("Title", siteCollectionCreationInformation.Title);
                     payload.Add("Url", siteCollectionCreationInformation.Url);
@@ -69,7 +68,7 @@ namespace OfficeDevPnP.Core.Sites
                     var requestBody = new StringContent(jsonBody);
 
                     // Build Http request
-                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
+                    var request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
                     request.Content = requestBody;
                     request.Headers.Add("accept", "application/json;odata=verbose");
                     MediaTypeHeaderValue sharePointJsonMediaType = null;
@@ -84,7 +83,7 @@ namespace OfficeDevPnP.Core.Sites
                     requestBody.Headers.Add("X-RequestDigest", await clientContext.GetRequestDigest());
 
                     // Perform actual post operation
-                    HttpResponseMessage response = await httpClient.SendAsync(request, new System.Threading.CancellationToken());
+                    var response = await httpClient.SendAsync(request, new System.Threading.CancellationToken());
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -158,9 +157,9 @@ namespace OfficeDevPnP.Core.Sites
 
                 using (var httpClient = new PnPHttpProvider(handler))
                 {
-                    string requestUrl = String.Format("{0}/_api/GroupSiteManager/CreateGroupEx", clientContext.Web.Url);
+                    var requestUrl = String.Format("{0}/_api/GroupSiteManager/CreateGroupEx", clientContext.Web.Url);
 
-                    Dictionary<string, object> payload = new Dictionary<string, object>();
+                    var payload = new Dictionary<string, object>();
                     payload.Add("displayName", siteCollectionCreationInformation.DisplayName);
                     payload.Add("alias", siteCollectionCreationInformation.Alias);
                     payload.Add("isPublic", siteCollectionCreationInformation.IsPublic);
@@ -178,7 +177,7 @@ namespace OfficeDevPnP.Core.Sites
                     var requestBody = new StringContent(jsonBody);
 
                     // Build Http request
-                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
+                    var request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
                     request.Content = requestBody;
                     request.Headers.Add("accept", "application/json;odata=verbose");
                     MediaTypeHeaderValue sharePointJsonMediaType = null;
@@ -193,7 +192,7 @@ namespace OfficeDevPnP.Core.Sites
                     requestBody.Headers.Add("X-RequestDigest", await clientContext.GetRequestDigest());
 
                     // Perform actual post operation
-                    HttpResponseMessage response = await httpClient.SendAsync(request, new System.Threading.CancellationToken());
+                    var response = await httpClient.SendAsync(request, new System.Threading.CancellationToken());
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -267,9 +266,9 @@ namespace OfficeDevPnP.Core.Sites
 
                 using (var httpClient = new PnPHttpProvider(handler))
                 {
-                    string requestUrl = String.Format("{0}/_api/GroupSiteManager/CreateGroupForSite", clientContext.Web.Url);
+                    var requestUrl = String.Format("{0}/_api/GroupSiteManager/CreateGroupForSite", clientContext.Web.Url);
 
-                    Dictionary<string, object> payload = new Dictionary<string, object>();
+                    var payload = new Dictionary<string, object>();
                     payload.Add("displayName", siteCollectionGroupifyInformation.DisplayName);
                     payload.Add("alias", siteCollectionGroupifyInformation.Alias);
                     payload.Add("isPublic", siteCollectionGroupifyInformation.IsPublic);
@@ -298,7 +297,7 @@ namespace OfficeDevPnP.Core.Sites
                     var requestBody = new StringContent(jsonBody);
 
                     // Build Http request
-                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
+                    var request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
                     request.Content = requestBody;
                     request.Headers.Add("accept", "application/json;odata=verbose");
                     MediaTypeHeaderValue sharePointJsonMediaType = null;
@@ -313,7 +312,7 @@ namespace OfficeDevPnP.Core.Sites
                     requestBody.Headers.Add("X-RequestDigest", await clientContext.GetRequestDigest());
 
                     // Perform actual post operation
-                    HttpResponseMessage response = await httpClient.SendAsync(request, new System.Threading.CancellationToken());
+                    var response = await httpClient.SendAsync(request, new System.Threading.CancellationToken());
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -340,7 +339,6 @@ namespace OfficeDevPnP.Core.Sites
                 return await Task.Run(() => responseContext);
             }
         }
-
 
         private static Guid GetSiteDesignId(CommunicationSiteCollectionCreationInformation siteCollectionCreationInformation)
         {
@@ -380,7 +378,7 @@ namespace OfficeDevPnP.Core.Sites
         {
             await new SynchronizationContextRemover();
 
-            bool aliasExists = true;
+            var aliasExists = true;
 
             var accessToken = context.GetAccessToken();
 
@@ -395,8 +393,8 @@ namespace OfficeDevPnP.Core.Sites
 
                 using (var httpClient = new HttpClient(handler))
                 {
-                    string requestUrl = String.Format("{0}/_api/SP.Directory.DirectorySession/Group(alias='{1}')", context.Web.Url, alias);
-                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
+                    var requestUrl = String.Format("{0}/_api/SP.Directory.DirectorySession/Group(alias='{1}')", context.Web.Url, alias);
+                    var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
                     request.Headers.Add("accept", "application/json;odata.metadata=minimal");
                     httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     request.Headers.Add("odata-version", "4.0");
@@ -407,7 +405,7 @@ namespace OfficeDevPnP.Core.Sites
                     }
 
                     // Perform actual GET request
-                    HttpResponseMessage response = await httpClient.SendAsync(request);
+                    var response = await httpClient.SendAsync(request);
 
                     if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                     {
@@ -428,7 +426,6 @@ namespace OfficeDevPnP.Core.Sites
             }
         }
 
-
         private static async Task<string> GetValidSiteUrlFromAliasAsync(ClientContext context, string alias)
         {
             string responseString = null;
@@ -446,8 +443,8 @@ namespace OfficeDevPnP.Core.Sites
 
                 using (var httpClient = new HttpClient(handler))
                 {
-                    string requestUrl = String.Format("{0}/_api/GroupSiteManager/GetValidSiteUrlFromAlias?alias='{1}'", context.Web.Url, alias);
-                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
+                    var requestUrl = String.Format("{0}/_api/GroupSiteManager/GetValidSiteUrlFromAlias?alias='{1}'", context.Web.Url, alias);
+                    var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
                     request.Headers.Add("accept", "application/json;odata.metadata=minimal");
                     httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     request.Headers.Add("odata-version", "4.0");
@@ -458,7 +455,7 @@ namespace OfficeDevPnP.Core.Sites
                     }
 
                     // Perform actual GET request
-                    HttpResponseMessage response = await httpClient.SendAsync(request);
+                    var response = await httpClient.SendAsync(request);
 
                     if (response.IsSuccessStatusCode)
                     {

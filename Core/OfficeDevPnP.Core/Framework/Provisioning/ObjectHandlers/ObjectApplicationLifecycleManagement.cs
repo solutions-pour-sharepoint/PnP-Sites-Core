@@ -125,12 +125,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
         public override bool WillExtract(Web web, ProvisioningTemplate template, ProvisioningTemplateCreationInformation creationInfo)
         {
-            return (!web.IsSubSite());
+            return !web.IsSubSite();
         }
 
         public override bool WillProvision(Web web, ProvisioningTemplate template, ProvisioningTemplateApplyingInformation applyingInformation)
         {
-            return (!web.IsSubSite() && template.ApplicationLifecycleManagement != null);
+            return !web.IsSubSite() && template.ApplicationLifecycleManagement != null;
         }
     }
 #endif

@@ -116,17 +116,17 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns hash code in integer</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|",
-                (this.NoCrawl.GetHashCode()),
-                (this.RequestAccessEmail != null ? this.RequestAccessEmail.GetHashCode() : 0),
-                (this.WelcomePage != null ? this.WelcomePage.GetHashCode() : 0),
-                (this.Title != null ? this.Title.GetHashCode() : 0),
-                (this.Description != null ? this.Description.GetHashCode() : 0),
-                (this.SiteLogo != null ? this.SiteLogo.GetHashCode() : 0),
-                (this.AlternateCSS != null ? this.AlternateCSS.GetHashCode() : 0),
-                (this.HubSiteUrl != null ? this.HubSiteUrl.GetHashCode() : 0),
+            return String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|",
+                this.NoCrawl.GetHashCode(),
+                this.RequestAccessEmail != null ? this.RequestAccessEmail.GetHashCode() : 0,
+                this.WelcomePage != null ? this.WelcomePage.GetHashCode() : 0,
+                this.Title != null ? this.Title.GetHashCode() : 0,
+                this.Description != null ? this.Description.GetHashCode() : 0,
+                this.SiteLogo != null ? this.SiteLogo.GetHashCode() : 0,
+                this.AlternateCSS != null ? this.AlternateCSS.GetHashCode() : 0,
+                this.HubSiteUrl != null ? this.HubSiteUrl.GetHashCode() : 0,
                 this.CommentsOnSitePagesDisabled.GetHashCode()
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -138,9 +138,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is WebSettings))
             {
-                return (false);
+                return false;
             }
-            return (Equals((WebSettings)obj));
+            return Equals((WebSettings)obj);
         }
 
         /// <summary>
@@ -152,10 +152,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.NoCrawl == other.NoCrawl &&
+            return this.NoCrawl == other.NoCrawl &&
                     this.RequestAccessEmail == other.RequestAccessEmail &&
                     this.WelcomePage == other.WelcomePage &&
                     this.Title == other.Title &&
@@ -164,7 +164,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                     this.AlternateCSS == other.AlternateCSS &&
                     this.HubSiteUrl == other.HubSiteUrl &&
                     this.CommentsOnSitePagesDisabled == other.CommentsOnSitePagesDisabled
-                );
+                ;
         }
 
         #endregion

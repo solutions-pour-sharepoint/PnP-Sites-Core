@@ -76,12 +76,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}|",
-                (this.Id != null ? this.Id.GetHashCode() : 0),
+            return String.Format("{0}|{1}|{2}|{3}|",
+                this.Id != null ? this.Id.GetHashCode() : 0,
                 this.Required.GetHashCode(),
                 this.Hidden.GetHashCode(),
                 this.Remove.GetHashCode()
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -93,9 +93,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is FieldRef))
             {
-                return (false);
+                return false;
             }
-            return (Equals((FieldRef)obj));
+            return Equals((FieldRef)obj);
         }
 
         /// <summary>
@@ -107,13 +107,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.Id == other.Id &&
+            return this.Id == other.Id &&
                 this.Required == other.Required &&
                 this.Hidden == other.Hidden &&
-                this.Remove == other.Remove);
+                this.Remove == other.Remove;
         }
 
         #endregion

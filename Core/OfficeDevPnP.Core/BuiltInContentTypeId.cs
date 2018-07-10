@@ -100,7 +100,6 @@ namespace OfficeDevPnP.Core
         /// </summary>
         public const string ModernArticlePage = "0x0101009D1CB255DA76424F860D91F20E6C4118";
 
-
         private static Dictionary<string, bool> s_dict = (Dictionary<string, bool>) null;
 
         public static bool Contains(string id)
@@ -181,7 +180,7 @@ namespace OfficeDevPnP.Core
                 s_dict.Add(RedirectPage, true);
                 s_dict.Add(ModernArticlePage, true);
             }
-            bool flag = false;
+            var flag = false;
             s_dict.TryGetValue(id, out flag);
             return flag;
         }

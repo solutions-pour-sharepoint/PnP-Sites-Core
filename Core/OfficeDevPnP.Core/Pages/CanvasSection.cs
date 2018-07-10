@@ -146,7 +146,7 @@ namespace OfficeDevPnP.Core.Pages
         /// <returns>HTML string representing this section</returns>
         public string ToHtml()
         {
-            StringBuilder html = new StringBuilder(100);
+            var html = new StringBuilder(100);
 #if !NETSTANDARD2_0
             using (var htmlWriter = new HtmlTextWriter(new System.IO.StringWriter(html), ""))
             {

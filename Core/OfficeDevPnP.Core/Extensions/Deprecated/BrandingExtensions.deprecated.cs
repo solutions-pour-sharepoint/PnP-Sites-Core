@@ -8,13 +8,11 @@ using LanguageTemplateHash = System.Collections.Generic.Dictionary<string, Syste
 
 namespace Microsoft.SharePoint.Client
 {
-
     /// <summary>
     /// Class that deals with branding features
     /// </summary>
     public static partial class BrandingExtensions
     {
-
         #region TO BE DEPRECATED IN MARCH 2016 RELEASE - Long deprecation time to avoid issues
 
         /// <summary>

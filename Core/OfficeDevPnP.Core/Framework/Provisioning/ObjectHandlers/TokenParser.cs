@@ -45,7 +45,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         /// <param name="tokenDefinition">A TokenDefinition object</param>
         public void AddToken(TokenDefinition tokenDefinition)
         {
-
             _tokens.Add(tokenDefinition);
             // ORDER IS IMPORTANT!
             var sortedTokens = from t in _tokens
@@ -137,7 +136,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             if (template.Localizations.Any())
             {
                 // Read all resource keys in a list
-                List<Tuple<string, uint, string>> resourceEntries = new List<Tuple<string, uint, string>>();
+                var resourceEntries = new List<Tuple<string, uint, string>>();
                 foreach (var localizationEntry in template.Localizations)
                 {
                     var filePath = localizationEntry.ResourceFile;
@@ -164,8 +163,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 foreach (var key in uniqueKeys)
                 {
                     var matches = resourceEntries.Where(k => k.Item1 == key);
-                    var entries = matches.Select(k => new ResourceEntry() { LCID = k.Item2, Value = k.Item3 }).ToList();
-                    LocalizationToken token = new LocalizationToken(web, key, entries);
+                    var entries = matches.Select(k => new ResourceEntry { LCID = k.Item2, Value = k.Item3 }).ToList();
+                    var token = new LocalizationToken(web, key, entries);
 
                     _tokens.Add(token);
                 }
@@ -218,7 +217,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
         private void AddTermStoreTokens(Web web)
         {
-            TaxonomySession session = TaxonomySession.GetTaxonomySession(web.Context);
+            var session = TaxonomySession.GetTaxonomySession(web.Context);
 
             var termStores = session.EnsureProperty(s => s.TermStores);
             foreach (var ts in termStores)
@@ -464,14 +463,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         /// <returns>Returns list of token resource values</returns>
         public List<Tuple<string, string>> GetResourceTokenResourceValues(string tokenValue)
         {
-            List<Tuple<string, string>> resourceValues = new List<Tuple<string, string>>();
+            var resourceValues = new List<Tuple<string, string>>();
             var resourceTokens = _tokens.Where(t => t is LocalizationToken && t.GetTokens().Contains(tokenValue));
             foreach (LocalizationToken resourceToken in resourceTokens)
             {
                 var entries = resourceToken.ResourceEntries;
                 foreach (var entry in entries)
                 {
-                    CultureInfo ci = new CultureInfo((int)entry.LCID);
+                    var ci = new CultureInfo((int)entry.LCID);
                     resourceValues.Add(new Tuple<string, string>(ci.Name, entry.Value));
                 }
             }
@@ -512,7 +511,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         /// <returns>Returns collections of left over tokens</returns>
         public IEnumerable<string> GetLeftOverTokens(string input)
         {
-            List<string> values = new List<string>();
+            var values = new List<string>();
             var matches = Regex.Matches(input, "(?<guid>\\{\\S{8}-\\S{4}-\\S{4}-\\S{4}-\\S{12}?\\})").OfType<Match>().Select(m => m.Value);
             foreach (var match in matches)
             {

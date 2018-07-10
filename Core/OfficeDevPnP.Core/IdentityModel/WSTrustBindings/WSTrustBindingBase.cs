@@ -58,7 +58,7 @@ namespace OfficeDevPnP.Core.IdentityModel.WSTrustBindings
             
             if (_enableRsaProofKeys)
             {
-                RsaSecurityTokenParameters item = new RsaSecurityTokenParameters
+                var item = new RsaSecurityTokenParameters
                 {
                     InclusionMode = SecurityTokenInclusionMode.Never,
                     RequireDerivedKeys = false
@@ -75,7 +75,7 @@ namespace OfficeDevPnP.Core.IdentityModel.WSTrustBindings
         /// <returns>Returns Binding elements created</returns>
         public override BindingElementCollection CreateBindingElements()
         {
-            BindingElementCollection elements = new BindingElementCollection();
+            var elements = new BindingElementCollection();
             elements.Clear();
             if ((SecurityMode.Message == _securityMode) || (SecurityMode.TransportWithMessageCredential == _securityMode))
             {
@@ -116,7 +116,7 @@ namespace OfficeDevPnP.Core.IdentityModel.WSTrustBindings
 
         protected static void ValidateSecurityMode(SecurityMode securityMode)
         {
-            if (((securityMode != SecurityMode.None) && (securityMode != SecurityMode.Message)) && ((securityMode != SecurityMode.Transport) && (securityMode != SecurityMode.TransportWithMessageCredential)))
+            if ((securityMode != SecurityMode.None) && (securityMode != SecurityMode.Message) && ((securityMode != SecurityMode.Transport) && (securityMode != SecurityMode.TransportWithMessageCredential)))
             {
                 throw new ArgumentOutOfRangeException(nameof(securityMode));
             }
@@ -157,7 +157,7 @@ namespace OfficeDevPnP.Core.IdentityModel.WSTrustBindings
         {
             get
             {
-                TransportBindingElement element = CreateBindingElements().Find<TransportBindingElement>();
+                var element = CreateBindingElements().Find<TransportBindingElement>();
 
                 if (element == null)
                 {

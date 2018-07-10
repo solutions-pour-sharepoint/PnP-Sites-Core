@@ -31,6 +31,5 @@ namespace OfficeDevPnP.Core.Entities
         /// Date Time of External user creation
         /// </summary>
         public DateTime WhenCreated { get; set; }
-
     }
 }

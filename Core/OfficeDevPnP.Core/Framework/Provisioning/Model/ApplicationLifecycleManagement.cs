@@ -69,10 +69,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|",
+            return String.Format("{0}|{1}|",
                 AppCatalog?.GetHashCode() ?? 0,
                 Apps?.GetHashCode() ?? 0
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -84,9 +84,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is ApplicationLifecycleManagement))
             {
-                return (false);
+                return false;
             }
-            return (Equals((ApplicationLifecycleManagement)obj));
+            return Equals((ApplicationLifecycleManagement)obj);
         }
 
         /// <summary>
@@ -98,12 +98,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.AppCatalog == other.AppCatalog &&
+            return this.AppCatalog == other.AppCatalog &&
                 this.Apps.DeepEquals(other.Apps)
-                );
+                ;
         }
 
         #endregion

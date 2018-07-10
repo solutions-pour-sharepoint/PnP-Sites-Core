@@ -104,6 +104,5 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs
                 Properties.Remove(propertyKey);
             }
         }
-
     }
 }

@@ -28,7 +28,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                 var siteAuditSettings = site.Audit;
 
-                bool include = false;
+                var include = false;
                 if (siteAuditSettings.AuditFlags != auditSettings.AuditFlags)
                 {
                     include = true;
@@ -73,7 +73,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 if (template.AuditSettings != null)
                 {
                     // Check if this is not a noscript site as we're not allowed to update some properties
-                    bool isNoScriptSite = web.IsNoScriptSite();
+                    var isNoScriptSite = web.IsNoScriptSite();
 
                     var site = (web.Context as ClientContext).Site;
 

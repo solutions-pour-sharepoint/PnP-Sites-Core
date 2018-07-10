@@ -40,7 +40,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
             }
 
             // If the .PNP package exists unpack it into PnP OpenXML package info object
-            MemoryStream ms = packageStream.ToMemoryStream();
+            var ms = packageStream.ToMemoryStream();
             this.pnpInfo = ms.UnpackTemplate();
         }
 
@@ -80,19 +80,19 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
             if (packageStream != null)
             {
                 // If the .PNP package exists unpack it into PnP OpenXML package info object
-                MemoryStream ms = packageStream.ToMemoryStream();
+                var ms = packageStream.ToMemoryStream();
                 this.pnpInfo = ms.UnpackTemplate();
             }
             else
             {
                 // Otherwsie initialize a fresh new PnP OpenXML package info object
-                this.pnpInfo = new PnPInfo()
+                this.pnpInfo = new PnPInfo
                 {
-                    Manifest = new PnPManifest()
+                    Manifest = new PnPManifest
                     {
                         Type = PackageType.Full
                     },
-                    Properties = new PnPProperties()
+                    Properties = new PnPProperties
                     {
                         Generator = PnPCoreUtilities.PnPCoreVersionTag,
                         Author = !String.IsNullOrEmpty(author) ? author : String.Empty,
@@ -293,7 +293,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
             try
             {
                 var memoryStream = stream.ToMemoryStream();
-                byte[] bytes = memoryStream.ToArray();
+                var bytes = memoryStream.ToArray();
 
                 // Check if the file already exists in the package
                 var existingFile = pnpInfo.Files.FirstOrDefault(f => f.OriginalName.Equals(fileName, StringComparison.InvariantCultureIgnoreCase) && f.Folder.Equals(container, StringComparison.InvariantCultureIgnoreCase));
@@ -404,8 +404,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
         /// </summary>
         private PnPFileInfo GetFileFromInsidePackage(string fileName, string container)
         {
-            string mappedPath = Path.Combine(container, fileName).Replace('\\', '/');
-			PnPFileInfo file = null;
+            var mappedPath = Path.Combine(container, fileName).Replace('\\', '/');
+            PnPFileInfo file = null;
 			if (pnpInfo.FilesMap != null)
 			{
 				 file = (from item in pnpInfo.FilesMap.Map
@@ -419,7 +419,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
         internal override string GetContainer()
         {
             // The is no default container
-            return (String.Empty);
+            return String.Empty;
         }
         #endregion
 
@@ -430,7 +430,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
         /// </summary>
         public void Commit()
         {
-            MemoryStream stream = pnpInfo.PackTemplateAsStream();
+            var stream = pnpInfo.PackTemplateAsStream();
             persistenceConnector.SaveFileStream(this.packageFileName, stream);
         }
 

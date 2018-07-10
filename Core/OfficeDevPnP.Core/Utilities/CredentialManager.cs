@@ -13,7 +13,6 @@ namespace OfficeDevPnP.Core.Utilities
     /// </summary>
     public static class CredentialManager
     {
-
         /// <summary>
         /// Returns a SharePoint Online Credential given a certain name. Add the credential in the Windows Credential Manager and create a new Windows Credential. Then add a new GENERIC Credential. The name parameter in the method maps to the Internet or network address field.
         /// </summary>
@@ -91,7 +90,6 @@ namespace OfficeDevPnP.Core.Utilities
                 ncred.UserName = Marshal.StringToCoTaskMemUni(Environment.UserName);
                 return ncred;
             }
-
            }
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]

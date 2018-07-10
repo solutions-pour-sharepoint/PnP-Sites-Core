@@ -62,11 +62,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|",
-                (this.Name != null ? this.Name.GetHashCode() : 0),
-                (this.Description != null ? this.Description.GetHashCode() : 0),
+            return String.Format("{0}|{1}|{2}|",
+                this.Name != null ? this.Name.GetHashCode() : 0,
+                this.Description != null ? this.Description.GetHashCode() : 0,
                 this.Permissions.Aggregate(0, (acc, next) => acc += (next.GetHashCode()))
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -78,9 +78,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is RoleDefinition))
             {
-                return (false);
+                return false;
             }
-            return (Equals((RoleDefinition)obj));
+            return Equals((RoleDefinition)obj);
         }
 
         /// <summary>
@@ -92,12 +92,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.Name == other.Name &&
+            return this.Name == other.Name &&
                 this.Description == other.Description &&
-                this.Permissions.DeepEquals(other.Permissions));
+                this.Permissions.DeepEquals(other.Permissions);
         }
 
         #endregion

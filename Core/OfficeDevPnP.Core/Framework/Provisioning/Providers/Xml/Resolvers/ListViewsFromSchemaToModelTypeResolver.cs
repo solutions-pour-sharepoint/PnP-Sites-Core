@@ -35,7 +35,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers
                     new Model.View { SchemaXml = x.OuterXml });
             }
 
-            return (result);
+            return result;
         }
     }
 }

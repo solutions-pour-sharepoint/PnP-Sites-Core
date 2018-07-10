@@ -49,7 +49,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers.V2018
                 result = new ContentDeliveryNetwork(publicCdnSettings, privateCdnSettings);
             }
 
-            return (result);
+            return result;
         }
     }
 }

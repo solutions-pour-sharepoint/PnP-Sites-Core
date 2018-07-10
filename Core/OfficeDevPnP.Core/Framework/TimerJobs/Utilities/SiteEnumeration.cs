@@ -54,7 +54,7 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs.Utilities
         {
 #if !ONPREMISES
             //strip the wildcard
-            string searchString = siteWildCard.Substring(0, siteWildCard.IndexOf("*"));
+            var searchString = siteWildCard.Substring(0, siteWildCard.IndexOf("*"));
 
             // If we did not yet load all sites then do it...this one is only hit the first time
             if (this.sites == null)
@@ -77,7 +77,7 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs.Utilities
         internal void ResolveSite(ClientContext context, string site, List<string> resolvedSites)
         {
             //strip the wildcard
-            string searchString = site.Substring(0, site.IndexOf("*"));
+            var searchString = site.Substring(0, site.IndexOf("*"));
 
             // If we did not yet load all sites then do it...this one is only hit the first time
             if (this.sites == null)
@@ -156,9 +156,9 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs.Utilities
         /// <returns>List of found site collections</returns>
         private static List<String> SiteSearch(ClientRuntimeContext cc, string keywordQueryValue)
         {
-            List<String> sites = new List<String>();
+            var sites = new List<String>();
 
-            KeywordQuery keywordQuery = new KeywordQuery(cc);
+            var keywordQuery = new KeywordQuery(cc);
             // Important to avoid trimming "similar" site collections
             keywordQuery.TrimDuplicates = false;
 
@@ -167,8 +167,8 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs.Utilities
                 keywordQueryValue = "contentclass:\"STS_Site\"";
             }
 
-            int startRow = 0;
-            int totalRows = 0;
+            var startRow = 0;
+            var totalRows = 0;
 
             totalRows = ProcessQuery(cc, keywordQueryValue, sites, keywordQuery, startRow);
 
@@ -195,19 +195,19 @@ namespace OfficeDevPnP.Core.Framework.TimerJobs.Utilities
         /// <returns>Total result rows of the query</returns>
         private static int ProcessQuery(ClientRuntimeContext cc, string keywordQueryValue, List<string> sites, KeywordQuery keywordQuery, int startRow)
         {
-            int totalRows = 0;
+            var totalRows = 0;
 
             keywordQuery.QueryText = keywordQueryValue;
             keywordQuery.RowLimit = 500;
             keywordQuery.StartRow = startRow;
             keywordQuery.SelectProperties.Add("SPSiteUrl");
             keywordQuery.SortList.Add("SPSiteUrl", SortDirection.Ascending);
-            SearchExecutor searchExec = new SearchExecutor(cc);
-            
+            var searchExec = new SearchExecutor(cc);
+
             // Important to avoid trimming "similar" site collections
             keywordQuery.TrimDuplicates = false;
             
-            ClientResult<ResultTableCollection> results = searchExec.ExecuteQuery(keywordQuery);
+            var results = searchExec.ExecuteQuery(keywordQuery);
             cc.ExecuteQueryRetry();
 
             if (results != null)

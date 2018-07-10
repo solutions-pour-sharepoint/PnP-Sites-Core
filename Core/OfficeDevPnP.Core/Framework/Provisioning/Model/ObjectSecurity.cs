@@ -66,11 +66,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|",
+            return String.Format("{0}|{1}|{2}|",
                 this.RoleAssignments.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.CopyRoleAssignments.GetHashCode(),
                 this.ClearSubscopes.GetHashCode()
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -82,9 +82,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is ObjectSecurity))
             {
-                return (false);
+                return false;
             }
-            return (Equals((ObjectSecurity)obj));
+            return Equals((ObjectSecurity)obj);
         }
 
         /// <summary>
@@ -96,14 +96,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (
+            return 
                 this.RoleAssignments.DeepEquals(other.RoleAssignments) &&
                 this.CopyRoleAssignments == other.CopyRoleAssignments &&
                 this.ClearSubscopes == other.ClearSubscopes
-                );
+                ;
         }
 
         #endregion

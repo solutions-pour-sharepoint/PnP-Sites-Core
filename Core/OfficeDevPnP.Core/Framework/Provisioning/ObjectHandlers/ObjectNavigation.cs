@@ -118,7 +118,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     }
 
                     // Check if this is not a noscript site as navigation features are not supported
-                    bool isNoScriptSite = web.IsNoScriptSite();
+                    var isNoScriptSite = web.IsNoScriptSite();
 
                     // Retrieve the current web navigation settings
                     var navigationSettings = new WebNavigationSettings(web.Context, web);
@@ -232,7 +232,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
         private bool WebSupportsProvisionNavigation(Web web, ProvisioningTemplate template)
         {
-            bool isNavSupported = true;
+            var isNavSupported = true;
             // The Navigation handler for managed metedata only works for sites with Publishing Features enabled
             if (!web.IsPublishingWeb())
             {
@@ -255,7 +255,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
         private bool WebSupportsExtractNavigation(Web web)
         {
-            bool isNavSupported = true;
+            var isNavSupported = true;
             // The Navigation handler for managed metedata only works for sites with Publishing Features enabled
             if (!web.IsPublishingWeb())
             {
@@ -277,7 +277,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
         private Boolean AreSiblingsEnabledForCurrentStructuralNavigation(Web web)
         {
-            bool siblingsEnabled = false;
+            var siblingsEnabled = false;
 
             if (bool.TryParse(web.GetPropertyBagValueString(NavigationShowSiblings, "false"), out siblingsEnabled))
             {
@@ -422,14 +422,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             // Apply any token replacement for taxonomy IDs
             TokenizeManagedNavigationTaxonomyIds(web, result);
 
-            return (result);
+            return result;
         }
 
         private StructuralNavigation GetStructuralNavigation(Web web, WebNavigationSettings navigationSettings, Boolean currentNavigation)
         {
             // By default avoid removing existing nodes
             var result = new StructuralNavigation { RemoveExistingNodes = false };
-            Microsoft.SharePoint.Client.NavigationNodeCollection sourceNodes = currentNavigation ?
+            var sourceNodes = currentNavigation ?
                 web.Navigation.QuickLaunch : web.Navigation.TopNavigationBar;
 
             web.Context.Load(web, w => w.ServerRelativeUrl);
@@ -441,14 +441,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 result.NavigationNodes.AddRange(from n in sourceNodes.AsEnumerable()
                                                 select n.ToDomainModelNavigationNode(web));
             }
-            return (result);
+            return result;
         }
 
         protected void TokenizeManagedNavigationTaxonomyIds(Web web, ManagedNavigation managedNavigation)
         {
             // Replace Taxonomy field references to SspId, TermSetId with tokens
-            TaxonomySession session = TaxonomySession.GetTaxonomySession(web.Context);
-            TermStore defaultStore = session.GetDefaultSiteCollectionTermStore();
+            var session = TaxonomySession.GetTaxonomySession(web.Context);
+            var defaultStore = session.GetDefaultSiteCollectionTermStore();
             var site = (web.Context as ClientContext).Site;
             var siteCollectionTermGroup = defaultStore.GetSiteCollectionGroup(site, false);
             web.Context.Load(siteCollectionTermGroup, t => t.Name);
@@ -461,10 +461,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             web.Context.Load(defaultStore, ts => ts.Name, ts => ts.Id);
             web.Context.ExecuteQueryRetry();
 
-            Guid navigationTermStoreId = Guid.Parse(managedNavigation.TermStoreId);
+            var navigationTermStoreId = Guid.Parse(managedNavigation.TermStoreId);
             if (navigationTermStoreId != Guid.Empty)
             {
-                TermStore navigationTermStore = session.TermStores.GetById(navigationTermStoreId);
+                var navigationTermStore = session.TermStores.GetById(navigationTermStoreId);
                 web.Context.Load(navigationTermStore, ts => ts.Name, ts => ts.Id);
                 web.Context.ExecuteQueryRetry();
 
@@ -479,7 +479,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         managedNavigation.TermStoreId = $"{{termstoreid:{navigationTermStore.Name}}}";
                     }
 
-                    Guid navigationTermSetId = Guid.Parse(managedNavigation.TermSetId);
+                    var navigationTermSetId = Guid.Parse(managedNavigation.TermSetId);
                     if (navigationTermSetId != Guid.Empty)
                     {
                         var navigationTermSet = navigationTermStore.GetTermSet(navigationTermSetId);
@@ -512,8 +512,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
         public override bool WillProvision(Web web, ProvisioningTemplate template, ProvisioningTemplateApplyingInformation applyingInformation)
         {
-            return (template.Navigation != null &&
-                WebSupportsProvisionNavigation(web, template));
+            return template.Navigation != null &&
+                WebSupportsProvisionNavigation(web, template);
         }
     }
 
@@ -521,7 +521,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
     {
         internal static Model.NavigationNode ToDomainModelNavigationNode(this Microsoft.SharePoint.Client.NavigationNode node, Web web)
         {
-
             var result = new Model.NavigationNode
             {
                 Title = node.Title,
@@ -535,7 +534,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             result.NavigationNodes.AddRange(from n in node.Children.AsEnumerable()
                                             select n.ToDomainModelNavigationNode(web));
 
-            return (result);
+            return result;
         }
     }
 }

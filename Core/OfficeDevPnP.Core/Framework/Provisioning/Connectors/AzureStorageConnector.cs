@@ -81,20 +81,20 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
                 Initialize();
             }
 
-            List<string> result = new List<string>();
+            var result = new List<string>();
 
             var containerTuple = ParseContainer(container);
 
             container = containerTuple.Item1;
-            string prefix = string.IsNullOrEmpty(containerTuple.Item2) ? null : containerTuple.Item2;
+            var prefix = string.IsNullOrEmpty(containerTuple.Item2) ? null : containerTuple.Item2;
 
-            CloudBlobContainer blobContainer = blobClient.GetContainerReference(container);
+            var blobContainer = blobClient.GetContainerReference(container);
 
             foreach (IListBlobItem item in blobContainer.ListBlobs(prefix, false))
             {
                 if (item.GetType() == typeof(CloudBlockBlob))
                 {
-                    CloudBlockBlob blob = (CloudBlockBlob)item;
+                    var blob = (CloudBlockBlob)item;
                     result.Add(blob.Name);
                 }
             }
@@ -129,20 +129,20 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
                 Initialize();
             }
 
-            List<string> result = new List<string>();
+            var result = new List<string>();
 
             var containerTuple = ParseContainer(container);
 
             container = containerTuple.Item1;
-            string prefix = string.IsNullOrEmpty(containerTuple.Item2) ? null : containerTuple.Item2;
+            var prefix = string.IsNullOrEmpty(containerTuple.Item2) ? null : containerTuple.Item2;
 
-            CloudBlobContainer blobContainer = blobClient.GetContainerReference(container);
+            var blobContainer = blobClient.GetContainerReference(container);
 
             foreach (IListBlobItem item in blobContainer.ListBlobs(prefix, false))
             {
                 if (item.GetType() == typeof(CloudBlobDirectory))
                 {
-                    CloudBlobDirectory blob = (CloudBlobDirectory)item;
+                    var blob = (CloudBlobDirectory)item;
                     result.Add(blob.Uri.ToString());
                 }
             }
@@ -281,12 +281,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
                 container = containerTuple.Item1;
                 fileName = string.Concat(containerTuple.Item2, fileName);
 
-                CloudBlobContainer blobContainer = blobClient.GetContainerReference(container);
+                var blobContainer = blobClient.GetContainerReference(container);
 
                 // Create the container if it doesn't already exist.
                 blobContainer.CreateIfNotExists();
 
-                CloudBlockBlob blockBlob = blobContainer.GetBlockBlobReference(fileName);
+                var blockBlob = blobContainer.GetBlockBlobReference(fileName);
 
                 blockBlob.UploadFromStream(stream);
                 Log.Info(Constants.LOGGING_SOURCE, CoreResources.Provisioning_Connectors_Azure_FileSaved, fileName, container);
@@ -332,8 +332,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
 
             try
             {
-                CloudBlobContainer blobContainer = blobClient.GetContainerReference(container);
-                CloudBlockBlob blockBlob = blobContainer.GetBlockBlobReference(fileName);
+                var blobContainer = blobClient.GetContainerReference(container);
+                var blockBlob = blobContainer.GetBlockBlobReference(fileName);
 
                 if (blockBlob.Exists())
                 {
@@ -369,7 +369,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
         {
             try
             {
-                CloudStorageAccount storageAccount = CloudStorageAccount.Parse(GetConnectionString());
+                var storageAccount = CloudStorageAccount.Parse(GetConnectionString());
                 blobClient = storageAccount.CreateCloudBlobClient();
                 initialized = true;
             }
@@ -394,10 +394,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
                 container = containerTuple.Item1;
                 fileName = string.Concat(containerTuple.Item2, fileName);
 
-                CloudBlobContainer blobContainer = blobClient.GetContainerReference(container);
-                CloudBlockBlob blockBlob = blobContainer.GetBlockBlobReference(fileName);
+                var blobContainer = blobClient.GetContainerReference(container);
+                var blockBlob = blobContainer.GetBlockBlobReference(fileName);
 
-                MemoryStream result = new MemoryStream();
+                var result = new MemoryStream();
                 blockBlob.DownloadToStream(result);
                 result.Position = 0;
 
@@ -430,7 +430,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors
             return Tuple.Create(container, folder);
         }
         #endregion
-
 
     }
 }

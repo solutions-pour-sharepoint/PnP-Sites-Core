@@ -97,13 +97,13 @@ namespace Microsoft.SharePoint.Client
 
             using (var appCatalogContext = tenant.Context.Clone(catalogUri))
             {
-                List catalog = appCatalogContext.Web.GetListByUrl("appcatalog");
+                var catalog = appCatalogContext.Web.GetListByUrl("appcatalog");
                 if (catalog == null)
                 {
                     throw new Exception($"No app catalog found...did you provide a valid app catalog site?");
                 }
 
-                Folder rootFolder = catalog.RootFolder;
+                var rootFolder = catalog.RootFolder;
 
                 // Upload package
                 var sppkgFile = rootFolder.UploadFile(spPkgName, System.IO.Path.Combine(spPkgPath, spPkgName), overwrite);

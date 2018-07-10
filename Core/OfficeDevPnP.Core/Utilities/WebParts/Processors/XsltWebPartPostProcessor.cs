@@ -176,12 +176,10 @@ namespace OfficeDevPnP.Core.Utilities.WebParts.Processors
                     }
 
                     throw new Exception("View not found");
-
                 }, out view))
                 {
                     return view;
                 }
-
             }
 
             return null;

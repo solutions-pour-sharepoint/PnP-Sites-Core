@@ -67,11 +67,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers
                 {
                     result = PnPObjectsMapper.MapObjects(sourcePropertyValue, typeResolver, resolvers, recursive);
                 }
-                return (result);
+                return result;
             }
             else
             {
-                return (null);
+                return null;
             }
         }
     }

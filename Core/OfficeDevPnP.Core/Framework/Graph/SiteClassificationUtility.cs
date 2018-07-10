@@ -22,7 +22,7 @@ namespace OfficeDevPnP.Core.Framework.Graph
                 throw new ArgumentException("Specify a valid accesstoken", nameof(accessToken));
             }
             // GET https://graph.microsoft.com/beta/settings
-            string directorySettingsUrl = $"{GraphHttpClient.MicrosoftGraphBetaBaseUri}settings";
+            var directorySettingsUrl = $"{GraphHttpClient.MicrosoftGraphBetaBaseUri}settings";
             var directorySettingsJson = GraphHttpClient.MakeGetRequestForString(directorySettingsUrl, accessToken);
             var directorySettings = JsonConvert.DeserializeObject<DirectorySettingTemplates>(directorySettingsJson);
 
@@ -32,7 +32,7 @@ namespace OfficeDevPnP.Core.Framework.Graph
             if (unifiedGroupSetting != null)
             {
                 // DELETE https://graph.microsoft.com/beta/settings
-                string deleteDirectorySettingUrl = $"{GraphHttpClient.MicrosoftGraphBetaBaseUri}settings/{unifiedGroupSetting.Id}";
+                var deleteDirectorySettingUrl = $"{GraphHttpClient.MicrosoftGraphBetaBaseUri}settings/{unifiedGroupSetting.Id}";
                 GraphHttpClient.MakeDeleteRequest(
                     deleteDirectorySettingUrl,
                     accessToken: accessToken);
@@ -88,7 +88,7 @@ namespace OfficeDevPnP.Core.Framework.Graph
             }
 
             // GET https://graph.microsoft.com/beta/directorySettingTemplates
-            string directorySettingTemplatesUrl = $"{GraphHttpClient.MicrosoftGraphBetaBaseUri}directorySettingTemplates";
+            var directorySettingTemplatesUrl = $"{GraphHttpClient.MicrosoftGraphBetaBaseUri}directorySettingTemplates";
             var directorySettingTemplatesJson = GraphHttpClient.MakeGetRequestForString(directorySettingTemplatesUrl, accessToken);
             var directorySettingTemplates = JsonConvert.DeserializeObject<DirectorySettingTemplates>(directorySettingTemplatesJson);
 
@@ -118,7 +118,7 @@ namespace OfficeDevPnP.Core.Framework.Graph
                 }
 
                 // POST https://graph.microsoft.com/beta/settings
-                string newDirectorySettingUrl = $"{GraphHttpClient.MicrosoftGraphBetaBaseUri}settings";
+                var newDirectorySettingUrl = $"{GraphHttpClient.MicrosoftGraphBetaBaseUri}settings";
                 var newDirectorySettingResult = GraphHttpClient.MakePostRequestForString(
                     newDirectorySettingUrl,
                     content: new
@@ -147,7 +147,7 @@ namespace OfficeDevPnP.Core.Framework.Graph
                 throw new ArgumentException("Specify a valid accesstoken", nameof(accessToken));
             }
             // GET https://graph.microsoft.com/beta/directorySettingTemplates
-            string directorySettingsUrl = $"{GraphHttpClient.MicrosoftGraphBetaBaseUri}settings";
+            var directorySettingsUrl = $"{GraphHttpClient.MicrosoftGraphBetaBaseUri}settings";
             var directorySettingsJson = GraphHttpClient.MakeGetRequestForString(directorySettingsUrl, accessToken);
             var directorySettings = JsonConvert.DeserializeObject<DirectorySettingTemplates>(directorySettingsJson);
 
@@ -212,7 +212,7 @@ namespace OfficeDevPnP.Core.Framework.Graph
                 throw new ArgumentException("Specify a valid accesstoken", nameof(accessToken));
             }
             // GET https://graph.microsoft.com/beta/settings
-            string directorySettingsUrl = $"{GraphHttpClient.MicrosoftGraphBetaBaseUri}settings";
+            var directorySettingsUrl = $"{GraphHttpClient.MicrosoftGraphBetaBaseUri}settings";
             var directorySettingsJson = GraphHttpClient.MakeGetRequestForString(directorySettingsUrl, accessToken);
             var directorySettings = JsonConvert.DeserializeObject<DirectorySettingTemplates>(directorySettingsJson);
 
@@ -249,7 +249,7 @@ namespace OfficeDevPnP.Core.Framework.Graph
                 }
 
                 // PATCH https://graph.microsoft.com/beta/settings
-                string updateDirectorySettingUrl = $"{GraphHttpClient.MicrosoftGraphBetaBaseUri}settings/{unifiedGroupSetting.Id}";
+                var updateDirectorySettingUrl = $"{GraphHttpClient.MicrosoftGraphBetaBaseUri}settings/{unifiedGroupSetting.Id}";
                 var updateDirectorySettingResult = GraphHttpClient.MakePatchRequestForString(
                     updateDirectorySettingUrl,
                     content: new

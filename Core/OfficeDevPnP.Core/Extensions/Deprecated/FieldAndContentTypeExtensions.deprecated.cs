@@ -100,6 +100,5 @@ namespace Microsoft.SharePoint.Client
         {
             SetDefaultContentTypeToList(web, listTitle, contentType.Id.ToString());
         }
-
     }
 }

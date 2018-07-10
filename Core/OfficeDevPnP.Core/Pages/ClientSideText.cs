@@ -103,11 +103,11 @@ namespace OfficeDevPnP.Core.Pages
             }
 
             // Obtain the json data
-            ClientSideTextControlData controlData = new ClientSideTextControlData()
+            var controlData = new ClientSideTextControlData
             {
                 ControlType = this.ControlType,
                 Id = this.InstanceId.ToString("D"),
-                Position = new ClientSideCanvasControlPosition()
+                Position = new ClientSideCanvasControlPosition
                 {
                     ZoneIndex = this.Section.Order,
                     SectionIndex = this.Column.Order,
@@ -125,7 +125,7 @@ namespace OfficeDevPnP.Core.Pages
             }
             catch { }
 
-            StringBuilder html = new StringBuilder(100);
+            var html = new StringBuilder(100);
 #if NETSTANDARD2_0
             html.Append($@"<div {CanvasControlAttribute}=""{this.CanvasControlData}"" {CanvasDataVersionAttribute}=""{ this.DataVersion}""  {ControlDataAttribute}=""{this.jsonControlData.Replace("\"", "&quot;")}"">");
             html.Append($@"<div {TextRteAttribute}=""{this.Rte}"">");
@@ -185,7 +185,7 @@ namespace OfficeDevPnP.Core.Pages
 
             // By default simple plain text is wrapped in a Paragraph, need to drop it to avoid getting multiple paragraphs on page edits.
             // Only drop the paragraph tag when there's only one Paragraph element underneath the DIV tag
-            if ((div.FirstChild != null && (div.FirstChild as IElement).TagName.Equals("P", StringComparison.InvariantCultureIgnoreCase)) &&
+            if (div.FirstChild != null && (div.FirstChild as IElement).TagName.Equals("P", StringComparison.InvariantCultureIgnoreCase) &&
                 (div.ChildElementCount == 1))
             {
                 this.Text = (div.FirstChild as IElement).InnerHtml;
@@ -196,7 +196,7 @@ namespace OfficeDevPnP.Core.Pages
             }
 
             // load data from the data-sp-controldata attribute
-            var jsonSerializerSettings = new JsonSerializerSettings()
+            var jsonSerializerSettings = new JsonSerializerSettings
             {
                 MissingMemberHandling = MissingMemberHandling.Ignore
             };

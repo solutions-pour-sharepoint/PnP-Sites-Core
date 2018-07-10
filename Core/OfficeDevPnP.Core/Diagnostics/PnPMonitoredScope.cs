@@ -25,7 +25,7 @@ namespace OfficeDevPnP.Core.Diagnostics
         /// </summary>
         public PnPMonitoredScope()
         {
-            Guid g = Guid.NewGuid();
+            var g = Guid.NewGuid();
             StartScope($"Unnamed Scope {g}");
         }
 
@@ -60,11 +60,9 @@ namespace OfficeDevPnP.Core.Diagnostics
             StartScope(name);
         }
 
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "OfficeDevPnP.Core.Diagnostics.LogEntry.set_Message(System.String)")]
         private void StartScope(string name)
         {
-
 
             _threadId = Thread.CurrentThread.ManagedThreadId;
             _stopWatch = new Stopwatch();
@@ -112,7 +110,7 @@ namespace OfficeDevPnP.Core.Diagnostics
         /// <param name="args">Arguments object</param>
         public void LogError(string message, params object[] args)
         {
-            Log.Error(new LogEntry()
+            Log.Error(new LogEntry
             {
                 CorrelationId = TopScope.CorrelationId,
                 EllapsedMilliseconds = _stopWatch.ElapsedMilliseconds,
@@ -130,7 +128,7 @@ namespace OfficeDevPnP.Core.Diagnostics
         /// <param name="args">Arguments object</param>
         public void LogError(Exception ex, string message, params object[] args)
         {
-            Log.Error(new LogEntry()
+            Log.Error(new LogEntry
             {
                 CorrelationId = TopScope.CorrelationId,
                 EllapsedMilliseconds = _stopWatch.ElapsedMilliseconds,
@@ -148,7 +146,7 @@ namespace OfficeDevPnP.Core.Diagnostics
         /// <param name="args">Arguments object</param>
         public void LogInfo(string message, params object[] args)
         {
-            Log.Info(new LogEntry()
+            Log.Info(new LogEntry
             {
                 CorrelationId = TopScope.CorrelationId,
                 EllapsedMilliseconds = _stopWatch.ElapsedMilliseconds,
@@ -165,7 +163,7 @@ namespace OfficeDevPnP.Core.Diagnostics
         /// <param name="args">Arguments object</param>
         public void LogInfo(Exception ex, string message, params object[] args)
         {
-            Log.Info(new LogEntry()
+            Log.Info(new LogEntry
             {
                 CorrelationId = TopScope.CorrelationId,
                 EllapsedMilliseconds = _stopWatch.ElapsedMilliseconds,
@@ -176,7 +174,6 @@ namespace OfficeDevPnP.Core.Diagnostics
             });
         }
 
-
         /// <summary>
         /// Logs Warning
         /// </summary>
@@ -184,7 +181,7 @@ namespace OfficeDevPnP.Core.Diagnostics
         /// <param name="args">Arguments object</param>
         public void LogWarning(string message, params object[] args)
         {
-            Log.Warning(new LogEntry()
+            Log.Warning(new LogEntry
             {
                 CorrelationId = TopScope.CorrelationId,
                 EllapsedMilliseconds = _stopWatch.ElapsedMilliseconds,
@@ -193,7 +190,6 @@ namespace OfficeDevPnP.Core.Diagnostics
                 ThreadId = _threadId
             });
         }
-
 
         /// <summary>
         /// Logs Warning
@@ -203,7 +199,7 @@ namespace OfficeDevPnP.Core.Diagnostics
         /// <param name="args">Arguments object</param>
         public void LogWarning(Exception ex, string message, params object[] args)
         {
-            Log.Warning(new LogEntry()
+            Log.Warning(new LogEntry
             {
                 CorrelationId = TopScope.CorrelationId,
                 EllapsedMilliseconds = _stopWatch.ElapsedMilliseconds,
@@ -212,7 +208,6 @@ namespace OfficeDevPnP.Core.Diagnostics
                 Exception = ex,
                 ThreadId = _threadId
             });
-
         }
 
         /// <summary>
@@ -222,7 +217,7 @@ namespace OfficeDevPnP.Core.Diagnostics
         /// <param name="args">Arguments object</param>
         public void LogDebug(string message, params object[] args)
         {
-            Log.Debug(new LogEntry()
+            Log.Debug(new LogEntry
             {
                 CorrelationId = TopScope.CorrelationId,
                 EllapsedMilliseconds = _stopWatch.ElapsedMilliseconds,
@@ -240,7 +235,7 @@ namespace OfficeDevPnP.Core.Diagnostics
         /// <param name="args">Arguments object</param>
         public void LogDebug(Exception ex, string message, params object[] args)
         {
-            Log.Debug(new LogEntry()
+            Log.Debug(new LogEntry
             {
                 CorrelationId = TopScope.CorrelationId,
                 EllapsedMilliseconds = _stopWatch.ElapsedMilliseconds,
@@ -265,7 +260,6 @@ namespace OfficeDevPnP.Core.Diagnostics
                 if (disposing)
                 {
                     EndScope();
-
                 }
                 disposedValue = true;
             }

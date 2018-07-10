@@ -30,7 +30,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
             return this.Items.AsEnumerable<SupportedUILanguage>().DeepEquals(other.Items.AsEnumerable<SupportedUILanguage>());

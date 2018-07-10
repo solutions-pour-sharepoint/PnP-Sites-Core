@@ -38,11 +38,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|",
-                (this.Name != null ? this.Name.GetHashCode() : 0),
-                (this.ContentTypeId != null ? this.ContentTypeId.GetHashCode() : 0),
-                (this.FileSourcePath != null ? this.FileSourcePath.GetHashCode() : 0)
-            ).GetHashCode());
+            return String.Format("{0}|{1}|{2}|",
+                this.Name != null ? this.Name.GetHashCode() : 0,
+                this.ContentTypeId != null ? this.ContentTypeId.GetHashCode() : 0,
+                this.FileSourcePath != null ? this.FileSourcePath.GetHashCode() : 0
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -54,9 +54,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is DefaultDocument))
             {
-                return (false);
+                return false;
             }
-            return (Equals((DefaultDocument)obj));
+            return Equals((DefaultDocument)obj);
         }
 
         /// <summary>
@@ -68,14 +68,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.Name == other.Name &&
+            return this.Name == other.Name &&
                     this.ContentTypeId == other.ContentTypeId &&
                     this.FileSourcePath == other.FileSourcePath
-                );
-
+                ;
         }
 
         #endregion

@@ -42,7 +42,5 @@ namespace OfficeDevPnP.Core.Entities
         public TaxonomyFieldCreationInformation()
             : base("TaxonomyFieldType")
         { }
-
     }
-
 }

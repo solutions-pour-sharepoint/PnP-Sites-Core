@@ -10,7 +10,6 @@ namespace OfficeDevPnP.Core.Utilities
     /// </summary>
     public static class EncryptionUtility
     {
-
         /// <summary>
         /// Encrypt a piece of text based on a given certificate
         /// </summary>
@@ -19,16 +18,16 @@ namespace OfficeDevPnP.Core.Utilities
         /// <returns>Encrypted text</returns>
         public static string Encrypt(string stringToEncrypt, string thumbPrint)
         {
-            string encryptedString = string.Empty;
+            var encryptedString = string.Empty;
 
-            X509Certificate2 certificate = X509CertificateUtility.LoadCertificate(StoreName.My, StoreLocation.LocalMachine, thumbPrint);
+            var certificate = X509CertificateUtility.LoadCertificate(StoreName.My, StoreLocation.LocalMachine, thumbPrint);
 
             if (certificate == null)
             {
                 return string.Empty;
             }
 
-            byte[] encoded = Encoding.UTF8.GetBytes(stringToEncrypt);
+            var encoded = Encoding.UTF8.GetBytes(stringToEncrypt);
             byte[] encrypted;
 
             try
@@ -53,9 +52,9 @@ namespace OfficeDevPnP.Core.Utilities
         /// <returns>Decrypted text</returns>
         public static string Decrypt(string stringToDecrypt, string thumbPrint)
         {
-            string decryptedString = string.Empty;
+            var decryptedString = string.Empty;
 
-            X509Certificate2 certificate = X509CertificateUtility.LoadCertificate(StoreName.My, StoreLocation.LocalMachine, thumbPrint);
+            var certificate = X509CertificateUtility.LoadCertificate(StoreName.My, StoreLocation.LocalMachine, thumbPrint);
 
             if (certificate == null)
             {
@@ -88,7 +87,7 @@ namespace OfficeDevPnP.Core.Utilities
         /// <returns>Encrypted string</returns>
         public static string EncryptStringWithDPAPI(System.Security.SecureString input)
         {
-            byte[] encryptedData = System.Security.Cryptography.ProtectedData.Protect(
+            var encryptedData = System.Security.Cryptography.ProtectedData.Protect(
                 System.Text.Encoding.Unicode.GetBytes(ToInsecureString(input)), null,
                 System.Security.Cryptography.DataProtectionScope.LocalMachine);
             return Convert.ToBase64String(encryptedData);
@@ -105,7 +104,7 @@ namespace OfficeDevPnP.Core.Utilities
         {
             try
             {
-                byte[] decryptedData = System.Security.Cryptography.ProtectedData.Unprotect(
+                var decryptedData = System.Security.Cryptography.ProtectedData.Unprotect(
                     Convert.FromBase64String(encryptedData),
                     null,
                     System.Security.Cryptography.DataProtectionScope.CurrentUser);
@@ -128,7 +127,7 @@ namespace OfficeDevPnP.Core.Utilities
             if (string.IsNullOrEmpty(input))
                 throw new ArgumentException("Input string is empty and cannot be made into a SecureString", nameof(input));
 
-            SecureString secure = new SecureString();
+            var secure = new SecureString();
             foreach (char c in input)
             {
                 secure.AppendChar(c);
@@ -144,8 +143,8 @@ namespace OfficeDevPnP.Core.Utilities
         /// <returns>A "regular" string representation of the passed SecureString</returns>
         public static string ToInsecureString(SecureString input)
         {
-            string returnValue = string.Empty;
-            IntPtr ptr = System.Runtime.InteropServices.Marshal.SecureStringToBSTR(input);
+            var returnValue = string.Empty;
+            var ptr = System.Runtime.InteropServices.Marshal.SecureStringToBSTR(input);
             try
             {
                 returnValue = System.Runtime.InteropServices.Marshal.PtrToStringBSTR(ptr);
@@ -156,7 +155,6 @@ namespace OfficeDevPnP.Core.Utilities
             }
             return returnValue;
         }
-
 
     }
 }

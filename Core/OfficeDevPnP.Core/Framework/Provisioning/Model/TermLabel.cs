@@ -9,7 +9,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
 {
     public partial class TermLabel : BaseModel, IEquatable<TermLabel>
     {
-
         #region Public Members
         /// <summary>
         /// Gets or sets the Language for the term label
@@ -36,10 +35,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}",
+            return String.Format("{0}|{1}",
                 this.Language.GetHashCode(),
-                (this.Value != null ? this.Value.GetHashCode() : 0)
-            ).GetHashCode());
+                this.Value != null ? this.Value.GetHashCode() : 0
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -51,9 +50,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is TermLabel))
             {
-                return (false);
+                return false;
             }
-            return (Equals((TermLabel)obj));
+            return Equals((TermLabel)obj);
         }
 
         /// <summary>
@@ -65,11 +64,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.Language == other.Language &&
-                this.Value == other.Value);
+            return this.Language == other.Language &&
+                this.Value == other.Value;
         }
 
         #endregion

@@ -28,7 +28,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 });
 
                 // Check if this is not a noscript site as we're not allowed to write to the web property bag is that one
-                bool isNoScriptSite = web.IsNoScriptSite();
+                var isNoScriptSite = web.IsNoScriptSite();
                 if (isNoScriptSite)
                 {
                     return parser;
@@ -43,7 +43,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                 foreach (var propbagEntry in template.PropertyBagEntries)
                 {
-                    bool propExists = web.PropertyBagContainsKey(propbagEntry.Key);
+                    var propExists = web.PropertyBagContainsKey(propbagEntry.Key);
 
                     if (propbagEntry.Overwrite)
                     {
@@ -69,7 +69,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                 web.AddIndexedPropertyBagKey(propbagEntry.Key);
                             }
                         }
-
                     }
                 }
             }
@@ -89,7 +88,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 foreach (var propbagEntry in web.AllProperties.FieldValues)
                 {
                     var indexed = indexedProperties.Contains(propbagEntry.Key);
-                    entries.Add(new PropertyBagEntry() { Key = propbagEntry.Key, Value = propbagEntry.Value.ToString(), Indexed = indexed });
+                    entries.Add(new PropertyBagEntry { Key = propbagEntry.Key, Value = propbagEntry.Value.ToString(), Indexed = indexed });
                 }
 
                 template.PropertyBagEntries.Clear();
@@ -111,11 +110,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
         private ProvisioningTemplate CleanupEntities(ProvisioningTemplate template, ProvisioningTemplateCreationInformation creationInfo)
         {
-            ProvisioningTemplate baseTemplate = creationInfo.BaseTemplate;
+            var baseTemplate = creationInfo.BaseTemplate;
 
             foreach (var propertyBagEntry in baseTemplate.PropertyBagEntries)
             {
-                int index = template.PropertyBagEntries.FindIndex(f => f.Key.Equals(propertyBagEntry.Key));
+                var index = template.PropertyBagEntries.FindIndex(f => f.Key.Equals(propertyBagEntry.Key));
 
                 if (index > -1)
                 {
@@ -125,7 +124,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
             // Scan for "system" properties that should be removed as well. Below list contains
             // prefixes of properties that will be dropped
-            List<string> systemPropertyBagEntriesExclusions = new List<string>(new string[]
+            var systemPropertyBagEntriesExclusions = new List<string>(new string[]
             {
                 "_",
                 "vti_",
@@ -136,7 +135,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             });
 
             // Below property prefixes indicate properties that never can be dropped 
-            List<string> systemPropertyBagEntriesInclusions = new List<string>(new string[]
+            var systemPropertyBagEntriesInclusions = new List<string>(new string[]
             {
                 "_PnP_"
             });
@@ -174,11 +173,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
         private IEnumerable<T> SymmetricExcept<T>(IEnumerable<T> seq1, IEnumerable<T> seq2)
         {
-            HashSet<T> hashSet = new HashSet<T>(seq1);
+            var hashSet = new HashSet<T>(seq1);
             hashSet.SymmetricExceptWith(seq2);
             return hashSet.Select(x => x);
         }
-
 
         public override bool WillProvision(Web web, ProvisioningTemplate template, ProvisioningTemplateApplyingInformation applyingInformation)
         {
@@ -187,7 +185,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 _willProvision = template.PropertyBagEntries.Any() && !web.IsNoScriptSite();
             }
             return _willProvision.Value;
-
         }
 
         public override bool WillExtract(Web web, ProvisioningTemplate template, ProvisioningTemplateCreationInformation creationInfo)

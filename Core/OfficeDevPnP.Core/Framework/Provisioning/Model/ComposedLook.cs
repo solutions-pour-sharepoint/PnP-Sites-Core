@@ -33,7 +33,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         public static ComposedLook Empty
         {
             private set { _empty = value; }
-            get { return (_empty); }
+            get { return _empty; }
         }
 
         #endregion
@@ -74,13 +74,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}|{4}",
+            return String.Format("{0}|{1}|{2}|{3}|{4}",
                 BackgroundFile?.GetHashCode() ?? 0,
                 ColorFile?.GetHashCode() ?? 0,
                 FontFile?.GetHashCode() ?? 0,
                 Name?.GetHashCode() ?? 0,
                 this.Version.GetHashCode()
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -92,9 +92,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is ComposedLook))
             {
-                return(false);
+                returnfalse;
             }
-            return (Equals((ComposedLook)obj));
+            return Equals((ComposedLook)obj);
         }
 
         /// <summary>
@@ -106,14 +106,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.BackgroundFile == other.BackgroundFile &&
+            return this.BackgroundFile == other.BackgroundFile &&
                 this.ColorFile == other.ColorFile &&
                 this.FontFile == other.FontFile &&
                 this.Name == other.Name &&
-                this.Version == other.Version);
+                this.Version == other.Version;
         }
 
         #endregion

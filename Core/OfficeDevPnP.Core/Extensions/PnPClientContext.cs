@@ -40,8 +40,8 @@ namespace OfficeDevPnP.Core
                 {
                     // Call the ExecutingWebRequest delegate method from the original ClientContext object, but pass along the webRequestEventArgs of 
                     // the new delegate method
-                    MethodInfo methodInfo = clientContext.GetType().GetMethod("OnExecutingWebRequest", BindingFlags.Instance | BindingFlags.NonPublic);
-                    object[] parametersArray = new object[] { webRequestEventArgs };
+                    var methodInfo = clientContext.GetType().GetMethod("OnExecutingWebRequest", BindingFlags.Instance | BindingFlags.NonPublic);
+                    var parametersArray = new object[] { webRequestEventArgs };
                     methodInfo.Invoke(clientContext, parametersArray);
                 };
             }
@@ -106,7 +106,6 @@ namespace OfficeDevPnP.Core
                 AuthenticationMode = this.AuthenticationMode
             };
 
-
             // In case of using networkcredentials in on premises or SharePointOnlineCredentials in Office 365
             if (this.Credentials != null)
             {
@@ -130,6 +129,5 @@ namespace OfficeDevPnP.Core
 
             return clonedClientContext;
         }
-
     }
 }

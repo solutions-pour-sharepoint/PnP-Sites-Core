@@ -126,7 +126,7 @@ namespace Microsoft.SharePoint.Client
         /// <exception cref="System.ArgumentException">fileLeafRef</exception>
         public static PublishingPage GetPublishingPage(this Web web, string fileLeafRef)
         {
-            return (web.GetPublishingPage(fileLeafRef, null));
+            return web.GetPublishingPage(fileLeafRef, null);
         }
 
         /// <summary>
@@ -193,8 +193,8 @@ namespace Microsoft.SharePoint.Client
         /// <param name="imageRenditionHeight">The height of the Image Rendition</param>
         public static void CreatePublishingImageRendition(this Web web, string imageRenditionName, int imageRenditionWidth, int imageRenditionHeight)
         {
-            List<string> imageRenditionNames = new List<string>();
-            List<ImageRendition> existingImageRenditions = SiteImageRenditions.GetRenditions(web.Context) as List<ImageRendition>;
+            var imageRenditionNames = new List<string>();
+            var existingImageRenditions = SiteImageRenditions.GetRenditions(web.Context) as List<ImageRendition>;
             web.Context.ExecuteQueryRetry();
             foreach (ImageRendition existingImageRendition in existingImageRenditions)
             {
@@ -203,7 +203,7 @@ namespace Microsoft.SharePoint.Client
             if (!imageRenditionNames.Contains(imageRenditionName))
             {
                 Log.Info(Constants.LOGGING_SOURCE, CoreResources.WebExtensions_CreatePublishingImageRendition, imageRenditionName, imageRenditionWidth, imageRenditionHeight);
-                ImageRendition newImageRendition = new ImageRendition();
+                var newImageRendition = new ImageRendition();
                 newImageRendition.Name = imageRenditionName;
                 newImageRendition.Width = imageRenditionWidth;
                 newImageRendition.Height = imageRenditionHeight;

@@ -18,11 +18,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
             {
                 if (this.ParentTemplate != null && this.ParentTemplate.WebSettings != null)
                 {
-                    return (this.ParentTemplate.WebSettings.SiteLogo);
+                    return this.ParentTemplate.WebSettings.SiteLogo;
                 }
                 else
                 {
-                    return (null);
+                    return null;
                 }
             }
             set
@@ -50,11 +50,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
             {
                 if (this.ParentTemplate != null && this.ParentTemplate.WebSettings != null)
                 {
-                    return (this.ParentTemplate.WebSettings.AlternateCSS);
+                    return this.ParentTemplate.WebSettings.AlternateCSS;
                 }
                 else
                 {
-                    return (null);
+                    return null;
                 }
             }
             set
@@ -82,11 +82,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
             {
                 if (this.ParentTemplate != null && this.ParentTemplate.WebSettings != null)
                 {
-                    return (this.ParentTemplate.WebSettings.MasterPageUrl);
+                    return this.ParentTemplate.WebSettings.MasterPageUrl;
                 }
                 else
                 {
-                    return (null);
+                    return null;
                 }
             }
             set

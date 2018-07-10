@@ -33,7 +33,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             get
             {
-                return (this._parentTemplate);
+                return this._parentTemplate;
             }
             internal set
             {
@@ -91,7 +91,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <remarks>We implemented this to adhere to the generic List of T behavior</remarks>
         public T Find(Predicate<T> match)
         {
-            return (this.FirstOrDefault(item => match(item)));
+            return this.FirstOrDefault(item => match(item));
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns matching index</returns>
         public Int32 FindIndex(Predicate<T> match)
         {
-            return (this.FindIndex(0, this.Count, match));
+            return this.FindIndex(0, this.Count, match);
         }
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns matching index</returns>
         public int FindIndex(int startIndex, Predicate<T> match)
         {
-            return (this.FindIndex(startIndex, this.Count - startIndex, match));
+            return this.FindIndex(startIndex, this.Count - startIndex, match);
         }
 
         /// <summary>
@@ -137,7 +137,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                 throw new ArgumentNullException(nameof(match));
             }
 
-            int num = startIndex + count;
+            var num = startIndex + count;
             for (int i = startIndex; i < num; i++)
             {
                 if (match(this.Items[i]))
@@ -160,7 +160,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                 throw new ArgumentNullException(nameof(match));
             }
 
-            List<Int32> matches = new List<Int32>();
+            var matches = new List<Int32>();
 
             for (Int32 index = 0; index < this.Items.Count; index++)
             {
@@ -173,7 +173,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                 this.Items.RemoveAt(index);
             }
 
-            return (matches.Count());
+            return matches.Count();
         }
     }
 }

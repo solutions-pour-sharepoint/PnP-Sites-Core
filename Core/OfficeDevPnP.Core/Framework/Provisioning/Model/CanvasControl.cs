@@ -59,7 +59,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|",
+            return String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|",
                 this.ControlProperties.Aggregate(0, (acc, next) => acc += next.GetHashCode()),
                 Type.GetHashCode(),
                 CustomWebPartName?.GetHashCode() ?? 0,
@@ -67,7 +67,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                 ControlId.GetHashCode(),
                 Order.GetHashCode(),
                 Column.GetHashCode()
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -79,9 +79,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is CanvasControl))
             {
-                return (false);
+                return false;
             }
-            return (Equals((CanvasControl)obj));
+            return Equals((CanvasControl)obj);
         }
 
         /// <summary>
@@ -93,17 +93,17 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.ControlProperties.DeepEquals(other.ControlProperties) &&
+            return this.ControlProperties.DeepEquals(other.ControlProperties) &&
                 this.Type == other.Type &&
                 this.CustomWebPartName == other.CustomWebPartName &&
                 this.JsonControlData == other.JsonControlData &&
                 this.ControlId == other.ControlId &&
                 this.Order == other.Order &&
                 this.Column == other.Column
-                );
+                ;
         }
 
         #endregion

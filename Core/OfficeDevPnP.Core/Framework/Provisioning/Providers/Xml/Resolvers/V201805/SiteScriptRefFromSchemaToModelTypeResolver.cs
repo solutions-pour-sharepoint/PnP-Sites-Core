@@ -21,7 +21,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers.V2018
 
         public object Resolve(object source, Dictionary<String, IResolver> resolvers = null, Boolean recursive = false)
         {
-            List<String> result = new List<String>();
+            var result = new List<String>();
 
             var siteScripts = source.GetPublicInstancePropertyValue("SiteScripts");
             if (null != siteScripts)
@@ -32,7 +32,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers.V2018
                 }
             }
 
-            return (result);
+            return result;
         }
     }
 }

@@ -45,7 +45,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers
                     result = resultArray;
                 }
             }
-            return (result);
+            return result;
         }
     }
 }

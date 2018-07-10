@@ -47,7 +47,7 @@ namespace OfficeDevPnP.Core.Utilities
         /// <returns>Returns deserialized object</returns>
         public static T Deserialize<T>(XDocument xdoc)
         {
-            XmlSerializer _xmlSerializer = new XmlSerializer(typeof(T));
+            var _xmlSerializer = new XmlSerializer(typeof(T));
             using (var _reader = xdoc.Root.CreateReader())
             {
                 return (T)_xmlSerializer.Deserialize(_reader);
@@ -62,7 +62,7 @@ namespace OfficeDevPnP.Core.Utilities
         /// <returns>An string that represents the serialized object.</returns>
         public static string Serialize<T>(T objectToSerialize) where T : new()
         {
-            return (Serialize(objectToSerialize, null));
+            return Serialize(objectToSerialize, null);
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace OfficeDevPnP.Core.Utilities
         {
             using (StringWriter _sw = new StringWriter())
             {
-                XmlSerializer xs = GetFormatter(objectToSerialize.GetType());
+                var xs = GetFormatter(objectToSerialize.GetType());
                 if (ns != null)
                 {
                     xs.Serialize(_sw, objectToSerialize, ns);
@@ -97,7 +97,7 @@ namespace OfficeDevPnP.Core.Utilities
         /// <returns>An string that represents the serialized object.</returns>
         public static Stream SerializeToStream<T>(T objectToSerialize) where T : new()
         {
-            return (SerializeToStream(objectToSerialize, null));
+            return SerializeToStream(objectToSerialize, null);
         }
 
         /// <summary>
@@ -109,8 +109,8 @@ namespace OfficeDevPnP.Core.Utilities
         /// <returns>An string that represents the serialized object.</returns>
         public static Stream SerializeToStream<T>(T objectToSerialize, XmlSerializerNamespaces ns) where T : new()
         {
-            MemoryStream stream = new MemoryStream();
-            XmlSerializer xs = GetFormatter(objectToSerialize.GetType());
+            var stream = new MemoryStream();
+            var xs = GetFormatter(objectToSerialize.GetType());
             if (ns != null)
             {
                 xs.Serialize(stream, objectToSerialize, ns);

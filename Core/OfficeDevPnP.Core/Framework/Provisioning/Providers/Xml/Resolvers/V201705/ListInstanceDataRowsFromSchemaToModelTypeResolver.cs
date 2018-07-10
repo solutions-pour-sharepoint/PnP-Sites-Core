@@ -50,7 +50,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers.V2017
                     expressions.Add(dr => dr.Security, new SecurityFromSchemaToModelTypeResolver());
 
                     expressions.Add(dr => dr.Key, 
-                        new ExpressionValueResolver(((s, p) => (String)s.GetPublicInstancePropertyValue("Key"))));
+                        new ExpressionValueResolver((s, p) => (String)s.GetPublicInstancePropertyValue("Key")));
 
                     result.AddRange(
                         PnPObjectsMapper.MapObjects<Model.DataRow>(dataRows,
@@ -61,7 +61,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers.V2017
                 }
             }
 
-            return (result);
+            return result;
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers.V2017
         /// <returns></returns>
         protected LambdaExpression CreateSelectorLambda(Type targetType, String propertyName)
         {
-            return (Expression.Lambda(
+            return Expression.Lambda(
                 Expression.Convert(
                     Expression.MakeMemberAccess(
                         Expression.Parameter(targetType, "i"),
@@ -80,7 +80,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers.V2017
                             System.Reflection.BindingFlags.Instance |
                             System.Reflection.BindingFlags.Public)),
                     typeof(object)),
-                ParameterExpression.Parameter(targetType, "i")));
+                ParameterExpression.Parameter(targetType, "i"));
         }
     }
 }

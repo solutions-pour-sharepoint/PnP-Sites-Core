@@ -105,7 +105,6 @@ namespace OfficeDevPnP.Core.Pages
             {
                 return htmlProperties;
             }
-
         }
 
         /// <summary>
@@ -154,7 +153,6 @@ namespace OfficeDevPnP.Core.Pages
             {
                 this.title = value;
             }
-
         }
 
         /// <summary>
@@ -233,7 +231,6 @@ namespace OfficeDevPnP.Core.Pages
             }
         }
 
-
         /// <summary>
         /// Value of the "data-sp-controldata" attribute
         /// </summary>
@@ -259,7 +256,7 @@ namespace OfficeDevPnP.Core.Pages
             this.webPartId = new Guid(component.Id).ToString("D");
 
             // Parse the manifest json blob as we need some data from it
-            JObject wpJObject = JObject.Parse(component.Manifest);
+            var wpJObject = JObject.Parse(component.Manifest);
             this.title = wpJObject["preconfiguredEntries"][0]["title"]["default"].Value<string>();
             this.description = wpJObject["preconfiguredEntries"][0]["title"]["default"].Value<string>();
             if (wpJObject["supportsFullBleed"]!=null)
@@ -296,12 +293,12 @@ namespace OfficeDevPnP.Core.Pages
             }
 
             // Obtain the json data
-            ClientSideWebPartControlData controlData = new ClientSideWebPartControlData()
+            var controlData = new ClientSideWebPartControlData
             {
                 ControlType = this.ControlType,
                 Id = this.InstanceId.ToString("D"),
                 WebPartId = this.WebPartId,
-                Position = new ClientSideCanvasControlPosition()
+                Position = new ClientSideCanvasControlPosition
                 {
                     ZoneIndex = this.Section.Order,
                     SectionIndex = this.Column.Order,
@@ -351,13 +348,13 @@ namespace OfficeDevPnP.Core.Pages
                 }
             }
 
-            ClientSideWebPartData webpartData = new ClientSideWebPartData() { Id = controlData.WebPartId, InstanceId = controlData.Id, Title = this.Title, Description = this.Description, DataVersion = this.DataVersion, Properties = "jsonPropsToReplacePnPRules" };
+            var webpartData = new ClientSideWebPartData { Id = controlData.WebPartId, InstanceId = controlData.Id, Title = this.Title, Description = this.Description, DataVersion = this.DataVersion, Properties = "jsonPropsToReplacePnPRules" };
 
             this.jsonControlData = JsonConvert.SerializeObject(controlData);
             this.jsonWebPartData = JsonConvert.SerializeObject(webpartData);
             this.jsonWebPartData = jsonWebPartData.Replace("\"jsonPropsToReplacePnPRules\"", this.Properties.ToString(Formatting.None));
 
-            StringBuilder html = new StringBuilder(100);
+            var html = new StringBuilder(100);
 #if NETSTANDARD2_0
             html.Append($@"<div {CanvasControlAttribute}=""{this.CanvasControlData}"" {CanvasDataVersionAttribute}=""{this.DataVersion}"" {ControlDataAttribute}=""{this.JsonControlData.Replace("\"", "&quot;")}"">");
             html.Append($@"<div {WebPartAttribute}=""{this.WebPartData}"" {WebPartDataVersionAttribute}=""{this.DataVersion}"" {WebPartDataAttribute}=""{this.JsonWebPartData.Replace("\"", "&quot;")}"">");
@@ -511,20 +508,19 @@ namespace OfficeDevPnP.Core.Pages
             base.FromHtml(element);
 
             // load data from the data-sp-controldata attribute
-            var jsonSerializerSettings = new JsonSerializerSettings()
+            var jsonSerializerSettings = new JsonSerializerSettings
             {
                 MissingMemberHandling = MissingMemberHandling.Ignore
             };
             this.spControlData = JsonConvert.DeserializeObject<ClientSideWebPartControlData>(element.GetAttribute(CanvasControl.ControlDataAttribute), jsonSerializerSettings);
             this.controlType = this.spControlData.ControlType;
 
-
             var wpDiv = element.GetElementsByTagName("div").Where(a => a.HasAttribute(ClientSideWebPart.WebPartDataAttribute)).FirstOrDefault();
             this.webPartData = wpDiv.GetAttribute(ClientSideWebPart.WebPartAttribute);
 
             // Decode the html encoded string
             var decoded = WebUtility.HtmlDecode(wpDiv.GetAttribute(ClientSideWebPart.WebPartDataAttribute));
-            JObject wpJObject = JObject.Parse(decoded);
+            var wpJObject = JObject.Parse(decoded);
             this.title = wpJObject["title"] != null ? wpJObject["title"].Value<string>() : "";
             this.description = wpJObject["description"] != null ? wpJObject["description"].Value<string>() : "";
             // Set property to trigger correct loading of properties 
@@ -578,7 +574,6 @@ namespace OfficeDevPnP.Core.Pages
             if (parsedJson["webPartData"] != null && parsedJson["webPartData"]["dataVersion"] != null)
             {
                 this.dataVersion = parsedJson["webPartData"]["dataVersion"].ToString(Formatting.None).Trim('"');
-
             }
             else if (parsedJson["dataVersion"] != null)
             {
@@ -594,7 +589,6 @@ namespace OfficeDevPnP.Core.Pages
             {
                 this.serverProcessedContent = (JObject)parsedJson["serverProcessedContent"];
             }
-
         }
         #endregion
     }

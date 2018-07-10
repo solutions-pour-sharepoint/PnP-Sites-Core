@@ -49,8 +49,8 @@ namespace OfficeDevPnP.Core.Framework.Graph
         Task<HttpResponseMessage> IHttpProvider.SendAsync(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationToken cancellationToken)
         {
             // Retry logic variables
-            int retryAttempts = 0;
-            int backoffInterval = this._delay;
+            var retryAttempts = 0;
+            var backoffInterval = this._delay;
 
             // Loop until we need to retry
             while (retryAttempts < this._retryCount)
@@ -61,10 +61,10 @@ namespace OfficeDevPnP.Core.Framework.Graph
                     request.Headers.UserAgent.TryParseAdd(string.IsNullOrEmpty(_userAgent) ? $"{PnPCoreUtilities.PnPCoreUserAgent}" : _userAgent);
 
                     // Make the request
-                    Task<HttpResponseMessage> result = base.SendAsync(request, completionOption, cancellationToken);
+                    var result = base.SendAsync(request, completionOption, cancellationToken);
 
                     // And return the response in case of success
-                    return (result);
+                    return result;
                 }
                 // Or handle any ServiceException
                 catch (ServiceException ex)

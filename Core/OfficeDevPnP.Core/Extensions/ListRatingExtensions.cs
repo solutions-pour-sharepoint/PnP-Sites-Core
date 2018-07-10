@@ -169,10 +169,10 @@ namespace Microsoft.SharePoint.Client
         /// <returns></returns>
         private static void EnsureField(List list, Guid fieldId)
         {
-            FieldCollection fields = list.Fields;
+            var fields = list.Fields;
 
-            FieldCollection availableFields = list.ParentWeb.AvailableFields;
-            Field field = availableFields.GetById(fieldId);
+            var availableFields = list.ParentWeb.AvailableFields;
+            var field = availableFields.GetById(fieldId);
 
             _library.Context.Load(fields);
             _library.Context.Load(field, p => p.SchemaXmlWithResourceTokens, p => p.Id, p => p.InternalName, p => p.StaticName);

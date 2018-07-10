@@ -308,7 +308,7 @@ namespace OfficeDevPnP.Core.Pages
             }
 
             // Deserialize the json string
-            var jsonSerializerSettings = new JsonSerializerSettings()
+            var jsonSerializerSettings = new JsonSerializerSettings
             {
                 MissingMemberHandling = MissingMemberHandling.Ignore
             };
@@ -335,7 +335,7 @@ namespace OfficeDevPnP.Core.Pages
         internal virtual void FromHtml(IElement element)
         {
             // deserialize control data
-            var jsonSerializerSettings = new JsonSerializerSettings()
+            var jsonSerializerSettings = new JsonSerializerSettings
             {
                 MissingMemberHandling = MissingMemberHandling.Ignore
             };

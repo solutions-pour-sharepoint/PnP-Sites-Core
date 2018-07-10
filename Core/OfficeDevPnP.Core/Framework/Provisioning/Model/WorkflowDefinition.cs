@@ -124,20 +124,20 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|",
+            return String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|",
                 this.Properties.Aggregate(0, (acc, next) => acc += next.GetHashCode()),
-                (this.FormField != null ? this.FormField.GetHashCode() : 0),
-                (this.Id != null ? this.Id.GetHashCode() : 0),
-                (this.AssociationUrl != null ? this.AssociationUrl.GetHashCode() : 0),
-                (this.Description != null ? this.Description.GetHashCode() : 0),
-                (this.DisplayName != null ? this.DisplayName.GetHashCode() : 0),
-                (this.InitiationUrl != null ? this.InitiationUrl.GetHashCode() : 0),
+                this.FormField != null ? this.FormField.GetHashCode() : 0,
+                this.Id != null ? this.Id.GetHashCode() : 0,
+                this.AssociationUrl != null ? this.AssociationUrl.GetHashCode() : 0,
+                this.Description != null ? this.Description.GetHashCode() : 0,
+                this.DisplayName != null ? this.DisplayName.GetHashCode() : 0,
+                this.InitiationUrl != null ? this.InitiationUrl.GetHashCode() : 0,
                 this.RequiresAssociationForm.GetHashCode(),
                 this.RequiresInitiationForm.GetHashCode(),
-                (this.RestrictToScope != null ? this.RestrictToScope.GetHashCode() : 0),
-                (this.RestrictToType != null ? this.RestrictToType.GetHashCode() : 0),
-                (this.XamlPath != null ? this.XamlPath.GetHashCode() : 0)
-            ).GetHashCode());
+                this.RestrictToScope != null ? this.RestrictToScope.GetHashCode() : 0,
+                this.RestrictToType != null ? this.RestrictToType.GetHashCode() : 0,
+                this.XamlPath != null ? this.XamlPath.GetHashCode() : 0
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -149,9 +149,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is WorkflowDefinition))
             {
-                return (false);
+                return false;
             }
-            return (Equals((WorkflowDefinition)obj));
+            return Equals((WorkflowDefinition)obj);
         }
 
         /// <summary>
@@ -163,10 +163,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (
+            return 
                 this.Properties.DeepEquals(other.Properties) &&
                 this.FormField == other.FormField &&
                 this.Id == other.Id &&
@@ -179,7 +179,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                 this.RestrictToScope == other.RestrictToScope &&
                 this.RestrictToType == other.RestrictToType &&
                 this.XamlPath == other.XamlPath
-                );
+                ;
         }
 
         #endregion

@@ -70,7 +70,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
         public override bool WillProvision(Web web, ProvisioningTemplate template, ProvisioningTemplateApplyingInformation applyingInformation)
         {
-            return (template.Tenant != null && template.Tenant.WebApiPermissions != null && template.Tenant.WebApiPermissions.Any());
+            return template.Tenant != null && template.Tenant.WebApiPermissions != null && template.Tenant.WebApiPermissions.Any();
         }
     }
 }

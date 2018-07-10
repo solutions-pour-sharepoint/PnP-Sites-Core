@@ -54,12 +54,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}",
+            return String.Format("{0}|{1}|{2}|{3}",
                 this.IsExternal.GetHashCode(),
                 this.NavigationNodes.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
-                (this.Title != null ? this.Title.GetHashCode() : 0),
-                (this.Url != null ? this.Url.GetHashCode() : 0)
-            ).GetHashCode());
+                this.Title != null ? this.Title.GetHashCode() : 0,
+                this.Url != null ? this.Url.GetHashCode() : 0
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -71,9 +71,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is NavigationNode))
             {
-                return (false);
+                return false;
             }
-            return (Equals((NavigationNode)obj));
+            return Equals((NavigationNode)obj);
         }
 
         /// <summary>
@@ -85,14 +85,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.IsExternal == other.IsExternal &&
+            return this.IsExternal == other.IsExternal &&
                 this.NavigationNodes.DeepEquals(other.NavigationNodes) &&
                 this.Title == other.Title &&
                 this.Url == other.Url
-                );
+                ;
         }
 
         #endregion

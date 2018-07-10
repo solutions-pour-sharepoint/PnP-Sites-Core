@@ -29,7 +29,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
         /// <param name="recursive">Defines whether to apply the mapping recursively, optional and by default false</param>
         public static void MapProperties<TSource>(TSource source, Object destination, Dictionary<Expression<Func<TSource, Object>>, IResolver> resolverExpressions = null, Boolean recursive = false)
         {
-            Dictionary<string, IResolver> resolvers = ConvertExpressionsToResolvers(resolverExpressions);
+            var resolvers = ConvertExpressionsToResolvers(resolverExpressions);
             MapProperties(source, destination, resolvers, recursive);
         }
 
@@ -43,7 +43,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
         /// <param name="recursive">Defines whether to apply the mapping recursively, optional and by default false</param>
         public static void MapProperties<TDestination>(Object source, TDestination destination, Dictionary<Expression<Func<TDestination, Object>>, IResolver> resolverExpressions = null, Boolean recursive = false)
         {
-            Dictionary<string, IResolver> resolvers = ConvertExpressionsToResolvers(resolverExpressions);
+            var resolvers = ConvertExpressionsToResolvers(resolverExpressions);
             MapProperties(source, destination, resolvers, recursive);
         }
 
@@ -161,7 +161,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                             }
                             else
                             {
-                                object sourceValue = sp.GetValue(source);
+                                var sourceValue = sp.GetValue(source);
                                 if (sourceValue != null && dp.PropertyType == typeof(string) && sp.PropertyType != typeof(string))
                                 {
                                     // Default conversion to String
@@ -189,7 +189,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                                 else if (sourceValue != null && spSpecified != null)
                                 {
                                     // We are processing a property of the schema, which can be nullable
-                                    bool isSpecified = (bool)spSpecified.GetValue(source);
+                                    var isSpecified = (bool)spSpecified.GetValue(source);
                                     if (!isSpecified)
                                     {
                                         sourceValue = null;
@@ -224,8 +224,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
         /// <returns>The mapped destination object</returns>
         public static Object MapObjects<TDestination>(Object source, ITypeResolver resolver, Dictionary<Expression<Func<TDestination, Object>>, IResolver> resolverExpressions = null, Boolean recursive = false)
         {
-            Dictionary<string, IResolver> resolvers = ConvertExpressionsToResolvers(resolverExpressions);
-            return(MapObjects(source, resolver, resolvers, recursive));
+            var resolvers = ConvertExpressionsToResolvers(resolverExpressions);
+            return MapObjects(source, resolver, resolvers, recursive);
         }
         
         /// <summary>
@@ -246,7 +246,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                 result = resolver.Resolve(source, resolvers, recursive);
             }
 
-            return (result);
+            return result;
         }
 
         #endregion

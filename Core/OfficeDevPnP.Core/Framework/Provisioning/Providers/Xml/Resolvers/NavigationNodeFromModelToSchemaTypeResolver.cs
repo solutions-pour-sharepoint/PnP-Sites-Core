@@ -15,7 +15,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers
         public string Name => this.GetType().Name;
         public bool CustomCollectionResolver => false;
 
-
         public object Resolve(object source, Dictionary<string, IResolver> resolvers = null, bool recursive = false)
         {
             Array result = null;
@@ -28,7 +27,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers
             
             if (modelSource != null)
             {
-                Model.NavigationNodeCollection sourceNodes = modelSource.GetPublicInstancePropertyValue("NavigationNodes") as Model.NavigationNodeCollection;
+                var sourceNodes = modelSource.GetPublicInstancePropertyValue("NavigationNodes") as Model.NavigationNodeCollection;
                 if (sourceNodes != null)
                 {
                     var navigationNodeTypeName = $"{PnPSerializationScope.Current?.BaseSchemaNamespace}.NavigationNode, {PnPSerializationScope.Current?.BaseSchemaAssemblyName}";
@@ -49,7 +48,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers
                 }
             }
 
-            return (result);
+            return result;
         }
     }
 }

@@ -99,17 +99,17 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|",
+            return String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|",
                 this.AllowMembersEditMembership.GetHashCode(),
                 this.AllowRequestToJoinLeave.GetHashCode(),
                 this.AutoAcceptRequestToJoinLeave.GetHashCode(),
-                (this.Description != null ? this.Description.GetHashCode() : 0),
+                this.Description != null ? this.Description.GetHashCode() : 0,
                 this.Members.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.OnlyAllowMembersViewMembership.GetHashCode(),
-                (this.Owner != null ? this.Owner.GetHashCode() : 0),
-                (this.RequestToJoinLeaveEmailSetting != null ? this.RequestToJoinLeaveEmailSetting.GetHashCode() : 0),
-                (this.Title != null ? this.Title.GetHashCode() : 0)
-            ).GetHashCode());
+                this.Owner != null ? this.Owner.GetHashCode() : 0,
+                this.RequestToJoinLeaveEmailSetting != null ? this.RequestToJoinLeaveEmailSetting.GetHashCode() : 0,
+                this.Title != null ? this.Title.GetHashCode() : 0
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -121,9 +121,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is SiteGroup))
             {
-                return (false);
+                return false;
             }
-            return (Equals((SiteGroup)obj));
+            return Equals((SiteGroup)obj);
         }
 
         /// <summary>
@@ -136,10 +136,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (
+            return 
                 this.AllowMembersEditMembership == other.AllowMembersEditMembership &&
                 this.AllowRequestToJoinLeave == other.AllowRequestToJoinLeave &&
                 this.AutoAcceptRequestToJoinLeave == other.AutoAcceptRequestToJoinLeave &&
@@ -149,7 +149,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                 this.Owner == other.Owner &&
                 this.RequestToJoinLeaveEmailSetting == other.RequestToJoinLeaveEmailSetting &&
                 this.Title == other.Title
-                );
+                ;
         }
 
         #endregion

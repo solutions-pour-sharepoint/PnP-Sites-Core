@@ -20,7 +20,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.TokenDefinitio
         {
             if (CacheValue == null)
             {
-                TaxonomySession session = TaxonomySession.GetTaxonomySession(TokenContext);
+                var session = TaxonomySession.GetTaxonomySession(TokenContext);
                 var termStore = session.GetDefaultSiteCollectionTermStore();
                 TokenContext.Load(termStore, t => t.Id);
                 TokenContext.ExecuteQueryRetry();

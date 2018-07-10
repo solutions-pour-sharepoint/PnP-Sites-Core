@@ -5,7 +5,6 @@
     /// </summary>
     public static class EnumerationExtensions
     {
-
         #region Extension Methods
 
         /// <summary>
@@ -17,11 +16,11 @@
         /// <returns>Returns new value</returns>
         public static T Include<T>(this Enum value, T append)
         {
-            Type type = value.GetType();
+            var type = value.GetType();
 
             //determine the values
             object result = value;
-            _Value parsed = new _Value(append, type);
+            var parsed = new _Value(append, type);
             if (parsed.Signed is long)
             {
                 result = Convert.ToInt64(value) | (long)parsed.Signed;
@@ -44,11 +43,11 @@
         /// <returns>Returns new value</returns>
         public static T Remove<T>(this Enum value, T remove)
         {
-            Type type = value.GetType();
+            var type = value.GetType();
 
             //determine the values
             object result = value;
-            _Value parsed = new _Value(remove, type);
+            var parsed = new _Value(remove, type);
             if (parsed.Signed is long)
             {
                 result = Convert.ToInt64(value) & ~(long)parsed.Signed;
@@ -71,11 +70,11 @@
         /// <returns>Returns true if condition matches and enumerated type contains value</returns>
         public static bool Has<T>(this Enum value, T check)
         {
-            Type type = value.GetType();
+            var type = value.GetType();
 
             //determine the values
             object result = value;
-            _Value parsed = new _Value(check, type);
+            var parsed = new _Value(check, type);
             if (parsed.Signed is long)
             {
                 return (Convert.ToInt64(value) & (long)parsed.Signed) == (long)parsed.Signed;
@@ -111,7 +110,6 @@
         //cover any lesser value
         private class _Value
         {
-
             //cached comparisons for tye to use
             private static readonly Type _UInt64 = typeof(ulong);
             private static readonly Type _UInt32 = typeof(long);
@@ -121,7 +119,6 @@
 
             public _Value(object value, Type type)
             {
-
                 //make sure it is even an enum to work with
                 if (!type.IsEnum)
                 {
@@ -129,7 +126,7 @@
                 }
 
                 //then check for the enumerated value
-                Type compare = Enum.GetUnderlyingType(type);
+                var compare = Enum.GetUnderlyingType(type);
 
                 //if this is an unsigned long then the only
                 //value that can hold it would be a ulong
@@ -142,13 +139,10 @@
                 {
                     Signed = Convert.ToInt64(value);
                 }
-
             }
-
         }
 
         #endregion
 
     }
-
 }

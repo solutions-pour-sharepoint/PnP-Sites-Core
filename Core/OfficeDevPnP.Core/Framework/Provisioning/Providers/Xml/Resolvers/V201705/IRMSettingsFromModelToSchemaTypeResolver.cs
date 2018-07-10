@@ -38,7 +38,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers.V2017
                 result.SetPublicInstancePropertyValue("LicenseCacheExpireDaysSpecified", true);
             }
 
-            return (result);
+            return result;
         }
     }
 }

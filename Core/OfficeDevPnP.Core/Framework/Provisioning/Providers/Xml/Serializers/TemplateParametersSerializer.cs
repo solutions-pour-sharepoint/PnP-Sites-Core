@@ -18,7 +18,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Serializers
     {
         public string Name
         {
-            get { return (this.GetType().Name); }
+            get { return this.GetType().Name; }
         }
 
         public void Deserialize(object persistence, ProvisioningTemplate template)

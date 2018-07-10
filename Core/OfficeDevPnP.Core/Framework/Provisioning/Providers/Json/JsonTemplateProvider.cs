@@ -32,15 +32,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Json
         {
             var formatter = new JsonPnPFormatter();
             formatter.Initialize(this);
-            return (this.GetTemplates(formatter));
+            return this.GetTemplates(formatter);
         }
 
         public override List<ProvisioningTemplate> GetTemplates(ITemplateFormatter formatter)
         {
-            List<ProvisioningTemplate> result = new List<ProvisioningTemplate>();
+            var result = new List<ProvisioningTemplate>();
 
             // Retrieve the list of available template files
-            List<String> files = this.Connector.GetFiles();
+            var files = this.Connector.GetFiles();
 
             // For each file
             foreach (var file in files)
@@ -48,7 +48,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Json
                 if (file.EndsWith(".json", StringComparison.InvariantCultureIgnoreCase))
                 {
                     // And convert it into a ProvisioningTemplate
-                    ProvisioningTemplate provisioningTemplate = this.GetTemplate(file, formatter);
+                    var provisioningTemplate = this.GetTemplate(file, formatter);
 
                     if (provisioningTemplate != null)
                     {
@@ -58,32 +58,32 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Json
                 }
             }
 
-            return (result);
+            return result;
         }
 
         public override ProvisioningTemplate GetTemplate(string uri)
         {
-            return (this.GetTemplate(uri, (ITemplateProviderExtension[])null));
+            return this.GetTemplate(uri, (ITemplateProviderExtension[])null);
         }
 
         public override ProvisioningTemplate GetTemplate(string uri, ITemplateProviderExtension[] extensions)
         {
-            return (this.GetTemplate(uri, null, null, extensions));
+            return this.GetTemplate(uri, null, null, extensions);
         }
 
         public override ProvisioningTemplate GetTemplate(string uri, string identifier)
         {
-            return (this.GetTemplate(uri, identifier, null));
+            return this.GetTemplate(uri, identifier, null);
         }
 
         public override ProvisioningTemplate GetTemplate(string uri, ITemplateFormatter formatter)
         {
-            return (this.GetTemplate(uri, null, formatter));
+            return this.GetTemplate(uri, null, formatter);
         }
 
         public override ProvisioningTemplate GetTemplate(string uri, string identifier, ITemplateFormatter formatter)
         {
-            return (this.GetTemplate(uri, null, formatter, null));
+            return this.GetTemplate(uri, null, formatter, null);
         }
 
         public override ProvisioningTemplate GetTemplate(string uri, string identifier, ITemplateFormatter formatter, ITemplateProviderExtension[] extensions)
@@ -100,7 +100,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Json
             }
 
             // Get the XML document from a File Stream
-            Stream stream = this.Connector.GetFileStream(uri);
+            var stream = this.Connector.GetFileStream(uri);
 
             if (stream == null)
             {
@@ -111,7 +111,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Json
             stream = PreProcessGetTemplateExtensions(extensions, stream);
 
             // And convert it into a ProvisioningTemplate
-            ProvisioningTemplate provisioningTemplate = formatter.ToProvisioningTemplate(stream, identifier);
+            var provisioningTemplate = formatter.ToProvisioningTemplate(stream, identifier);
 
             // Handle any post-processing extension
             provisioningTemplate = PostProcessGetTemplateExtensions(extensions, provisioningTemplate);
@@ -119,7 +119,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Json
             // Store the identifier of this template, is needed for latter save operation
             this.Uri = uri;
 
-            return (provisioningTemplate);
+            return provisioningTemplate;
         }
 
         public override void Save(ProvisioningTemplate template)

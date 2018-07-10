@@ -20,12 +20,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         {
             using (var scope = new PnPMonitoredScope(this.Name))
             {
-
                 web.Context.Load(web.RegionalSettings);
                 web.Context.Load(web.RegionalSettings.TimeZone, tz => tz.Id);
                 web.Context.ExecuteQueryRetry();
 
-                Model.RegionalSettings settings = new Model.RegionalSettings();
+                var settings = new Model.RegionalSettings();
 
                 settings.AdjustHijriDays = web.RegionalSettings.AdjustHijriDays;
                 settings.AlternateCalendarType = (CalendarType)web.RegionalSettings.AlternateCalendarType;

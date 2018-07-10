@@ -149,7 +149,7 @@ namespace OfficeDevPnP.Core.Pages
                 pageTitle = "";
             }
 
-            string header = Replace1point4Defaults(NoPageHeader);
+            var header = Replace1point4Defaults(NoPageHeader);
 
             return header.Replace("@@title@@", pageTitle).Replace("@@textalignment@@", titleAlignment.ToString());
         }
@@ -177,14 +177,14 @@ namespace OfficeDevPnP.Core.Pages
                 return;
             }
 
-            HtmlParser parser = new HtmlParser(new HtmlParserOptions() { IsEmbedded = true });
+            var parser = new HtmlParser(new HtmlParserOptions { IsEmbedded = true });
             using (var document = parser.Parse(pageHeaderHtml))
             {
                 var pageHeaderControl = document.All.Where(m => m.HasAttribute(CanvasControl.ControlDataAttribute)).FirstOrDefault();
                 if (pageHeaderControl != null)
                 {
                     var decoded = WebUtility.HtmlDecode(pageHeaderControl.GetAttribute(ClientSideWebPart.ControlDataAttribute));
-                    JObject wpJObject = JObject.Parse(decoded);
+                    var wpJObject = JObject.Parse(decoded);
 
                     // Store the server processed content as that's needed for full fidelity
                     if (wpJObject["serverProcessedContent"] != null)
@@ -205,13 +205,13 @@ namespace OfficeDevPnP.Core.Pages
                         }
                         if (wpJObject["properties"]["showKicker"] != null)
                         {
-                            bool showKicker = false;
+                            var showKicker = false;
                             bool.TryParse(wpJObject["properties"]["showKicker"].ToString(), out showKicker);
                             this.ShowKicker = showKicker;
                         }
                         if (wpJObject["properties"]["showPublishDate"] != null)
                         {
-                            bool showPublishDate = false;
+                            var showPublishDate = false;
                             bool.TryParse(wpJObject["properties"]["showPublishDate"].ToString(), out showPublishDate);
                             this.ShowPublishDate = showPublishDate;
                         }
@@ -230,7 +230,7 @@ namespace OfficeDevPnP.Core.Pages
                             this.pageHeaderType = ClientSidePageHeaderType.Custom;
                             if (wpJObject["properties"] != null)
                             {
-                                Guid result = new Guid();
+                                var result = new Guid();
                                 if (wpJObject["properties"]["siteId"] != null && Guid.TryParse(wpJObject["properties"]["siteId"].ToString(), out result))
                                 {
                                     this.siteId = result;
@@ -254,8 +254,8 @@ namespace OfficeDevPnP.Core.Pages
                                 }
                             }
 
-                            System.Globalization.CultureInfo usCulture = new System.Globalization.CultureInfo("en-US");
-                            System.Globalization.CultureInfo europeanCulture = new System.Globalization.CultureInfo("nl-BE");
+                            var usCulture = new System.Globalization.CultureInfo("en-US");
+                            var europeanCulture = new System.Globalization.CultureInfo("nl-BE");
 
                             if (wpJObject["properties"]["translateX"] != null)
                             {
@@ -345,10 +345,10 @@ namespace OfficeDevPnP.Core.Pages
 
                 if (headerImageResolved)
                 {
-                    string focalPoints = "";
+                    var focalPoints = "";
                     if (TranslateX.HasValue || TranslateY.HasValue)
                     {
-                        System.Globalization.CultureInfo usCulture = new System.Globalization.CultureInfo("en-US");
+                        var usCulture = new System.Globalization.CultureInfo("en-US");
                         var translateX = TranslateX.Value.ToString(usCulture);
                         var translateY = TranslateY.Value.ToString(usCulture);
                         focalPoints = $",&quot;translateX&quot;&#58;{translateX},&quot;translateY&quot;&#58;{translateY}";
@@ -372,7 +372,7 @@ namespace OfficeDevPnP.Core.Pages
         {
             if (!string.IsNullOrEmpty(this.Authors))
             {
-                string data = this.Authors.Replace("\r", "").Replace("\n", "").TrimStart(new char[] { '[' }).TrimEnd(new char[] { ']' });
+                var data = this.Authors.Replace("\r", "").Replace("\n", "").TrimStart(new char[] { '[' }).TrimEnd(new char[] { ']' });
                 var jsonencoded = WebUtility.HtmlEncode(data).Replace(":", "&#58;").Replace("@", "%40");
                 header = header.Replace("@@authors@@", jsonencoded);
             }
@@ -419,7 +419,6 @@ namespace OfficeDevPnP.Core.Pages
                 }
             }
         }
-
     }
 #endif
 }

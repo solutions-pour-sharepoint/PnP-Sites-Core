@@ -573,15 +573,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|{13}|{14}|{15}|{16}|{17}|{18}|{19}|{20}|{21}|{22}|{23}|{24}|{25}|{26}|{27}|{28}|{29}|{30}|{31}|{32}|{33}|",
-                (this.ComposedLook != null ? this.ComposedLook.GetHashCode() : 0),
+            return String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|{13}|{14}|{15}|{16}|{17}|{18}|{19}|{20}|{21}|{22}|{23}|{24}|{25}|{26}|{27}|{28}|{29}|{30}|{31}|{32}|{33}|",
+                this.ComposedLook != null ? this.ComposedLook.GetHashCode() : 0,
                 this.ContentTypes.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.CustomActions.SiteCustomActions.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.CustomActions.WebCustomActions.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.Features.SiteFeatures.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.Features.WebFeatures.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.Files.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
-                (this.Id != null ? this.Id.GetHashCode() : 0),
+                this.Id != null ? this.Id.GetHashCode() : 0,
                 this.Lists.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.PropertyBagEntries.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
 #pragma warning disable 618
@@ -595,14 +595,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                 this.Security.SiteSecurityPermissions.RoleAssignments.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.Security.SiteSecurityPermissions.RoleDefinitions.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.SiteFields.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
-                (this.SitePolicy != null ? this.SitePolicy.GetHashCode() : 0),
+                this.SitePolicy != null ? this.SitePolicy.GetHashCode() : 0,
                 this.Version.GetHashCode(),
                 this.Pages.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.TermGroups.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.Workflows.WorkflowDefinitions.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.Workflows.WorkflowSubscriptions.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.AddIns.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
-                (this.Publishing != null ? this.Publishing.GetHashCode() : 0),
+                this.Publishing != null ? this.Publishing.GetHashCode() : 0,
                 this.Localizations.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.WebSettings.GetHashCode(),
                 this.SiteWebhooks.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
@@ -610,7 +610,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                 this.TemplateCultureInfo?.GetHashCode() ?? 0,
                 this.Scope.GetHashCode(),
                 this.Tenant.GetHashCode()
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -622,9 +622,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is ProvisioningTemplate))
             {
-                return (false);
+                return false;
             }
-            return (Equals((ProvisioningTemplate)obj));
+            return Equals((ProvisioningTemplate)obj);
         }
 
         /// <summary>
@@ -638,10 +638,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (
+            return 
                 this.ComposedLook.Equals(other.ComposedLook) &&
                 this.ContentTypes.DeepEquals(other.ContentTypes) &&
                 this.CustomActions.SiteCustomActions.DeepEquals(other.CustomActions.SiteCustomActions) &&
@@ -678,7 +678,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                 this.TemplateCultureInfo == other.TemplateCultureInfo &&
                 this.Scope == other.Scope &&
                 this.Tenant == other.Tenant
-            );
+            ;
         }
 
         #endregion

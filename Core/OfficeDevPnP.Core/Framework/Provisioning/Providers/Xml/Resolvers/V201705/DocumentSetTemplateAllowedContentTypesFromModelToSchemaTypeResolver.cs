@@ -36,7 +36,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers
 
                 result.GetPublicInstanceProperty("RemoveExistingContentTypes").SetValue(result, documentSetTemplate.RemoveExistingContentTypes);
 
-                Int32 i = 0;
+                var i = 0;
                 foreach (var ct in documentSetTemplate.AllowedContentTypes)
                 {
                     var item = Activator.CreateInstance(allowedContentTypeType);
@@ -55,7 +55,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers
                 }
             }
 
-            return (result);
+            return result;
         }
     }
 }

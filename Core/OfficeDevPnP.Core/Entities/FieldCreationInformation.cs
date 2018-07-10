@@ -70,5 +70,4 @@ namespace OfficeDevPnP.Core.Entities
             FieldType = fieldType.ToString();
         }
     }
-
 }

@@ -130,14 +130,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}|{4}|{5}|",
+            return String.Format("{0}|{1}|{2}|{3}|{4}|{5}|",
                 this.AllowedContentTypes.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.DefaultDocuments.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.SharedFields.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.WelcomePageFields.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.RemoveExistingContentTypes.GetHashCode(),
                 this.XmlDocuments?.GetHashCode() ?? 0
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -149,9 +149,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is DocumentSetTemplate))
             {
-                return (false);
+                return false;
             }
-            return (Equals((DocumentSetTemplate)obj));
+            return Equals((DocumentSetTemplate)obj);
         }
 
         /// <summary>
@@ -163,16 +163,16 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.AllowedContentTypes.DeepEquals(other.AllowedContentTypes) &&
+            return this.AllowedContentTypes.DeepEquals(other.AllowedContentTypes) &&
                     this.DefaultDocuments.DeepEquals(other.DefaultDocuments) &&
                     this.SharedFields.DeepEquals(other.SharedFields) &&
                     this.WelcomePageFields.DeepEquals(other.WelcomePageFields) &&
                     this.RemoveExistingContentTypes == other.RemoveExistingContentTypes &&
                     this.XmlDocuments == other.XmlDocuments
-                );
+                ;
         }
 
         #endregion

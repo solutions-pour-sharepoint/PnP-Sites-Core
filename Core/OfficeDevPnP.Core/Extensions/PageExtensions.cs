@@ -38,7 +38,6 @@ namespace Microsoft.SharePoint.Client
         private const string WikiPage_ThreeColumnsHeader = @"<div class=""ExternalClassD1A150D6187F449B8A6C4BEA2D4913BB""><table id=""layoutsTable"" style=""width&#58;100%;""><tbody><tr style=""vertical-align&#58;top;""><td colspan=""3""><div class=""ms-rte-layoutszone-outer"" style=""width&#58;100%;""><div class=""ms-rte-layoutszone-inner"" role=""textbox"" aria-haspopup=""true"" aria-autocomplete=""both"" aria-multiline=""true""></div>&#160;</div></td></tr><tr style=""vertical-align&#58;top;""><td style=""width&#58;33.3%;""><div class=""ms-rte-layoutszone-outer"" style=""width&#58;100%;""><div class=""ms-rte-layoutszone-inner"" role=""textbox"" aria-haspopup=""true"" aria-autocomplete=""both"" aria-multiline=""true""></div>&#160;</div></td><td class=""ms-wiki-columnSpacing"" style=""width&#58;33.3%;""><div class=""ms-rte-layoutszone-outer"" style=""width&#58;100%;""><div class=""ms-rte-layoutszone-inner"" role=""textbox"" aria-haspopup=""true"" aria-autocomplete=""both"" aria-multiline=""true""></div>&#160;</div></td><td class=""ms-wiki-columnSpacing"" style=""width&#58;33.3%;""><div class=""ms-rte-layoutszone-outer"" style=""width&#58;100%;""><div class=""ms-rte-layoutszone-inner"" role=""textbox"" aria-haspopup=""true"" aria-autocomplete=""both"" aria-multiline=""true""></div>&#160;</div></td></tr></tbody></table><span id=""layoutsData"" style=""display&#58;none;"">true,false,3</span></div>";
         private const string WikiPage_ThreeColumnsHeaderFooter = @"<div class=""ExternalClass5849C2C61FEC44E9B249C60F7B0ACA38""><table id=""layoutsTable"" style=""width&#58;100%;""><tbody><tr style=""vertical-align&#58;top;""><td colspan=""3""><div class=""ms-rte-layoutszone-outer"" style=""width&#58;100%;""><div class=""ms-rte-layoutszone-inner"" role=""textbox"" aria-haspopup=""true"" aria-autocomplete=""both"" aria-multiline=""true""></div>&#160;</div></td></tr><tr style=""vertical-align&#58;top;""><td style=""width&#58;33.3%;""><div class=""ms-rte-layoutszone-outer"" style=""width&#58;100%;""><div class=""ms-rte-layoutszone-inner"" role=""textbox"" aria-haspopup=""true"" aria-autocomplete=""both"" aria-multiline=""true""></div>&#160;</div></td><td class=""ms-wiki-columnSpacing"" style=""width&#58;33.3%;""><div class=""ms-rte-layoutszone-outer"" style=""width&#58;100%;""><div class=""ms-rte-layoutszone-inner"" role=""textbox"" aria-haspopup=""true"" aria-autocomplete=""both"" aria-multiline=""true""></div>&#160;</div></td><td class=""ms-wiki-columnSpacing"" style=""width&#58;33.3%;""><div class=""ms-rte-layoutszone-outer"" style=""width&#58;100%;""><div class=""ms-rte-layoutszone-inner"" role=""textbox"" aria-haspopup=""true"" aria-autocomplete=""both"" aria-multiline=""true""></div>&#160;</div></td></tr><tr style=""vertical-align&#58;top;""><td colspan=""3""><div class=""ms-rte-layoutszone-outer"" style=""width&#58;100%;""><div class=""ms-rte-layoutszone-inner"" role=""textbox"" aria-haspopup=""true"" aria-autocomplete=""both"" aria-multiline=""true""></div>&#160;</div></td></tr></tbody></table><span id=""layoutsData"" style=""display&#58;none;"">true,true,3</span></div>";
 
-
         /// <summary>
         /// Gets the HTML contents of a wiki page
         /// </summary>
@@ -245,7 +244,7 @@ namespace Microsoft.SharePoint.Client
                 throw new ArgumentNullException(nameof(webPart));
             }
 
-            File webPartPage = web.GetFileByServerRelativeUrl(serverRelativePageUrl);
+            var webPartPage = web.GetFileByServerRelativeUrl(serverRelativePageUrl);
 
             if (webPartPage == null)
             {
@@ -255,7 +254,7 @@ namespace Microsoft.SharePoint.Client
             web.Context.Load(webPartPage, wp => wp.ListItemAllFields);
             web.Context.ExecuteQueryRetry();
 
-            string wikiField = (string)webPartPage.ListItemAllFields["WikiField"];
+            var wikiField = (string)webPartPage.ListItemAllFields["WikiField"];
 
             var wpdNew = AddWebPart(web, webPartPage, webPart, "wpz", 0);
 
@@ -419,7 +418,7 @@ namespace Microsoft.SharePoint.Client
 
                 var webPartPage = web.GetFileByServerRelativeUrl(serverRelativePageUrl);
 
-                bool forceCheckout = false;
+                var forceCheckout = false;
                 webPartPage.EnsureProperty(wpg => wpg.ListId);
                 if (webPartPage.ListId != Guid.Empty)
                 {
@@ -908,7 +907,7 @@ namespace Microsoft.SharePoint.Client
         /// <returns>A <see cref="ClientSidePage"/> instance</returns>
         public static ClientSidePage LoadClientSidePage(this Web web, string pageName)
         {
-            return ClientSidePage.Load((web.Context as ClientContext), pageName);
+            return ClientSidePage.Load(web.Context as ClientContext, pageName);
         }
 #endif
         /// <summary>
@@ -1030,7 +1029,7 @@ namespace Microsoft.SharePoint.Client
             var folderName = serverRelativePageUrl.Substring(0, serverRelativePageUrl.LastIndexOf("/", StringComparison.Ordinal));
 
             //ensure that folderName does not contain the web's ServerRelativeUrl -> otherwise it will fail on SubSites
-            if (folderName.ToLower().StartsWith((web.ServerRelativeUrl.ToLower())))
+            if (folderName.ToLower().StartsWith(web.ServerRelativeUrl.ToLower()))
             {
                 folderName = folderName.Substring(web.ServerRelativeUrl.Length);
             }
@@ -1197,7 +1196,6 @@ namespace Microsoft.SharePoint.Client
                     }
             }
 
-
             def.SaveWebPartChanges();
 
             context.ExecuteQueryRetry();
@@ -1298,9 +1296,8 @@ namespace Microsoft.SharePoint.Client
                 web.Context.ExecuteQueryRetry();
             }
 
-            return (friendlyUrl.Value);
+            return friendlyUrl.Value;
         }
-
 
     }
 }

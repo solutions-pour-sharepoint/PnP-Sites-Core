@@ -42,7 +42,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Extensions
             }
 
             var currentUser = web.EnsureProperty(w => w.CurrentUser);
-            PeopleManager peopleManager = new PeopleManager(web.Context);
+            var peopleManager = new PeopleManager(web.Context);
             var languageSettings = peopleManager.GetUserProfilePropertyFor(web.CurrentUser.LoginName, "SPS-MUILanguages");
             web.Context.ExecuteQueryRetry();
 

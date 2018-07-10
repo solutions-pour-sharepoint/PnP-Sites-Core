@@ -40,7 +40,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Extensibility
 
             try
             {
-
                 var _instance = GetProviderInstance(provider) as IProvisioningExtensibilityTokenProvider;
                 if (_instance != null)
                 {
@@ -62,7 +61,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Extensibility
             }
             catch (Exception ex)
             {
-                string _message = string.Format(
+                var _message = string.Format(
                     CoreResources.Provisioning_Extensibility_Pipeline_Exception,
                     provider.Assembly,
                     provider.Type,
@@ -104,7 +103,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Extensibility
 
             try
             {
-
                 var _instance = GetProviderInstance(handler);
 #pragma warning disable 618
                 if (_instance is IProvisioningExtensibilityProvider)
@@ -141,14 +139,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Extensibility
             }
             catch (Exception ex)
             {
-                string _message = string.Format(
+                var _message = string.Format(
                     CoreResources.Provisioning_Extensibility_Pipeline_Exception,
                     handler.Assembly,
                     handler.Type,
                     ex);
                 Log.Error(_loggingSource, _message);
                 throw new ExtensiblityPipelineException(_message, ex);
-
             }
         }
 
@@ -183,7 +180,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Extensibility
 
             try
             {
-
                 var _instance = GetProviderInstance(handler);
                 if (_instance is IProvisioningExtensibilityHandler)
                 {
@@ -206,14 +202,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Extensibility
             }
             catch (Exception ex)
             {
-                string _message = string.Format(
+                var _message = string.Format(
                     CoreResources.Provisioning_Extensibility_Pipeline_Exception,
                     handler.Assembly,
                     handler.Type,
                     ex);
                 Log.Error(_loggingSource, _message);
                 throw new ExtensiblityPipelineException(_message, ex);
-
             }
 
             return parsedTemplate;

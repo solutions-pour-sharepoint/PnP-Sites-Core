@@ -47,7 +47,7 @@ namespace OfficeDevPnP.Core.IdentityModel.WSTrustBindings
                 throw new ArgumentOutOfRangeException(nameof(clientCredentialType));
             }
 
-            if (((SecurityMode.Transport == mode) && (HttpClientCredentialType.Digest != clientCredentialType)) && (HttpClientCredentialType.Basic != clientCredentialType))
+            if ((SecurityMode.Transport == mode) && (HttpClientCredentialType.Digest != clientCredentialType) && (HttpClientCredentialType.Basic != clientCredentialType))
             {
                 throw new InvalidOperationException("ID3225");
             }
@@ -90,9 +90,9 @@ namespace OfficeDevPnP.Core.IdentityModel.WSTrustBindings
 
         private static bool IsHttpClientCredentialTypeDefined(HttpClientCredentialType value)
         {
-            if ((((value != HttpClientCredentialType.None) && (value != HttpClientCredentialType.Basic)) && ((value != HttpClientCredentialType.Digest) && (value != HttpClientCredentialType.Ntlm))) && (value != HttpClientCredentialType.Windows))
+            if (((value != HttpClientCredentialType.None) && (value != HttpClientCredentialType.Basic) && ((value != HttpClientCredentialType.Digest) && (value != HttpClientCredentialType.Ntlm)) && (value != HttpClientCredentialType.Windows))
             {
-                return (value == HttpClientCredentialType.Certificate);
+                return value == HttpClientCredentialType.Certificate;
             }
 
             return true;
@@ -114,7 +114,7 @@ namespace OfficeDevPnP.Core.IdentityModel.WSTrustBindings
                 {
                     throw new ArgumentOutOfRangeException(nameof(value));
                 }
-                if (((SecurityMode.Transport == base.SecurityMode) && (HttpClientCredentialType.Digest != value)) && (HttpClientCredentialType.Basic != value))
+                if ((SecurityMode.Transport == base.SecurityMode) && (HttpClientCredentialType.Digest != value) && (HttpClientCredentialType.Basic != value))
                 {
                     throw new InvalidOperationException("ID3225");
                 }

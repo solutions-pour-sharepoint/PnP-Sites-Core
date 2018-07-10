@@ -32,12 +32,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
 
         string IXMLSchemaFormatter.NamespaceUri
         {
-            get { return (XMLConstants.PROVISIONING_SCHEMA_NAMESPACE_2015_05); }
+            get { return XMLConstants.PROVISIONING_SCHEMA_NAMESPACE_2015_05; }
         }
 
         string IXMLSchemaFormatter.NamespacePrefix
         {
-            get { return (XMLConstants.PROVISIONING_SCHEMA_PREFIX); }
+            get { return XMLConstants.PROVISIONING_SCHEMA_PREFIX; }
         }
 
         public bool IsValid(Stream template)
@@ -48,26 +48,26 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
             }
 
             // Load the template into an XDocument
-            XDocument xml = XDocument.Load(template);
+            var xml = XDocument.Load(template);
 
             // Load the XSD embedded resource
-            Stream stream = typeof(XMLPnPSchemaV201505Formatter)
+            var stream = typeof(XMLPnPSchemaV201505Formatter)
                 .Assembly
                 .GetManifestResourceStream("OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.ProvisioningSchema-2015-05.xsd");
 
             // Prepare the XML Schema Set
-            XmlSchemaSet schemas = new XmlSchemaSet();
+            var schemas = new XmlSchemaSet();
             schemas.Add(XMLConstants.PROVISIONING_SCHEMA_NAMESPACE_2015_05,
                 new XmlTextReader(stream));
 
-            Boolean result = true;
+            var result = true;
             xml.Validate(schemas, (o, e) =>
             {
                 Diagnostics.Log.Error(e.Exception, "SchemaFormatter", "Template is not valid: {0}", e.Message);
                 result = false;
             });
 
-            return (result);
+            return result;
         }
 
         Stream ITemplateFormatter.ToFormattedTemplate(Model.ProvisioningTemplate template)
@@ -77,9 +77,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                 throw new ArgumentNullException(nameof(template));
             }
 
-            V201505.ProvisioningTemplate result = new V201505.ProvisioningTemplate();
+            var result = new V201505.ProvisioningTemplate();
 
-            V201505.Provisioning wrappedResult = new V201505.Provisioning();
+            var wrappedResult = new V201505.Provisioning();
             wrappedResult.Preferences = new V201505.Preferences
             {
                 Generator = this.GetType().Assembly.FullName
@@ -109,7 +109,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
             {
                 result.PropertyBagEntries =
                     (from bag in template.PropertyBagEntries
-                     select new V201505.PropertyBagEntry()
+                     select new V201505.PropertyBagEntry
                      {
                          Key = bag.Key,
                          Value = bag.Value,
@@ -227,7 +227,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                          Required = fieldRef.Required
                      }).ToArray() : null,
                                        }).ToArray();
-
             }
             else
             {
@@ -596,19 +595,19 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
             }
 #endregion
 
-            XmlSerializerNamespaces ns =
+            var ns =
                 new XmlSerializerNamespaces();
             ns.Add(((IXMLSchemaFormatter)this).NamespacePrefix,
                 ((IXMLSchemaFormatter)this).NamespaceUri);
 
             var output = XMLSerializer.SerializeToStream<V201505.Provisioning>(wrappedResult, ns);
             output.Position = 0;
-            return (output);
+            return output;
         }
 
         public Model.ProvisioningTemplate ToProvisioningTemplate(Stream template)
         {
-            return (this.ToProvisioningTemplate(template, null));
+            return this.ToProvisioningTemplate(template, null);
         }
 
         public Model.ProvisioningTemplate ToProvisioningTemplate(Stream template, String identifier)
@@ -619,7 +618,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
             }
 
             // Crate a copy of the source stream
-            MemoryStream sourceStream = new MemoryStream();
+            var sourceStream = new MemoryStream();
             template.CopyTo(sourceStream);
             sourceStream.Position = 0;
 
@@ -631,20 +630,20 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
             }
 
             sourceStream.Position = 0;
-            XDocument xml = XDocument.Load(sourceStream);
+            var xml = XDocument.Load(sourceStream);
             XNamespace pnp = XMLConstants.PROVISIONING_SCHEMA_NAMESPACE_2015_05;
 
             // Prepare a variable to hold the single source formatted template
             V201505.ProvisioningTemplate source = null;
 
             // Prepare a variable to hold the resulting ProvisioningTemplate instance
-            Model.ProvisioningTemplate result = new Model.ProvisioningTemplate();
+            var result = new Model.ProvisioningTemplate();
 
             // Determine if we're working on a wrapped SharePointProvisioningTemplate or not
             if (xml.Root.Name == pnp + "Provisioning")
             {
                 // Deserialize the whole wrapper
-                V201505.Provisioning wrappedResult = XMLSerializer.Deserialize<V201505.Provisioning>(xml);
+                var wrappedResult = XMLSerializer.Deserialize<V201505.Provisioning>(xml);
 
                 // Handle the wrapper schema parameters
                 if (wrappedResult.Preferences != null &&
@@ -668,7 +667,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                         // Otherwise let's see if we have an external file for the template
                         var externalSource = templates.ProvisioningTemplateFile.FirstOrDefault(sptf => sptf.ID == identifier);
 
-                        Stream externalFileStream = this._provider.Connector.GetFileStream(externalSource.File);
+                        var externalFileStream = this._provider.Connector.GetFileStream(externalSource.File);
                         xml = XDocument.Load(externalFileStream);
 
                         if (xml.Root.Name != pnp + "ProvisioningTemplate")
@@ -797,17 +796,17 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                         contentType.Sealed,
                         contentType.Hidden,
                         contentType.ReadOnly,
-                        (contentType.DocumentTemplate != null ?
-                            contentType.DocumentTemplate.TargetName : null),
+                        contentType.DocumentTemplate != null ?
+                            contentType.DocumentTemplate.TargetName : null,
                         contentType.Overwrite,
-                        (contentType.FieldRefs != null ?
+                        contentType.FieldRefs != null ?
                             (from fieldRef in contentType.FieldRefs
                              select new Model.FieldRef(fieldRef.Name)
                              {
                                  Id = Guid.Parse(fieldRef.ID),
                                  Hidden = fieldRef.Hidden,
                                  Required = fieldRef.Required
-                             }) : null)
+                             }) : null
                         )
                     );
             }
@@ -820,26 +819,26 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                 result.Lists.AddRange(
                     from list in source.Lists
                     select new Model.ListInstance(
-                        (list.ContentTypeBindings != null ?
+                        list.ContentTypeBindings != null ?
                                 (from contentTypeBinding in list.ContentTypeBindings
                                  select new Model.ContentTypeBinding
                                  {
                                      ContentTypeId = contentTypeBinding.ContentTypeID,
                                      Default = contentTypeBinding.Default,
-                                 }) : null),
-                        (list.Views != null ?
+                                 }) : null,
+                        list.Views != null ?
                                 (from view in list.Views.Any
                                  select new View
                                  {
                                      SchemaXml = view.OuterXml,
-                                 }) : null),
-                        (list.Fields != null ?
+                                 }) : null,
+                        list.Fields != null ?
                                 (from field in list.Fields.Any
                                  select new Field
                                  {
                                      SchemaXml = field.OuterXml,
-                                 }) : null),
-                        (list.FieldRefs != null ?
+                                 }) : null,
+                        list.FieldRefs != null ?
                                  (from fieldRef in list.FieldRefs
                                   select new Model.FieldRef(fieldRef.Name)
                                   {
@@ -847,13 +846,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                                       Hidden = fieldRef.Hidden,
                                       Required = fieldRef.Required,
                                       Id = Guid.Parse(fieldRef.ID)
-                                  }) : null),
-                        (list.DataRows != null ?
+                                  }) : null,
+                        list.DataRows != null ?
                                  (from dataRow in list.DataRows
                                   select new Model.DataRow(
                                      (from dataValue in dataRow
                                       select dataValue).ToDictionary(k => k.FieldName, v => v.Value)
-                                  )).ToList() : null)
+                                  )).ToList() : null
                         )
                     {
                         ContentTypesEnabled = list.ContentTypesEnabled,
@@ -987,7 +986,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
             {
                 foreach (var page in source.Pages)
                 {
-
                     var pageLayout = WikiPageLayout.OneColumn;
                     switch (page.Layout)
                     {
@@ -1018,7 +1016,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                     }
 
                     result.Pages.Add(new Model.Page(page.Url, page.Overwrite, pageLayout,
-                        (page.WebParts != null ?
+                        page.WebParts != null ?
                             (from wp in page.WebParts
                              select new Model.WebPart
                              {
@@ -1027,8 +1025,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                                  Row = (uint)wp.Row,
                                  Contents = wp.Contents
 
-                             }).ToList() : null), page.WelcomePage, null));
-
+                             }).ToList() : null, page.WelcomePage, null));
                 }
             }
 #endregion
@@ -1102,7 +1099,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
             }
 #endregion
 
-            return (result);
+            return result;
         }
     }
 
@@ -1110,7 +1107,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
     {
         public static V201505.Term[] FromModelTermsToSchemaTermsV201505(this TermCollection terms)
         {
-            V201505.Term[] result = terms.Count > 0 ? (
+            var result = terms.Count > 0 ? (
                 from term in terms
                 select new V201505.Term
                 {
@@ -1147,12 +1144,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                          }).ToArray() : null,
                 }).ToArray() : null;
 
-            return (result);
+            return result;
         }
 
         public static List<Model.Term> FromSchemaTermsToModelTermsV201505(this V201505.Term[] terms)
         {
-            List<Model.Term> result = new List<Model.Term>(
+            var result = new List<Model.Term>(
                 from term in terms
                 select new Model.Term(
                     !string.IsNullOrEmpty(term.ID) ? Guid.Parse(term.ID) : Guid.Empty,
@@ -1179,7 +1176,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                 }
                 );
 
-            return (result);
+            return result;
         }
     }
 }

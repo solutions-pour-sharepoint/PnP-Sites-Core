@@ -54,12 +54,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}|",
-                (this.Assembly != null ? this.Assembly.GetHashCode() : 0),
-                (this.Configuration != null ? this.Configuration.GetHashCode() : 0),
+            return String.Format("{0}|{1}|{2}|{3}|",
+                this.Assembly != null ? this.Assembly.GetHashCode() : 0,
+                this.Configuration != null ? this.Configuration.GetHashCode() : 0,
                 this.Enabled.GetHashCode(),
-                (this.Type != null ? this.Type.GetHashCode() : 0)
-            ).GetHashCode());
+                this.Type != null ? this.Type.GetHashCode() : 0
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -71,9 +71,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is ExtensibilityHandler))
             {
-                return (false);
+                return false;
             }
-            return (Equals((ExtensibilityHandler)obj));
+            return Equals((ExtensibilityHandler)obj);
         }
 
         /// <summary>
@@ -85,13 +85,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.Assembly == other.Assembly &&
+            return this.Assembly == other.Assembly &&
                 this.Configuration == other.Configuration &&
                 this.Enabled == other.Enabled &&
-                this.Type == other.Type);
+                this.Type == other.Type;
         }
 
         #endregion

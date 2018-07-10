@@ -1,6 +1,5 @@
 ﻿namespace OfficeDevPnP.Core.Enums
 {
- 
     /// <summary>
     /// Enum that defines the navigation types
     /// </summary>

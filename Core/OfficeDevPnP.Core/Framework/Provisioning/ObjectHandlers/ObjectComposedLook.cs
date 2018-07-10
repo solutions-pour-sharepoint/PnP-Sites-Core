@@ -30,7 +30,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         return parser;
                     }
 
-                    bool executeQueryNeeded = false;
+                    var executeQueryNeeded = false;
                     if (executeQueryNeeded)
                     {
                         web.Context.ExecuteQueryRetry();
@@ -87,10 +87,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                 // Ensure that we have URL property loaded for web and site
                 web.EnsureProperty(w => w.Url);
-                Site site = (web.Context as ClientContext).Site;
+                var site = (web.Context as ClientContext).Site;
                 site.EnsureProperty(s => s.Url);
                
-                SharePointConnector spConnector = new SharePointConnector(web.Context, web.Url, "dummy");
+                var spConnector = new SharePointConnector(web.Context, web.Url, "dummy");
                 // to get files from theme catalog we need a connector linked to the root site
                 SharePointConnector spConnectorRoot;
                 if (!site.Url.Equals(web.Url, StringComparison.InvariantCultureIgnoreCase))
@@ -126,7 +126,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         {
                             scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_ComposedLooks_ExtractObjects_Creating_SharePointConnector);
                             // Let's create a SharePoint connector since our files anyhow are in SharePoint at this moment
-                            TokenParser parser = new TokenParser(web, template);
+                            var parser = new TokenParser(web, template);
                             DownLoadFile(spConnector, spConnectorRoot, creationInfo.FileConnector, web.Url, parser.ParseString(composedLook.BackgroundFile), scope);
                             DownLoadFile(spConnector, spConnectorRoot, creationInfo.FileConnector, web.Url, parser.ParseString(composedLook.ColorFile), scope);
                             DownLoadFile(spConnector, spConnectorRoot, creationInfo.FileConnector, web.Url, parser.ParseString(composedLook.FontFile), scope);
@@ -150,14 +150,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                             f.Folder = Tokenize(f.Folder, web.Url);
                             template.Files.Add(f);
                         }
-
                     }
                     catch (JsonSerializationException)
                     {
                         // cannot deserialize the object, fall back to composed look detection
                         template = DetectComposedLook(web, template, creationInfo, scope, spConnector, spConnectorRoot);
                     }
-
                 }
                 else
                 {
@@ -177,7 +175,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                                     PnPMonitoredScope scope, SharePointConnector spConnector, 
                                                     SharePointConnector spConnectorRoot)
         {
-
             var theme = web.GetCurrentComposedLook();
 
             if (theme != null)
@@ -250,7 +247,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
         private void DownLoadFile(SharePointConnector reader, SharePointConnector readerRoot, FileConnectorBase writer, string webUrl, string asset, PnPMonitoredScope scope)
         {
-
             // No file passed...leave
             if (String.IsNullOrEmpty(asset))
             {
@@ -261,10 +257,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             ;
 
             SharePointConnector readerToUse;
-            Model.File f = GetComposedLookFile(asset);
+            var f = GetComposedLookFile(asset);
 
             // Strip the /sites/root part from /sites/root/lib/folder structure, special case for root site handling.
-            Uri u = new Uri(webUrl);
+            var u = new Uri(webUrl);
             if (f.Folder.IndexOf(u.PathAndQuery, StringComparison.InvariantCultureIgnoreCase) > -1 && u.PathAndQuery.Length > 1)
             {
                 f.Folder = f.Folder.Replace(u.PathAndQuery, "");
@@ -292,12 +288,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         private String FixFileName(string originalFileName)
         {
             // if we've found the file use the provided writer to persist the downloaded file
-            String regexStrip = @"(\\|/|:|\*|\?|""|>|<|\||=)*";
-            String result = Regex.Replace(originalFileName.Substring(0,
+            var regexStrip = @"(\\|/|:|\*|\?|""|>|<|\||=)*";
+            var result = Regex.Replace(originalFileName.Substring(0,
                 originalFileName.IndexOf("?") > 0 ? originalFileName.IndexOf("?") : originalFileName.Length),
                 regexStrip, "", RegexOptions.IgnorePatternWhitespace);
 
-            return (result);
+            return result;
         }
         private String FixFileUrl(string originalFileUrl)
         {
@@ -306,18 +302,18 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 return "";
             }
 
-            String fileUrl = originalFileUrl.Substring(0, originalFileUrl.LastIndexOf("/"));
-            String fileName = FixFileName(originalFileUrl.Substring(originalFileUrl.LastIndexOf("/") + 1));
+            var fileUrl = originalFileUrl.Substring(0, originalFileUrl.LastIndexOf("/"));
+            var fileName = FixFileName(originalFileUrl.Substring(originalFileUrl.LastIndexOf("/") + 1));
 
-            String result = $"{fileUrl}/{fileName}";
+            var result = $"{fileUrl}/{fileName}";
 
-            return (result);
+            return result;
         }
 
         private Model.File GetComposedLookFile(string asset)
         {
-            int index = asset.LastIndexOf("/");
-            Model.File file = new Model.File();
+            var index = asset.LastIndexOf("/");
+            var file = new Model.File();
             file.Src = FixFileName(asset.Substring(index + 1));
             file.Folder = asset.Substring(0, index);
             file.Overwrite = true;
@@ -333,7 +329,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 {
                     template.ComposedLook = null;
                 }
-
             }
             return template;
         }

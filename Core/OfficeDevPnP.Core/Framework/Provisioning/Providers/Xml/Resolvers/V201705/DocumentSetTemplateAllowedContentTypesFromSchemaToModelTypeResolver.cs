@@ -35,7 +35,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers.V2017
                 }
             }
 
-            return (result);
+            return result;
         }
     }
 }

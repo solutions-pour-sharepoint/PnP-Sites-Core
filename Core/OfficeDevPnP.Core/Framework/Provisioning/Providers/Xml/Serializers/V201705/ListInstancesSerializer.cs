@@ -178,7 +178,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Serializers.V20
                 resolvers.Add($"{listInstanceType}.ReadSecuritySpecified", new ExpressionValueResolver((s, v) =>
                 {
                     var value = (Int32)s.GetPublicInstancePropertyValue("ReadSecurity");
-                    return (value == 1 || value == 2);
+                    return value == 1 || value == 2;
                 }
                 ));
 
@@ -201,11 +201,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Serializers.V20
                     var value = (Guid)s.GetPublicInstancePropertyValue("TemplateFeatureID");
                     if (value == Guid.Empty)
                     {
-                        return (null);
+                        return null;
                     }
                     else
                     {
-                        return (value.ToString());
+                        return value.ToString();
                     }
                 }));
 

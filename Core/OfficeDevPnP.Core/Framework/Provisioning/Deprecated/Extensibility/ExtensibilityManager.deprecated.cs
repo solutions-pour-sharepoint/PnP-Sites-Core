@@ -13,7 +13,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Extensibility
     /// </summary>
     public partial class ExtensibilityManager
     {
-
         /// <summary>
         /// Method to Invoke Custom Provisioning Providers. 
         /// Ensure the ClientContext is not disposed in the custom provider.
@@ -29,6 +28,5 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Extensibility
         {
             ExecuteExtensibilityProvisionCallOut(ctx, handler, template, null, null, null);
         }
-
     }
 }

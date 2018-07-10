@@ -34,7 +34,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             get
             {
-                return (this._parentTemplate);
+                return this._parentTemplate;
             }
             internal set
             {

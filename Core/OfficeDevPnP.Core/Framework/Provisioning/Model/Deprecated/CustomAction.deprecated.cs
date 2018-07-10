@@ -31,7 +31,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
             set
             {
                 this._rightsValue = value;
-                BasePermissions _bp = new BasePermissions();
+                var _bp = new BasePermissions();
                 if (Enum.IsDefined(typeof(PermissionKind), value))
                 {
                     var _pk = (PermissionKind)value;

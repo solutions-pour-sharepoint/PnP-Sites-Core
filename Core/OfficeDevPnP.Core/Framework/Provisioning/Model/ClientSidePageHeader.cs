@@ -43,12 +43,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}|",
+            return String.Format("{0}|{1}|{2}|{3}|",
                 this.Type.GetHashCode(),
                 this.ServerRelativeImageUrl.GetHashCode(),
                 this.TranslateX.GetHashCode(),
                 this.TranslateY.GetHashCode()
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -60,9 +60,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is ClientSidePageHeader))
             {
-                return (false);
+                return false;
             }
-            return (Equals((ClientSidePageHeader)obj));
+            return Equals((ClientSidePageHeader)obj);
         }
 
         /// <summary>
@@ -74,14 +74,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.Type == other.Type &&
+            return this.Type == other.Type &&
                 this.ServerRelativeImageUrl == other.ServerRelativeImageUrl &&
                 this.TranslateX == other.TranslateX &&
                 this.TranslateY == other.TranslateY
-                );
+                ;
         }
 
         #endregion

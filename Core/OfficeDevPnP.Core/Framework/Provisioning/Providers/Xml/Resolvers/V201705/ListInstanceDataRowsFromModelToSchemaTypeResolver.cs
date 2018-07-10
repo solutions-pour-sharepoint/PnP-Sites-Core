@@ -14,7 +14,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers.V2017
         public string Name => this.GetType().Name;
         public bool CustomCollectionResolver => false;
 
-
         public ListInstanceDataRowsFromModelToSchemaTypeResolver()
         {
         }
@@ -53,10 +52,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers.V2017
                 // Process each DataRow element
                 var dataRows = Array.CreateInstance(listInstanceDataRowType, list.DataRows.Count);
 
-                Int32 i = 0;
+                var i = 0;
                 foreach (var dr in list.DataRows)
                 {
-                    Object dataRow = Activator.CreateInstance(listInstanceDataRowType);
+                    var dataRow = Activator.CreateInstance(listInstanceDataRowType);
                     PnPObjectsMapper.MapProperties(dr, dataRow, resolvers, recursive);
                     dataRows.SetValue(dataRow, i);
                     i++;
@@ -65,7 +64,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers.V2017
                 result.SetPublicInstancePropertyValue("DataRow", dataRows);
             }
 
-            return (result);
+            return result;
         }
 
         /// <summary>
@@ -76,7 +75,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers.V2017
         /// <returns></returns>
         protected LambdaExpression CreateSelectorLambda(Type targetType, String propertyName)
         {
-            return (Expression.Lambda(
+            return Expression.Lambda(
                 Expression.Convert(
                     Expression.MakeMemberAccess(
                         Expression.Parameter(targetType, "i"),
@@ -84,7 +83,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers.V2017
                             System.Reflection.BindingFlags.Instance |
                             System.Reflection.BindingFlags.Public)),
                     typeof(object)),
-                ParameterExpression.Parameter(targetType, "i")));
+                ParameterExpression.Parameter(targetType, "i"));
         }
     }
 }

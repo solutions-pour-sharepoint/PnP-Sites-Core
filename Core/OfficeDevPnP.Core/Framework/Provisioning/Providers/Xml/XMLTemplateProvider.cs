@@ -33,15 +33,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
         {
             var formatter = new XMLPnPSchemaFormatter();
             formatter.Initialize(this);
-            return (this.GetTemplates(formatter));
+            return this.GetTemplates(formatter);
         }
 
         public override List<ProvisioningTemplate> GetTemplates(ITemplateFormatter formatter)
         {
-            List<ProvisioningTemplate> result = new List<ProvisioningTemplate>();
+            var result = new List<ProvisioningTemplate>();
 
             // Retrieve the list of available template files
-            List<String> files = this.Connector.GetFiles();
+            var files = this.Connector.GetFiles();
 
             // For each file
             foreach (var file in files)
@@ -68,32 +68,32 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                 }
             }
 
-            return (result);
+            return result;
         }
 
         public override ProvisioningTemplate GetTemplate(string uri)
         {
-            return (this.GetTemplate(uri, (ITemplateProviderExtension[])null));
+            return this.GetTemplate(uri, (ITemplateProviderExtension[])null);
         }
 
         public override ProvisioningTemplate GetTemplate(string uri, ITemplateProviderExtension[] extensions = null)
         {
-            return (this.GetTemplate(uri, null, null, extensions));
+            return this.GetTemplate(uri, null, null, extensions);
         }
 
         public override ProvisioningTemplate GetTemplate(string uri, string identifier)
         {
-            return (this.GetTemplate(uri, identifier, null));
+            return this.GetTemplate(uri, identifier, null);
         }
 
         public override ProvisioningTemplate GetTemplate(string uri, ITemplateFormatter formatter)
         {
-            return (this.GetTemplate(uri, null, formatter));
+            return this.GetTemplate(uri, null, formatter);
         }
 
         public override ProvisioningTemplate GetTemplate(string uri, string identifier, ITemplateFormatter formatter)
         {
-            return (this.GetTemplate(uri, identifier, formatter, null));
+            return this.GetTemplate(uri, identifier, formatter, null);
         }
 
         public override ProvisioningTemplate GetTemplate(string uri, string identifier, ITemplateFormatter formatter, ITemplateProviderExtension[] extensions = null)
@@ -110,7 +110,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
             }
 
             // Get the XML document from a File Stream
-            Stream stream = this.Connector.GetFileStream(uri);
+            var stream = this.Connector.GetFileStream(uri);
 
             if (stream == null)
             {
@@ -124,7 +124,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
             stream = ResolveXIncludes(stream);
 
             // And convert it into a ProvisioningTemplate
-            ProvisioningTemplate provisioningTemplate = formatter.ToProvisioningTemplate(stream, identifier);
+            var provisioningTemplate = formatter.ToProvisioningTemplate(stream, identifier);
 
             // Handle any post-processing extension
             provisioningTemplate = PostProcessGetTemplateExtensions(extensions, provisioningTemplate);
@@ -132,7 +132,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
             // Store the identifier of this template, is needed for latter save operation
             this.Uri = uri;
 
-            return (provisioningTemplate);
+            return provisioningTemplate;
         }
 
         public override void Save(ProvisioningTemplate template)
@@ -211,30 +211,30 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                 throw new ArgumentNullException(nameof(stream));
             }
             var res = stream;
-            XDocument xml = XDocument.Load(stream);
+            var xml = XDocument.Load(stream);
 
             //find XInclude elements by XName
-            XName xiName = XName.Get("{http://www.w3.org/2001/XInclude}include");
+            var xiName = XName.Get("{http://www.w3.org/2001/XInclude}include");
             var includes = xml.Descendants(xiName).ToList();
 
             if (includes.Count > 0)
             {
                 foreach (var xi in includes)
                 {
-                    Boolean includeResolved = false;
+                    var includeResolved = false;
 
                     // Resolve xInclude and replace
-                    String href = (String)xi.Attribute("href") ?? String.Empty; 
+                    var href = (String)xi.Attribute("href") ?? String.Empty;
 
                     // If there is the href attribute
                     if (!String.IsNullOrEmpty(href))
                     {
-                        Stream incStream = this.Connector.GetFileStream(href);
+                        var incStream = this.Connector.GetFileStream(href);
                         // And if the referenced file can be loaded/resolved
-                        if(incStream == null)
+                        if (incStream == null)
                         {
                             //check if include has fallback
-                            XName xiFallback = XName.Get("{http://www.w3.org/2001/XInclude}fallback");
+                            var xiFallback = XName.Get("{http://www.w3.org/2001/XInclude}fallback");
                             var fallback = xi.Elements(xiFallback).FirstOrDefault();
                             if ((fallback != null)&&
                                 ((fallback.Elements().Count() > 0)||!string.IsNullOrEmpty(fallback.Value)))

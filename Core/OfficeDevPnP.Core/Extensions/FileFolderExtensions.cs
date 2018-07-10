@@ -214,7 +214,7 @@ namespace Microsoft.SharePoint.Client
 
         private static void CopyStream(Stream source, Stream destination)
         {
-            byte[] buffer = new byte[32768];
+            var buffer = new byte[32768];
             int bytesRead;
 
             do
@@ -560,7 +560,7 @@ namespace Microsoft.SharePoint.Client
                 parentFolder.EnsureProperty(p => p.Properties);
                 if (parentFolder.Properties.FieldValues.ContainsKey("vti_listname") && context != null)
                 {
-                    Guid parentListId = Guid.Parse((String)parentFolder.Properties.FieldValues["vti_listname"]);
+                    var parentListId = Guid.Parse((String)parentFolder.Properties.FieldValues["vti_listname"]);
                     parentList = context.Web.Lists.GetById(parentListId);
                     context.Load(parentList, l => l.BaseType, l => l.Title);
 #if ONPREMISES
@@ -600,7 +600,7 @@ namespace Microsoft.SharePoint.Client
                 };
                 parentFolder.EnsureProperty(f => f.ServerRelativeUrl);
                 newFolderInfo.FolderUrl = parentFolder.ServerRelativeUrl;
-                ListItem newFolderItem = parentList.AddItem(newFolderInfo);
+                var newFolderItem = parentList.AddItem(newFolderInfo);
                 newFolderItem["Title"] = folderName;
                 newFolderItem.Update();
 #if ONPREMISES
@@ -625,7 +625,7 @@ namespace Microsoft.SharePoint.Client
 #else
                 await context.ExecuteQueryRetryAsync();
 #endif
-                return (newFolder);
+                return newFolder;
             }
         }
 
@@ -665,11 +665,11 @@ namespace Microsoft.SharePoint.Client
 #else
         private static async Task<bool> DoesFolderExistImplementation(this Web web, string serverRelativeFolderUrl)
         {
-            Folder folder = web.GetFolderByServerRelativePath(ResourcePath.FromDecodedUrl(serverRelativeFolderUrl));
+            var folder = web.GetFolderByServerRelativePath(ResourcePath.FromDecodedUrl(serverRelativeFolderUrl));
 #endif
 
             web.Context.Load(folder);
-            bool exists = false;
+            var exists = false;
 
             try
             {
@@ -1069,7 +1069,7 @@ namespace Microsoft.SharePoint.Client
                             LeafName = folderName,
                             FolderUrl = UrlUtility.Combine(listUrl, createPath)
                         };
-                        ListItem newFolderItem = containingList.AddItem(newFolderInfo);
+                        var newFolderItem = containingList.AddItem(newFolderInfo);
 
                         var titleField = web.Context.LoadQuery(containingList.Fields.Where(f => f.Id == BuiltInFieldId.Title));
 #if ONPREMISES
@@ -1131,7 +1131,7 @@ namespace Microsoft.SharePoint.Client
         /// <returns>A list with the found <see cref="Microsoft.SharePoint.Client.File"/> objects</returns>
         public static List<File> FindFiles(this Web web, string match)
         {
-            Folder rootFolder = web.RootFolder;
+            var rootFolder = web.RootFolder;
             match = WildcardToRegex(match);
 #if ONPREMISES
             return ParseFiles(rootFolder, match, web.Context as ClientContext);
@@ -1150,7 +1150,7 @@ namespace Microsoft.SharePoint.Client
         public static async Task<List<File>> FindFilesAsync(this Web web, string match)
         {
             await new SynchronizationContextRemover();
-            Folder rootFolder = web.RootFolder;
+            var rootFolder = web.RootFolder;
             match = WildcardToRegex(match);
             return await ParseFiles(rootFolder, match, web.Context as ClientContext);
         }
@@ -1164,7 +1164,7 @@ namespace Microsoft.SharePoint.Client
         /// <returns>A list with the found <see cref="Microsoft.SharePoint.Client.File"/> objects</returns>
         public static List<File> FindFiles(this List list, string match)
         {
-            Folder rootFolder = list.EnsureProperty(l => l.RootFolder);
+            var rootFolder = list.EnsureProperty(l => l.RootFolder);
 
             match = WildcardToRegex(match);
 #if ONPREMISES
@@ -1183,7 +1183,7 @@ namespace Microsoft.SharePoint.Client
         public static async Task<List<File>> FindFilesAsync(this List list, string match)
         {
             await new SynchronizationContextRemover();
-            Folder rootFolder = list.EnsureProperty(l => l.RootFolder);
+            var rootFolder = list.EnsureProperty(l => l.RootFolder);
 
             match = WildcardToRegex(match);
             return await ParseFiles(rootFolder, match, list.Context as ClientContext);
@@ -1400,19 +1400,19 @@ namespace Microsoft.SharePoint.Client
 #else
             await web.Context.ExecuteQueryRetryAsync();
 #endif
-            ClientResult<Stream> stream = file.OpenBinaryStream();
+            var stream = file.OpenBinaryStream();
 #if ONPREMISES
             web.Context.ExecuteQueryRetry();
 #else
             await web.Context.ExecuteQueryRetryAsync();
 #endif
 
-            string returnString = string.Empty;
+            var returnString = string.Empty;
             using (Stream memStream = new MemoryStream())
             {
                 CopyStream(stream.Value, memStream);
                 memStream.Position = 0;
-                StreamReader reader = new StreamReader(memStream);
+                var reader = new StreamReader(memStream);
                 returnString = reader.ReadToEnd();
             }
 
@@ -1425,7 +1425,7 @@ namespace Microsoft.SharePoint.Client
 #endif
         {
             var foundFiles = new List<File>();
-            FileCollection files = folder.Files;
+            var files = folder.Files;
             context.Load(files, fs => fs.Include(f => f.ServerRelativeUrl, f => f.Name, f => f.Title, f => f.TimeCreated, f => f.TimeLastModified));
             context.Load(folder.Folders);
 #if ONPREMISES
@@ -1631,7 +1631,7 @@ namespace Microsoft.SharePoint.Client
             await clientContext.ExecuteQueryRetryAsync();
 #endif
 
-            ClientResult<Stream> stream = file.OpenBinaryStream();
+            var stream = file.OpenBinaryStream();
 #if ONPREMISES
             clientContext.ExecuteQueryRetry();
 #else
@@ -1755,7 +1755,7 @@ namespace Microsoft.SharePoint.Client
                 throw new ArgumentException(CoreResources.FileFolderExtensions_UploadFile_The_argument_must_be_a_single_file_name_and_cannot_contain_path_characters_, nameof(fileName));
 
             // Create the file
-            var newFileInfo = new FileCreationInformation()
+            var newFileInfo = new FileCreationInformation
             {
                 ContentStream = stream,
                 Url = fileName,
@@ -2074,7 +2074,7 @@ namespace Microsoft.SharePoint.Client
 #endif
 
             // Hash contents
-            HashAlgorithm ha = HashAlgorithm.Create();
+            var ha = HashAlgorithm.Create();
             using (var serverStream = streamResult.Value)
                 serverHash = ha.ComputeHash(serverStream);
 
@@ -2191,7 +2191,7 @@ namespace Microsoft.SharePoint.Client
                             {
                                 if (!currentValue.Equals(propertyValue, StringComparison.InvariantCultureIgnoreCase) && parentList != null)
                                 {
-                                    ContentType targetCT = parentList.GetContentTypeByName(propertyValue);
+                                    var targetCT = parentList.GetContentTypeByName(propertyValue);
 #if ONPREMISES
                                     context.ExecuteQueryRetry();
 #else
@@ -2343,7 +2343,7 @@ namespace Microsoft.SharePoint.Client
             {
                 var context = file.Context;
 
-                bool normalFile = true;
+                var normalFile = true;
                 // Ensure that ListItemAllFields.ServerObjectIsNull is loaded
                 try
                 {
@@ -2442,6 +2442,5 @@ namespace Microsoft.SharePoint.Client
                                Replace(@"\*", ".*").
                                Replace(@"\?", ".") + "$";
         }
-
     }
 }

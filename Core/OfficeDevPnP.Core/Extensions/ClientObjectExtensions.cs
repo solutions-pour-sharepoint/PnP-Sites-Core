@@ -19,9 +19,9 @@ namespace Microsoft.SharePoint.Client
         /// <returns>True if the server object is null, otherwise false</returns>
         public static bool ServerObjectIsNull<T>(this T clientObject) where T : ClientObject
         {
-            return (!(clientObject.ServerObjectIsNull != null && 
+            return !(clientObject.ServerObjectIsNull != null && 
                 clientObject.ServerObjectIsNull.HasValue && 
-                !clientObject.ServerObjectIsNull.Value));
+                !clientObject.ServerObjectIsNull.Value);
         }
 
         /// <summary>
@@ -252,7 +252,6 @@ namespace Microsoft.SharePoint.Client
         /// <returns>New Expression where return type is object and not generic</returns>
         public static Expression<Func<TInput, object>> ToUntypedPropertyExpression<TInput, TOutput>(this Expression<Func<TInput, TOutput>> expression)
         {
-
             var body = expression.Body as MemberExpression ?? ((UnaryExpression)expression.Body).Operand as MemberExpression;
 
             var memberName = body.Member.Name;

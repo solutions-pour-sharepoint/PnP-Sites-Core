@@ -269,7 +269,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers
         /// <returns>The template eventually updated by the custom extensions</returns>
         protected virtual ProvisioningTemplate PreProcessSaveTemplateExtensions(ITemplateProviderExtension[] extensions, ProvisioningTemplate template)
         {
-            ProvisioningTemplate result = template;
+            var result = template;
 
             // Handle any pre-processing extension during Save
             if (extensions != null && extensions.Length > 0)
@@ -280,7 +280,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers
                 }
             }
 
-            return (result);
+            return result;
         }
 
         protected Stream PostProcessSaveTemplateExtensions(ITemplateProviderExtension[] extensions, Stream stream)
@@ -300,7 +300,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers
                 }
             }
 
-            return (stream);
+            return stream;
         }
 
         protected Stream PreProcessGetTemplateExtensions(ITemplateProviderExtension[] extensions, Stream stream)
@@ -320,12 +320,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers
                 }
             }
 
-            return (stream);
+            return stream;
         }
 
         protected ProvisioningTemplate PostProcessGetTemplateExtensions(ITemplateProviderExtension[] extensions, ProvisioningTemplate template)
         {
-            ProvisioningTemplate result = template;
+            var result = template;
 
             // Handle any post-processing extension
             if (extensions != null && extensions.Length > 0)
@@ -336,7 +336,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers
                 }
             }
 
-            return (result);
+            return result;
         }
 
         #endregion

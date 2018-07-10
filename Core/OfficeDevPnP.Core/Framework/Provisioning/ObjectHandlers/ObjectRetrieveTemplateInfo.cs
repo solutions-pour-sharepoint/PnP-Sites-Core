@@ -38,7 +38,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 template.Scope = !web.IsSubSite() ? ProvisioningTemplateScope.RootSite : ProvisioningTemplateScope.Web;
 
                 // Retrieve original Template ID and remove it from Property Bag Entries
-                int provisioningTemplateIdIndex = template.PropertyBagEntries.FindIndex(f => f.Key.Equals("_PnP_ProvisioningTemplateId"));
+                var provisioningTemplateIdIndex = template.PropertyBagEntries.FindIndex(f => f.Key.Equals("_PnP_ProvisioningTemplateId"));
                 if (provisioningTemplateIdIndex > -1)
                 {
                     var templateId = template.PropertyBagEntries[provisioningTemplateIdIndex].Value;
@@ -50,14 +50,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 }
 
                 // Retrieve original Template Info and remove it from Property Bag Entries
-                int provisioningTemplateInfoIndex = template.PropertyBagEntries.FindIndex(f => f.Key.Equals("_PnP_ProvisioningTemplateInfo"));
+                var provisioningTemplateInfoIndex = template.PropertyBagEntries.FindIndex(f => f.Key.Equals("_PnP_ProvisioningTemplateInfo"));
                 if (provisioningTemplateInfoIndex > -1)
                 {
                     var jsonInfo = template.PropertyBagEntries[provisioningTemplateInfoIndex].Value;
 
                     if (jsonInfo != null)
                     {
-                        ProvisioningTemplateInfo info = JsonConvert.DeserializeObject<ProvisioningTemplateInfo>(jsonInfo);
+                        var info = JsonConvert.DeserializeObject<ProvisioningTemplateInfo>(jsonInfo);
 
                         // Override any previously defined Template ID, Version, and SitePolicy
                         // with the one stored in the Template Info, if any
@@ -90,7 +90,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 _willProvision = false;
             }
             return _willProvision.Value;
-
         }
 
         public override bool WillExtract(Web web, ProvisioningTemplate template, ProvisioningTemplateCreationInformation creationInfo)
@@ -100,7 +99,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 _willExtract = true;
             }
             return _willExtract.Value;
-
         }
     }
 }

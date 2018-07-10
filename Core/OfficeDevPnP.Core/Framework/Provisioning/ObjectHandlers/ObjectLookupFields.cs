@@ -34,7 +34,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     scope.LogError(CoreResources.Provisioning_ObjectHandlers_LookupFields_Processing_lookup_fields_failed___0_____1_, ex.Message, ex.StackTrace);
                     throw;
                 }
-
             }
 
             return parser;
@@ -68,7 +67,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     rootWeb.Context.Load(field, f => f.SchemaXmlWithResourceTokens);
                     rootWeb.Context.ExecuteQueryRetry();
 
-                    List sourceList = FindSourceList(listIdentifier, web, rootWeb);
+                    var sourceList = FindSourceList(listIdentifier, web, rootWeb);
 
                     if (sourceList != null)
                     {
@@ -108,7 +107,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                             web.Context.Load(field, f => f.SchemaXmlWithResourceTokens);
                             web.Context.ExecuteQueryRetry();
 
-                            List sourceList = FindSourceList(listIdentifier, web, rootWeb);
+                            var sourceList = FindSourceList(listIdentifier, web, rootWeb);
 
                             if (sourceList != null)
                             {
@@ -133,18 +132,18 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
         private static List FindSourceList(string listIdentifier, Web web, Web rootWeb)
         {
-            Guid listGuid = Guid.Empty;
+            var listGuid = Guid.Empty;
 
             if (!Guid.TryParse(listIdentifier, out listGuid))
             {
-                var sourceListUrl = UrlUtility.Combine(web.ServerRelativeUrl, (listIdentifier == Constants.FIELD_XML_USER_LISTIDENTIFIER ? Constants.FIELD_XML_USER_LISTRELATIVEURL : listIdentifier));
+                var sourceListUrl = UrlUtility.Combine(web.ServerRelativeUrl, listIdentifier == Constants.FIELD_XML_USER_LISTIDENTIFIER ? Constants.FIELD_XML_USER_LISTRELATIVEURL : listIdentifier);
                 return web.Lists.FirstOrDefault(l => l.RootFolder.ServerRelativeUrl.Equals(sourceListUrl, StringComparison.OrdinalIgnoreCase));
             }
             else
             {
-                List retVal = rootWeb.Lists.FirstOrDefault(l => l.Id.Equals(listGuid));
+                var retVal = rootWeb.Lists.FirstOrDefault(l => l.Id.Equals(listGuid));
 
-                if(retVal == null)
+                if (retVal == null)
                 {
                     retVal = web.Lists.FirstOrDefault(l => l.Id.Equals(listGuid));
                 }
@@ -197,7 +196,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             }
             return isDirty;
         }
-
 
         public override bool WillProvision(Web web, ProvisioningTemplate template, ProvisioningTemplateApplyingInformation applyingInformation)
         {

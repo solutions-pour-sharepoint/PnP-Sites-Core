@@ -76,15 +76,15 @@ namespace OfficeDevPnP.Core.Utilities
 
                 using (var httpClient = new PnPHttpProvider(handler))
                 {
-                    string identifierUrl = GetResourceIdentifier(resourceType, webUrl, subscription.Resource);
+                    var identifierUrl = GetResourceIdentifier(resourceType, webUrl, subscription.Resource);
                     if (string.IsNullOrEmpty(identifierUrl))
                     {
                         throw new Exception("Identifier of the resource cannot be determined");
                     }
 
-                    string requestUrl = identifierUrl + "/" + SubscriptionsUrlPart;
+                    var requestUrl = identifierUrl + "/" + SubscriptionsUrlPart;
 
-                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
+                    var request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
                     request.Headers.Add("X-RequestDigest", await context.GetRequestDigest());
                     request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     if (!string.IsNullOrEmpty(accessToken))
@@ -95,7 +95,7 @@ namespace OfficeDevPnP.Core.Utilities
                     request.Content = new StringContent(JsonConvert.SerializeObject(subscription),
                         Encoding.UTF8, "application/json");
 
-                    HttpResponseMessage response = await httpClient.SendAsync(request, new System.Threading.CancellationToken());
+                    var response = await httpClient.SendAsync(request, new System.Threading.CancellationToken());
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -130,11 +130,11 @@ namespace OfficeDevPnP.Core.Utilities
             await new SynchronizationContextRemover();
 
             // If validity in months is the Maximum, use the effective max allowed DateTime instead
-            DateTime expirationDateTime = validityInMonths == MaximumValidityInMonths
+            var expirationDateTime = validityInMonths == MaximumValidityInMonths
                 ? MaxExpirationDateTime
                 : DateTime.UtcNow.AddMonths(validityInMonths);
 
-            var subscription = new WebhookSubscription()
+            var subscription = new WebhookSubscription
             {
                 Resource = resourceId,
                 NotificationUrl = notificationUrl,
@@ -176,14 +176,14 @@ namespace OfficeDevPnP.Core.Utilities
 
                 using (var httpClient = new PnPHttpProvider(handler))
                 {
-                    string identifierUrl = GetResourceIdentifier(resourceType, webUrl, resourceId);
+                    var identifierUrl = GetResourceIdentifier(resourceType, webUrl, resourceId);
                     if (string.IsNullOrEmpty(identifierUrl))
                     {
                         throw new Exception("Identifier of the resource cannot be determined");
                     }
                     
-                    string requestUrl = string.Format("{0}/{1}('{2}')", identifierUrl, SubscriptionsUrlPart, subscriptionId);
-                    HttpRequestMessage request = new HttpRequestMessage(new HttpMethod("PATCH"), requestUrl);
+                    var requestUrl = string.Format("{0}/{1}('{2}')", identifierUrl, SubscriptionsUrlPart, subscriptionId);
+                    var request = new HttpRequestMessage(new HttpMethod("PATCH"), requestUrl);
                     request.Headers.Add("X-RequestDigest", await context.GetRequestDigest());
                     request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     if (!string.IsNullOrEmpty(accessToken))
@@ -195,14 +195,14 @@ namespace OfficeDevPnP.Core.Utilities
 
                     if (string.IsNullOrEmpty(webHookEndPoint))
                     {
-                        webhookSubscription = new WebhookSubscription()
+                        webhookSubscription = new WebhookSubscription
                         {
                             ExpirationDateTime = expirationDateTime
                         };
                     }
                     else
                     {
-                        webhookSubscription = new WebhookSubscription()
+                        webhookSubscription = new WebhookSubscription
                         {
                             NotificationUrl = webHookEndPoint,
                             ExpirationDateTime = expirationDateTime
@@ -212,7 +212,7 @@ namespace OfficeDevPnP.Core.Utilities
                     request.Content = new StringContent(JsonConvert.SerializeObject(webhookSubscription),
                         Encoding.UTF8, "application/json");
 
-                    HttpResponseMessage response = await httpClient.SendAsync(request, new System.Threading.CancellationToken());
+                    var response = await httpClient.SendAsync(request, new System.Threading.CancellationToken());
 
                     if (response.StatusCode != System.Net.HttpStatusCode.NoContent)
                     {
@@ -251,25 +251,24 @@ namespace OfficeDevPnP.Core.Utilities
 
                 using (var httpClient = new PnPHttpProvider(handler))
                 {
-                    string identifierUrl = GetResourceIdentifier(resourceType, webUrl, resourceId);
+                    var identifierUrl = GetResourceIdentifier(resourceType, webUrl, resourceId);
                     if (string.IsNullOrEmpty(identifierUrl))
                     {
                         throw new Exception("Identifier of the resource cannot be determined");
                     }
 
-                    string requestUrl = string.Format("{0}/{1}('{2}')", identifierUrl, SubscriptionsUrlPart, subscriptionId);
+                    var requestUrl = string.Format("{0}/{1}('{2}')", identifierUrl, SubscriptionsUrlPart, subscriptionId);
 
-                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Delete, requestUrl);
+                    var request = new HttpRequestMessage(HttpMethod.Delete, requestUrl);
                     request.Headers.Add("X-RequestDigest", await context.GetRequestDigest());
                     request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
 
                     if (!string.IsNullOrEmpty(accessToken))
                     {
                         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                     }
 
-                    HttpResponseMessage response = await httpClient.SendAsync(request, new System.Threading.CancellationToken());
+                    var response = await httpClient.SendAsync(request, new System.Threading.CancellationToken());
 
                     if (response.StatusCode != System.Net.HttpStatusCode.NoContent)
                     {
@@ -309,22 +308,22 @@ namespace OfficeDevPnP.Core.Utilities
 
                 using (var httpClient = new PnPHttpProvider(handler))
                 {
-                    string identifierUrl = GetResourceIdentifier(resourceType, webUrl, resourceId);
+                    var identifierUrl = GetResourceIdentifier(resourceType, webUrl, resourceId);
                     if (string.IsNullOrEmpty(identifierUrl))
                     {
                         throw new Exception("Identifier of the resource cannot be determined");
                     }
 
-                    string requestUrl = identifierUrl + "/" + SubscriptionsUrlPart;
+                    var requestUrl = identifierUrl + "/" + SubscriptionsUrlPart;
 
-                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
+                    var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
                     request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     if (accessToken != null)
                     {
                         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                     }
 
-                    HttpResponseMessage response = await httpClient.SendAsync(request, new System.Threading.CancellationToken());
+                    var response = await httpClient.SendAsync(request, new System.Threading.CancellationToken());
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -365,8 +364,8 @@ namespace OfficeDevPnP.Core.Utilities
         /// <returns><c>true</c> if valid, <c>false</c> otherwise</returns>
         private static bool ValidateExpirationDateTime(DateTime expirationDateTime)
         {
-            DateTime utcDateToValidate = expirationDateTime.ToUniversalTime();
-            DateTime utcNow = DateTime.UtcNow;
+            var utcDateToValidate = expirationDateTime.ToUniversalTime();
+            var utcNow = DateTime.UtcNow;
 
             return utcDateToValidate > utcNow
                 && utcDateToValidate <= MaxExpirationDateTime;

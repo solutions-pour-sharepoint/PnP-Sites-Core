@@ -72,7 +72,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     }
                     var fieldRefParent = schemaElement.Descendants("FieldRefs");
                     fieldRefParent.Remove();
-
                 }
                 formula.Value = formulaString;
             }
@@ -89,8 +88,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         protected string TokenizeTaxonomyField(Web web, XElement element)
         {
             // Replace Taxonomy field references to SspId, TermSetId with tokens
-            TaxonomySession session = TaxonomySession.GetTaxonomySession(web.Context);
-            TermStore store = session.GetDefaultSiteCollectionTermStore();
+            var session = TaxonomySession.GetTaxonomySession(web.Context);
+            var store = session.GetDefaultSiteCollectionTermStore();
 
             var sspIdElement = element.XPathSelectElement("./Customization/ArrayOfProperty/Property[Name = 'SspId']/Value");
             if (sspIdElement != null)
@@ -100,10 +99,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             var termSetIdElement = element.XPathSelectElement("./Customization/ArrayOfProperty/Property[Name = 'TermSetId']/Value");
             if (termSetIdElement != null)
             {
-                Guid termSetId = Guid.Parse(termSetIdElement.Value);
+                var termSetId = Guid.Parse(termSetIdElement.Value);
                 if (termSetId != Guid.Empty)
                 {
-                    Microsoft.SharePoint.Client.Taxonomy.TermSet termSet = store.GetTermSet(termSetId);
+                    var termSet = store.GetTermSet(termSetId);
                     store.Context.ExecuteQueryRetry();
 
                     if (!termSet.ServerObjectIsNull())
@@ -138,7 +137,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     if (termStoreIdElement != null)
                     {
                         var termStoreId = Guid.Parse(termStoreIdElement.Value);
-                        TaxonomySession taxSession = TaxonomySession.GetTaxonomySession(context);
+                        var taxSession = TaxonomySession.GetTaxonomySession(context);
                         try
                         {
                             taxSession.EnsureProperty(t => t.TermStores);
@@ -246,7 +245,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 Uri uri;
                 if (Uri.TryCreate(webUrl, UriKind.Absolute, out uri))
                 {
-                    string webUrlPathAndQuery = System.Web.HttpUtility.UrlDecode(uri.PathAndQuery);
+                    var webUrlPathAndQuery = System.Web.HttpUtility.UrlDecode(uri.PathAndQuery);
                     // Don't do additional replacement when masterpagecatalog and themecatalog (see #675)
                     if (url.IndexOf(webUrlPathAndQuery, StringComparison.InvariantCultureIgnoreCase) > -1 && (url.IndexOf("{masterpagecatalog}") == -1 ) && (url.IndexOf("{themecatalog}") ==-1))
                     {
@@ -263,7 +262,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 }
             }
 
-            return (result);
+            return result;
         }        
     }
 }

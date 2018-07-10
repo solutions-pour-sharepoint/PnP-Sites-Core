@@ -27,16 +27,16 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 web.EnsureProperties(w => w.ServerRelativeUrl);
 
                 // determine pages library
-                string pagesLibrary = "SitePages";
+                var pagesLibrary = "SitePages";
 
-                List<string> preCreatedPages = new List<string>();
+                var preCreatedPages = new List<string>();
 
                 var currentPageIndex = 0;
                 // pre create the needed pages so we can fill the needed tokens which might be used later on when we put web parts on those pages
                 foreach (var clientSidePage in template.ClientSidePages)
                 {
-                    string pageName = $"{System.IO.Path.GetFileNameWithoutExtension(clientSidePage.PageName)}.aspx";
-                    string url = $"{pagesLibrary}/{pageName}";
+                    var pageName = $"{System.IO.Path.GetFileNameWithoutExtension(clientSidePage.PageName)}.aspx";
+                    var url = $"{pagesLibrary}/{pageName}";
 
                     // Write page level status messages, needed in case many pages are provisioned
                     currentPageIndex++;
@@ -66,7 +66,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     if (!exists)
                     {
                         // Pre-create the page    
-                        Pages.ClientSidePage page = web.AddClientSidePage(pageName);
+                        var page = web.AddClientSidePage(pageName);
 
                         // Set page layout now, because once it's set, it can't be changed.
                         if (!string.IsNullOrEmpty(clientSidePage.Layout))
@@ -100,8 +100,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 // Iterate over the pages and create/update them
                 foreach (var clientSidePage in template.ClientSidePages)
                 {
-                    string pageName = $"{System.IO.Path.GetFileNameWithoutExtension(clientSidePage.PageName)}.aspx";
-                    string url = $"{pagesLibrary}/{pageName}";
+                    var pageName = $"{System.IO.Path.GetFileNameWithoutExtension(clientSidePage.PageName)}.aspx";
+                    var url = $"{pagesLibrary}/{pageName}";
                     // Write page level status messages, needed in case many pages are provisioned
                     currentPageIndex++;
                     WriteMessage($"ClientSidePage|{pageName}|{currentPageIndex}|{template.ClientSidePages.Count}", ProvisioningMessageType.Progress);
@@ -146,7 +146,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     }
 
                     // Set page title
-                    string newTitle = parser.ParseString(clientSidePage.Title);
+                    var newTitle = parser.ParseString(clientSidePage.Title);
                     if (page.PageTitle != newTitle)
                     {
                         page.PageTitle = newTitle;
@@ -202,10 +202,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     // if no section specified then add a default single column section
                     if (!clientSidePage.Sections.Any())
                     {
-                        clientSidePage.Sections.Add(new CanvasSection() { Type = CanvasSectionType.OneColumn, Order = 10 });
+                        clientSidePage.Sections.Add(new CanvasSection { Type = CanvasSectionType.OneColumn, Order = 10 });
                     }
 
-                    int sectionCount = -1;
+                    var sectionCount = -1;
                     // Apply the "layout" and content
                     foreach (var section in clientSidePage.Sections)
                     {
@@ -251,7 +251,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                 // Is it a text control?
                                 if (control.Type == WebPartType.Text)
                                 {
-                                    Pages.ClientSideText textControl = new Pages.ClientSideText();
+                                    var textControl = new Pages.ClientSideText();
                                     if (control.ControlProperties.Any())
                                     {
                                         var textProperty = control.ControlProperties.First();
@@ -271,7 +271,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                     }
                                     // Reduce column number by 1 due 0 start indexing
                                     page.AddControl(textControl, page.Sections[sectionCount].Columns[control.Column - 1], control.Order);
-
                                 }
                                 // It is a web part
                                 else
@@ -303,7 +302,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                     // Is an OOB client side web part (1st party)
                                     else
                                     {
-                                        string webPartName = "";
+                                        var webPartName = "";
                                         switch (control.Type)
                                         {
                                             case WebPartType.Image:
@@ -391,7 +390,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                                     if (baseControl != null)
                                     {
-                                        Pages.ClientSideWebPart myWebPart = new Pages.ClientSideWebPart(baseControl)
+                                        var myWebPart = new Pages.ClientSideWebPart(baseControl)
                                         {
                                             Order = control.Order
                                         };
@@ -418,7 +417,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                                             foreach (var property in control.ControlProperties)
                                             {
-                                                Type propertyType = typeof(string);
+                                                var propertyType = typeof(string);
 
                                                 if (controlProperties != null)
                                                 {
@@ -477,7 +476,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     {
                         page.Publish();
                     }
-
                 }
             }
 

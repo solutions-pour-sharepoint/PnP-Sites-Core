@@ -48,13 +48,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}|{4}|",
-                (this.DesignPackagePath != null ? this.DesignPackagePath.GetHashCode() : 0),
+            return String.Format("{0}|{1}|{2}|{3}|{4}|",
+                this.DesignPackagePath != null ? this.DesignPackagePath.GetHashCode() : 0,
                 this.MajorVersion.GetHashCode(),
                 this.MinorVersion.GetHashCode(),
-                (this.PackageGuid != null ? this.PackageGuid.GetHashCode() : 0),
-                (this.PackageName != null ? this.PackageName.GetHashCode() : 0)
-            ).GetHashCode());
+                this.PackageGuid != null ? this.PackageGuid.GetHashCode() : 0,
+                this.PackageName != null ? this.PackageName.GetHashCode() : 0
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -66,9 +66,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is DesignPackage))
             {
-                return (false);
+                return false;
             }
-            return (Equals((DesignPackage)obj));
+            return Equals((DesignPackage)obj);
         }
 
         /// <summary>
@@ -80,16 +80,16 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (
+            return 
                 this.DesignPackagePath == other.DesignPackagePath &&
                 this.MajorVersion == other.MajorVersion &&
                 this.MinorVersion == other.MinorVersion &&
                 this.PackageGuid == other.PackageGuid &&
                 this.PackageName == other.PackageName
-                );
+                ;
         }
 
         #endregion

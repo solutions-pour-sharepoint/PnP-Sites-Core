@@ -23,8 +23,8 @@ namespace OfficeDevPnP.Core.IdentityModel.TokenProviders.ADFS
         {
             samlToken = WrapInSoapMessage(samlToken, relyingPartyIdentifier);
 
-            string samlServer = samlSite.EndsWith("/") ? samlSite : samlSite + "/";
-            Uri samlServerRoot = new Uri(samlServer);
+            var samlServer = samlSite.EndsWith("/") ? samlSite : samlSite + "/";
+            var samlServerRoot = new Uri(samlServer);
 
             var sharepointSite = new
             {
@@ -33,16 +33,16 @@ namespace OfficeDevPnP.Core.IdentityModel.TokenProviders.ADFS
                 Wreply = $"{samlServerRoot.Scheme}://{samlServerRoot.Host}/_trust/"
             };
 
-            string stringData = $"wa=wsignin1.0&wctx={HttpUtility.UrlEncode(sharepointSite.Wctx)}&wresult={HttpUtility.UrlEncode(samlToken)}";
+            var stringData = $"wa=wsignin1.0&wctx={HttpUtility.UrlEncode(sharepointSite.Wctx)}&wresult={HttpUtility.UrlEncode(samlToken)}";
 
-            HttpWebRequest sharepointRequest = WebRequest.Create(sharepointSite.Wreply) as HttpWebRequest;
+            var sharepointRequest = WebRequest.Create(sharepointSite.Wreply) as HttpWebRequest;
             sharepointRequest.Method = "POST";
             sharepointRequest.ContentType = "application/x-www-form-urlencoded";
             sharepointRequest.CookieContainer = new CookieContainer();
             sharepointRequest.AllowAutoRedirect = false; // This is important
 
-            Stream newStream = sharepointRequest.GetRequestStream();
-            byte[] data = Encoding.UTF8.GetBytes(stringData);
+            var newStream = sharepointRequest.GetRequestStream();
+            var data = Encoding.UTF8.GetBytes(stringData);
             newStream.Write(data, 0, data.Length);
             newStream.Close();
 
@@ -64,49 +64,49 @@ namespace OfficeDevPnP.Core.IdentityModel.TokenProviders.ADFS
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "System.Xml.XmlDocument.CreateTextNode(System.String)")]
         private string WrapInSoapMessage(string stsResponse, string relyingPartyIdentifier)
         {
-            XmlDocument samlAssertion = new XmlDocument();
+            var samlAssertion = new XmlDocument();
             samlAssertion.PreserveWhitespace = true;
             samlAssertion.LoadXml(stsResponse);
 
             //Select the book node with the matching attribute value.
-            String notBefore = samlAssertion.DocumentElement.FirstChild.Attributes["NotBefore"].Value;
-            String notOnOrAfter = samlAssertion.DocumentElement.FirstChild.Attributes["NotOnOrAfter"].Value;
+            var notBefore = samlAssertion.DocumentElement.FirstChild.Attributes["NotBefore"].Value;
+            var notOnOrAfter = samlAssertion.DocumentElement.FirstChild.Attributes["NotOnOrAfter"].Value;
 
-            XmlDocument soapMessage = new XmlDocument();
-            XmlElement soapEnvelope = soapMessage.CreateElement("t", "RequestSecurityTokenResponse", "http://schemas.xmlsoap.org/ws/2005/02/trust");
+            var soapMessage = new XmlDocument();
+            var soapEnvelope = soapMessage.CreateElement("t", "RequestSecurityTokenResponse", "http://schemas.xmlsoap.org/ws/2005/02/trust");
             soapMessage.AppendChild(soapEnvelope);
-            XmlElement lifeTime = soapMessage.CreateElement("t", "Lifetime", soapMessage.DocumentElement.NamespaceURI);
+            var lifeTime = soapMessage.CreateElement("t", "Lifetime", soapMessage.DocumentElement.NamespaceURI);
             soapEnvelope.AppendChild(lifeTime);
-            XmlElement created = soapMessage.CreateElement("wsu", "Created", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd");
-            XmlText createdValue = soapMessage.CreateTextNode(notBefore);
+            var created = soapMessage.CreateElement("wsu", "Created", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd");
+            var createdValue = soapMessage.CreateTextNode(notBefore);
             created.AppendChild(createdValue);
             lifeTime.AppendChild(created);
-            XmlElement expires = soapMessage.CreateElement("wsu", "Expires", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd");
-            XmlText expiresValue = soapMessage.CreateTextNode(notOnOrAfter);
+            var expires = soapMessage.CreateElement("wsu", "Expires", "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd");
+            var expiresValue = soapMessage.CreateTextNode(notOnOrAfter);
             expires.AppendChild(expiresValue);
             lifeTime.AppendChild(expires);
-            XmlElement appliesTo = soapMessage.CreateElement("wsp", "AppliesTo", "http://schemas.xmlsoap.org/ws/2004/09/policy");
+            var appliesTo = soapMessage.CreateElement("wsp", "AppliesTo", "http://schemas.xmlsoap.org/ws/2004/09/policy");
             soapEnvelope.AppendChild(appliesTo);
-            XmlElement endPointReference = soapMessage.CreateElement("wsa", "EndpointReference", "http://www.w3.org/2005/08/addressing");
+            var endPointReference = soapMessage.CreateElement("wsa", "EndpointReference", "http://www.w3.org/2005/08/addressing");
             appliesTo.AppendChild(endPointReference);
-            XmlElement address = soapMessage.CreateElement("wsa", "Address", endPointReference.NamespaceURI);
-            XmlText addressValue = soapMessage.CreateTextNode(relyingPartyIdentifier);
+            var address = soapMessage.CreateElement("wsa", "Address", endPointReference.NamespaceURI);
+            var addressValue = soapMessage.CreateTextNode(relyingPartyIdentifier);
             address.AppendChild(addressValue);
             endPointReference.AppendChild(address);
-            XmlElement requestedSecurityToken = soapMessage.CreateElement("t", "RequestedSecurityToken", soapMessage.DocumentElement.NamespaceURI);
-            XmlNode samlToken = soapMessage.ImportNode(samlAssertion.DocumentElement, true);
+            var requestedSecurityToken = soapMessage.CreateElement("t", "RequestedSecurityToken", soapMessage.DocumentElement.NamespaceURI);
+            var samlToken = soapMessage.ImportNode(samlAssertion.DocumentElement, true);
             requestedSecurityToken.AppendChild(samlToken);
             soapEnvelope.AppendChild(requestedSecurityToken);
-            XmlElement tokenType = soapMessage.CreateElement("t", "TokenType", soapMessage.DocumentElement.NamespaceURI);
-            XmlText tokenTypeValue = soapMessage.CreateTextNode("urn:oasis:names:tc:SAML:1.0:assertion");
+            var tokenType = soapMessage.CreateElement("t", "TokenType", soapMessage.DocumentElement.NamespaceURI);
+            var tokenTypeValue = soapMessage.CreateTextNode("urn:oasis:names:tc:SAML:1.0:assertion");
             tokenType.AppendChild(tokenTypeValue);
             soapEnvelope.AppendChild(tokenType);
-            XmlElement requestType = soapMessage.CreateElement("t", "RequestType", soapMessage.DocumentElement.NamespaceURI);
-            XmlText requestTypeValue = soapMessage.CreateTextNode("http://schemas.xmlsoap.org/ws/2005/02/trust/Issue");
+            var requestType = soapMessage.CreateElement("t", "RequestType", soapMessage.DocumentElement.NamespaceURI);
+            var requestTypeValue = soapMessage.CreateTextNode("http://schemas.xmlsoap.org/ws/2005/02/trust/Issue");
             requestType.AppendChild(requestTypeValue);
             soapEnvelope.AppendChild(requestType);
-            XmlElement keyType = soapMessage.CreateElement("t", "KeyType", soapMessage.DocumentElement.NamespaceURI);
-            XmlText keyTypeValue = soapMessage.CreateTextNode("http://schemas.xmlsoap.org/ws/2005/05/identity/NoProofKey");
+            var keyType = soapMessage.CreateElement("t", "KeyType", soapMessage.DocumentElement.NamespaceURI);
+            var keyTypeValue = soapMessage.CreateTextNode("http://schemas.xmlsoap.org/ws/2005/05/identity/NoProofKey");
             keyType.AppendChild(keyTypeValue);
             soapEnvelope.AppendChild(keyType);
 
@@ -120,12 +120,12 @@ namespace OfficeDevPnP.Core.IdentityModel.TokenProviders.ADFS
         /// <returns>DateTime holding the expiration date. Defaults to DateTime.MinValue if there's no valid datetime in the saml token</returns>
         internal DateTime SamlTokenExpiresOn(string stsResponse)
         {
-            XmlDocument samlAssertion = new XmlDocument();
+            var samlAssertion = new XmlDocument();
             samlAssertion.PreserveWhitespace = true;
             samlAssertion.LoadXml(stsResponse);
 
-            String notOnOrAfter = samlAssertion.DocumentElement.FirstChild.Attributes["NotOnOrAfter"].Value;
-            DateTime toDate = DateTime.MinValue;
+            var notOnOrAfter = samlAssertion.DocumentElement.FirstChild.Attributes["NotOnOrAfter"].Value;
+            var toDate = DateTime.MinValue;
             if (DateTime.TryParse(notOnOrAfter, out toDate))
             {
                 return toDate;
@@ -143,17 +143,17 @@ namespace OfficeDevPnP.Core.IdentityModel.TokenProviders.ADFS
         /// <returns>TimeSpan holding the token lifetime. Defaults to TimeSpan.Zero is case of problems</returns>
         internal TimeSpan SamlTokenlifeTime(string stsResponse)
         {
-            XmlDocument samlAssertion = new XmlDocument();
+            var samlAssertion = new XmlDocument();
             samlAssertion.PreserveWhitespace = true;
             samlAssertion.LoadXml(stsResponse);
 
-            String notOnOrAfter = samlAssertion.DocumentElement.FirstChild.Attributes["NotOnOrAfter"].Value;
-            String notBefore = samlAssertion.DocumentElement.FirstChild.Attributes["NotBefore"].Value;
+            var notOnOrAfter = samlAssertion.DocumentElement.FirstChild.Attributes["NotOnOrAfter"].Value;
+            var notBefore = samlAssertion.DocumentElement.FirstChild.Attributes["NotBefore"].Value;
 
-            DateTime toDate = DateTime.MinValue;
+            var toDate = DateTime.MinValue;
             if (DateTime.TryParse(notOnOrAfter, out toDate))
             {
-                DateTime fromDate = DateTime.MinValue;
+                var fromDate = DateTime.MinValue;
                 if (DateTime.TryParse(notBefore, out fromDate))
                 {
                     return toDate - fromDate;
@@ -162,6 +162,5 @@ namespace OfficeDevPnP.Core.IdentityModel.TokenProviders.ADFS
 
             return TimeSpan.Zero;
         }
-
     }
 }

@@ -3,7 +3,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace OfficeDevPnP.Core.Entities
 {
-
     /// <summary>
     /// Represents YammerUser
     /// Generated based on Yammer response on 30th of June 2014 and using http://json2csharp.com/ service 

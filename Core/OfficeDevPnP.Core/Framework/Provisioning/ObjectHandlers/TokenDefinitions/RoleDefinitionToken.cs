@@ -16,7 +16,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.TokenDefinitio
             : base(web, $"{{roledefinition:{definition.RoleTypeKind}}}")
         {
             name = definition.EnsureProperty(r => r.Name);
-            
         }
 
         public override string GetReplaceValue()

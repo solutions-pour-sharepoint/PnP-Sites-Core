@@ -15,7 +15,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers.V2017
     {
         public string Name
         {
-            get { return (this.GetType().Name); }
+            get { return this.GetType().Name; }
         }
 
         public object Resolve(object source, object destination, object sourceValue)
@@ -30,7 +30,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers.V2017
                 result = (Boolean)removeExistingContentTypes;
             }
 
-            return (result);
+            return result;
         }
     }
 }

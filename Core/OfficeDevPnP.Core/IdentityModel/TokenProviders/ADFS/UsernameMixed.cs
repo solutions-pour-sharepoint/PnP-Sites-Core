@@ -14,7 +14,6 @@ namespace OfficeDevPnP.Core.IdentityModel.TokenProviders.ADFS
     /// </summary>
     public class UsernameMixed : BaseProvider
     {
-
         /// <summary>
         /// Performs active authentication against ADFS using the trust/13/usernamemixed ADFS endpoint.
         /// </summary>
@@ -27,31 +26,31 @@ namespace OfficeDevPnP.Core.IdentityModel.TokenProviders.ADFS
         /// <returns>A cookiecontainer holding the FedAuth cookie</returns>
         public CookieContainer GetFedAuthCookie(string siteUrl, string userName, string password, Uri userNameMixed, string relyingPartyIdentifier, int logonTokenCacheExpirationWindow)
         {
-            UsernameMixed adfsTokenProvider = new UsernameMixed();
+            var adfsTokenProvider = new UsernameMixed();
             var token = adfsTokenProvider.RequestToken(userName, password, userNameMixed, relyingPartyIdentifier);
-            string fedAuthValue = TransformSamlTokenToFedAuth(token.TokenXml.OuterXml, siteUrl, relyingPartyIdentifier);
+            var fedAuthValue = TransformSamlTokenToFedAuth(token.TokenXml.OuterXml, siteUrl, relyingPartyIdentifier);
 
             // Construct the cookie expiration date
-            TimeSpan lifeTime = SamlTokenlifeTime(token.TokenXml.OuterXml);
+            var lifeTime = SamlTokenlifeTime(token.TokenXml.OuterXml);
             if (lifeTime == TimeSpan.Zero)
             {
                 lifeTime = new TimeSpan(0, 60, 0);
             }
 
-            int cookieLifeTime = Math.Min((int)lifeTime.TotalMinutes, logonTokenCacheExpirationWindow);
-            DateTime expiresOn = DateTime.Now.AddMinutes(cookieLifeTime);
+            var cookieLifeTime = Math.Min((int)lifeTime.TotalMinutes, logonTokenCacheExpirationWindow);
+            var expiresOn = DateTime.Now.AddMinutes(cookieLifeTime);
 
             CookieContainer cc = null;
 
             if (!string.IsNullOrEmpty(fedAuthValue))
             {
                 cc = new CookieContainer();
-                Cookie samlAuth = new Cookie("FedAuth", fedAuthValue);
+                var samlAuth = new Cookie("FedAuth", fedAuthValue);
                 samlAuth.Expires = expiresOn;
                 samlAuth.Path = "/";
                 samlAuth.Secure = true;
                 samlAuth.HttpOnly = true;
-                Uri samlUri = new Uri(siteUrl);
+                var samlUri = new Uri(siteUrl);
                 samlAuth.Domain = samlUri.Host;
                 cc.Add(samlAuth);
             }
@@ -75,13 +74,12 @@ namespace OfficeDevPnP.Core.IdentityModel.TokenProviders.ADFS
                     KeyType = KeyTypes.Bearer
                 };
 
-                IWSTrustChannelContract channel = factory.CreateChannel();
+                var channel = factory.CreateChannel();
                 genericToken = channel.Issue(requestSecurityToken) as GenericXmlSecurityToken;
                 factory.Close();
             }
             return genericToken;
         }
-
     }
 }
 #endif

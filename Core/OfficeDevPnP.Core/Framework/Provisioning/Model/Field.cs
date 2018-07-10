@@ -35,7 +35,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            XElement element = PrepareFieldForCompare(this.SchemaXml);
+            var element = PrepareFieldForCompare(this.SchemaXml);
             return element.ToString().GetHashCode();
         }
 
@@ -48,9 +48,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is Field))
             {
-                return (false);
+                return false;
             }
-            return (Equals((Field)obj));
+            return Equals((Field)obj);
         }
 
         /// <summary>
@@ -62,17 +62,17 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            XElement currentXml = PrepareFieldForCompare(this.SchemaXml);
-            XElement otherXml = PrepareFieldForCompare(other.SchemaXml);
-            return (XNode.DeepEquals(currentXml, otherXml));
+            var currentXml = PrepareFieldForCompare(this.SchemaXml);
+            var otherXml = PrepareFieldForCompare(other.SchemaXml);
+            return XNode.DeepEquals(currentXml, otherXml);
         }
 
         private XElement PrepareFieldForCompare(string schemaXML)
         {
-            XElement element = XElement.Parse(schemaXML);
+            var element = XElement.Parse(schemaXML);
             if (element.Attribute("SourceID") != null)
             {
                 element.Attribute("SourceID").Remove();

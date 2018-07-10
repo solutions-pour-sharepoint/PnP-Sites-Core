@@ -12,7 +12,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 {
     internal class ObjectListInstanceDataRows : ObjectHandlerBase
     {
-
         public override string Name
         {
             get { return "List instances Data Rows"; }
@@ -39,7 +38,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     web.Context.Load(list);
 
                     // Retrieve the fields' types from the list
-                    Microsoft.SharePoint.Client.FieldCollection fields = list.Fields;
+                    var fields = list.Fields;
                     web.Context.Load(fields, fs => fs.Include(f => f.InternalName, f => f.FieldTypeKind, f => f.TypeAsString, f => f.ReadOnlyField, f => f.Title));
                     web.Context.ExecuteQueryRetry();
 
@@ -50,7 +49,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         var keyColumn = fields.FirstOrDefault(f => f.InternalName.Equals(parsedKeyColumn, StringComparison.InvariantCultureIgnoreCase));
                         if (keyColumn != null)
                         {
-
                             switch (keyColumn.FieldTypeKind)
                             {
                                 case FieldType.User:
@@ -73,13 +71,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                     foreach (var dataRow in listInstance.DataRows)
                     {
-
                         try
                         {
                             scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_ListInstancesDataRows_Creating_list_item__0_, listInstance.DataRows.IndexOf(dataRow) + 1);
 
-
-                            bool processItem = true;
+                            var processItem = true;
                             ListItem listitem = null;
                             var updateValues = new List<FieldUpdateValue>();
 
@@ -92,7 +88,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                 if (dataRowValues.Any())
                                 {
                                     var query = $@"<View><Query><Where><Eq><FieldRef Name=""{parsedKeyColumn}""/><Value Type=""{keyColumnType}"">{parser.ParseString(dataRowValues.FirstOrDefault().Value)}</Value></Eq></Where></Query><RowLimit>1</RowLimit></View>";
-                                    var camlQuery = new CamlQuery()
+                                    var camlQuery = new CamlQuery
                                     {
                                         ViewXml = query
                                     };
@@ -124,7 +120,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                             foreach (var dataValue in dataRow.Values)
                             {
-                                Field dataField = fields.FirstOrDefault(
+                                var dataField = fields.FirstOrDefault(
                                     f => f.InternalName == parser.ParseString(dataValue.Key));
 
                                 if (dataField != null && dataField.ReadOnlyField
@@ -144,7 +140,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                 }
                                 else
                                 {
-                                    String fieldValue = parser.ParseString(dataValue.Value);
+                                    var fieldValue = parser.ParseString(dataValue.Value);
 
                                     switch (dataField.FieldTypeKind)
                                     {
@@ -307,14 +303,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                 {
                                     case "TaxonomyFieldTypeMulti":
                                     {
-
                                         var field = fields.FirstOrDefault(f => f.InternalName == itemValue.Key as string || f.Title == itemValue.Key as string);
                                         var taxField = web.Context.CastTo<TaxonomyField>(field);
                                         if (itemValue.Value != null)
                                         {
                                             var valueCollection = new TaxonomyFieldValueCollection(web.Context, string.Join(";#", itemValue.Value as List<string>), taxField);
                                             taxField.SetFieldValueByValueCollection(listitem, valueCollection);
-
                                         }
                                         else
                                         {
@@ -345,8 +339,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                             taxValue.Label = string.Empty;
                                             taxValue.TermGuid = "11111111-1111-1111-1111-111111111111";
                                             taxValue.WssId = -1;
-                                            Field hiddenField = list.Fields.GetById(taxField.TextField);
-                                            listitem.Context.Load(hiddenField, tf => tf.InternalName);
+                                            var hiddenField = list.Fields.GetById(taxField.TextField);
+                                                listitem.Context.Load(hiddenField, tf => tf.InternalName);
                                             listitem.Context.ExecuteQueryRetry();
                                             taxField.SetFieldValueByValue(listitem, taxValue); // this order of updates is important.
                                             listitem[hiddenField.InternalName] = string.Empty; // this order of updates is important.
@@ -365,7 +359,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         }
                         catch (Exception ex)
                         {
-
                             if (ex.GetType().Equals(typeof(ServerException)) &&
                                 (ex as ServerException).ServerErrorTypeName.Equals("Microsoft.SharePoint.SPDuplicateValuesFoundException", StringComparison.InvariantCultureIgnoreCase) &&
                                 applyingInformation.IgnoreDuplicateDataRowErrors)
@@ -432,7 +425,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             }
         }
     }
-
 
 }
 

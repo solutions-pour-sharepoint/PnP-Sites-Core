@@ -23,9 +23,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}",
-                (this.Name != null ? this.Name.GetHashCode() : 0)
-            ).GetHashCode());
+            return String.Format("{0}",
+                this.Name != null ? this.Name.GetHashCode() : 0
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -37,9 +37,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is User))
             {
-                return (false);
+                return false;
             }
-            return (Equals((User)obj));
+            return Equals((User)obj);
         }
 
         /// <summary>
@@ -51,10 +51,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.Name == other.Name);
+            return this.Name == other.Name;
         }
 
         #endregion

@@ -73,7 +73,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             get
             {
-                return (this._header);
+                return this._header;
             }
             set
             {
@@ -110,7 +110,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|",
+            return String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|",
                 this.Sections.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.PageName?.GetHashCode() ?? 0,
                 this.PromoteAsNewsArticle.GetHashCode(),
@@ -119,7 +119,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                 this.Publish.GetHashCode(),
                 this.EnableComments.GetHashCode(),
                 this.Title?.GetHashCode() ?? 0
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -131,9 +131,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is ClientSidePage))
             {
-                return (false);
+                return false;
             }
-            return (Equals((ClientSidePage)obj));
+            return Equals((ClientSidePage)obj);
         }
 
         /// <summary>
@@ -145,10 +145,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.Sections.DeepEquals(other.Sections) &&
+            return this.Sections.DeepEquals(other.Sections) &&
                 this.PageName == other.PageName &&
                 this.PromoteAsNewsArticle == other.PromoteAsNewsArticle &&
                 this.Overwrite == other.Overwrite &&
@@ -156,7 +156,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                 this.Publish == other.Publish &&
                 this.EnableComments == other.EnableComments &&
                 this.Title == other.Title
-                );
+                ;
         }
 
         #endregion

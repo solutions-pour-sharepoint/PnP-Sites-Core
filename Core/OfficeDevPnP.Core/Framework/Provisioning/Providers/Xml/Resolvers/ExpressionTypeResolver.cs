@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers
 {
-
     internal class ExpressionTypeResolver<T> : ITypeResolver
     {
         public string Name => this.GetType().Name;
@@ -35,11 +34,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers
             {
                 var result = Activator.CreateInstance(this.targetItemType, true);
                 expression.Invoke((T)source, resolvers, recursive, result);
-                return (result);
+                return result;
             }
             else
             {
-                return (null);
+                return null;
             }
         }
     }

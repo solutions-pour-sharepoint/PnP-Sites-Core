@@ -605,13 +605,12 @@ namespace OfficeDevPnP.Core.ALM
 
                 using (var httpClient = new PnPHttpProvider(handler))
                 {
-
-                    string requestUrl = $"{_context.Web.Url}/_api/web/{(scope == AppCatalogScope.Tenant ? "tenant" : "sitecollection")}appcatalog/AvailableApps";
+                    var requestUrl = $"{_context.Web.Url}/_api/web/{(scope == AppCatalogScope.Tenant ? "tenant" : "sitecollection")}appcatalog/AvailableApps";
                     if (Guid.Empty != id)
                     {
                         requestUrl = $"{_context.Web.Url}/_api/web/{(scope == AppCatalogScope.Tenant ? "tenant" : "sitecollection")}appcatalog/AvailableApps/GetById('{id}')";
                     }
-                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
+                    var request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
                     request.Headers.Add("accept", "application/json;odata=verbose");
                     if (!string.IsNullOrEmpty(accessToken))
                     {
@@ -620,7 +619,7 @@ namespace OfficeDevPnP.Core.ALM
                     request.Headers.Add("X-RequestDigest", await _context.GetRequestDigest());
 
                     // Perform actual post operation
-                    HttpResponseMessage response = await httpClient.SendAsync(request, new System.Threading.CancellationToken());
+                    var response = await httpClient.SendAsync(request, new System.Threading.CancellationToken());
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -651,7 +650,6 @@ namespace OfficeDevPnP.Core.ALM
                                     var returnedAddins = responseJson["d"];
                                     addins = JsonConvert.DeserializeObject<AppMetadata>(returnedAddins.ToString());
                                 }
-
                             }
                             catch { }
                         }
@@ -665,7 +663,6 @@ namespace OfficeDevPnP.Core.ALM
             }
             return await Task.Run(() => addins);
         }
-
 
         private async Task<bool> BaseRequest(Guid id, AppManagerAction action, bool switchToAppCatalogContext, Dictionary<string, object> postObject, AppCatalogScope scope)
         {
@@ -692,9 +689,9 @@ namespace OfficeDevPnP.Core.ALM
                 using (var httpClient = new PnPHttpProvider(handler))
                 {
                     var method = action.ToString();
-                    string requestUrl = $"{context.Web.Url}/_api/web/{(scope == AppCatalogScope.Tenant ? "tenant" : "sitecollection")}appcatalog/AvailableApps/GetByID('{id}')/{method}";
+                    var requestUrl = $"{context.Web.Url}/_api/web/{(scope == AppCatalogScope.Tenant ? "tenant" : "sitecollection")}appcatalog/AvailableApps/GetByID('{id}')/{method}";
 
-                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
+                    var request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
                     request.Headers.Add("accept", "application/json;odata=nometadata");
                     if (!string.IsNullOrEmpty(accessToken))
                     {
@@ -713,7 +710,7 @@ namespace OfficeDevPnP.Core.ALM
                     }
 
                     // Perform actual post operation
-                    HttpResponseMessage response = await httpClient.SendAsync(request, new System.Threading.CancellationToken());
+                    var response = await httpClient.SendAsync(request, new System.Threading.CancellationToken());
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -765,11 +762,10 @@ namespace OfficeDevPnP.Core.ALM
 
                 using (var httpClient = new PnPHttpProvider(handler))
                 {
-
-                    string requestUrl = $"{context.Web.Url}/_api/web/{(scope == AppCatalogScope.Tenant ? "tenant" : "sitecollection")}appcatalog/Add(overwrite={(overwrite.ToString().ToLower())}, url='{filename}')";
+                    var requestUrl = $"{context.Web.Url}/_api/web/{(scope == AppCatalogScope.Tenant ? "tenant" : "sitecollection")}appcatalog/Add(overwrite={overwrite.ToString().ToLower()}, url='{filename}')";
 
                     var requestDigest = await context.GetRequestDigest();
-                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
+                    var request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
                     request.Headers.Add("accept", "application/json;odata=verbose");
                     if (!string.IsNullOrEmpty(accessToken))
                     {
@@ -780,7 +776,7 @@ namespace OfficeDevPnP.Core.ALM
                     request.Content = new ByteArrayContent(file);
                     httpClient.Timeout = new TimeSpan(0, 0, timeoutSeconds);
                     // Perform actual post operation
-                    HttpResponseMessage response = await httpClient.SendAsync(request, new System.Threading.CancellationToken());
+                    var response = await httpClient.SendAsync(request, new System.Threading.CancellationToken());
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -793,7 +789,7 @@ namespace OfficeDevPnP.Core.ALM
 
                             var metadataRequestUrl = $"{context.Web.Url}/_api/web/{(scope == AppCatalogScope.Tenant ? "tenant" : "sitecollection")}appcatalog/AvailableApps/GetById('{id}')";
 
-                            HttpRequestMessage metadataRequest = new HttpRequestMessage(HttpMethod.Post, metadataRequestUrl);
+                            var metadataRequest = new HttpRequestMessage(HttpMethod.Post, metadataRequestUrl);
                             metadataRequest.Headers.Add("accept", "application/json;odata=verbose");
                             if (!string.IsNullOrEmpty(accessToken))
                             {
@@ -802,7 +798,7 @@ namespace OfficeDevPnP.Core.ALM
                             metadataRequest.Headers.Add("X-RequestDigest", requestDigest);
 
                             // Perform actual post operation
-                            HttpResponseMessage metadataResponse = await httpClient.SendAsync(metadataRequest, new System.Threading.CancellationToken());
+                            var metadataResponse = await httpClient.SendAsync(metadataRequest, new System.Threading.CancellationToken());
 
                             if (metadataResponse.IsSuccessStatusCode)
                             {

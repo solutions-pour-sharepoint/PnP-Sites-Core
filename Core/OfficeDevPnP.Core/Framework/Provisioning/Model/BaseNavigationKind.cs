@@ -25,7 +25,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// </summary>
         public StructuralNavigation StructuralNavigation
         {
-            get { return (this._structuralNavigation); }
+            get { return this._structuralNavigation; }
             private set
             {
                 if (this._structuralNavigation != null)
@@ -45,7 +45,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// </summary>
         public ManagedNavigation ManagedNavigation
         {
-            get { return (this._managedNavigation); }
+            get { return this._managedNavigation; }
             private set
             {
                 if (this._managedNavigation != null)
@@ -93,10 +93,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}",
+            return String.Format("{0}|{1}",
                 this.StructuralNavigation.GetHashCode(),
                 this.ManagedNavigation.GetHashCode()
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -108,9 +108,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is BaseNavigationKind))
             {
-                return (false);
+                return false;
             }
-            return (Equals((BaseNavigationKind)obj));
+            return Equals((BaseNavigationKind)obj);
         }
 
         /// <summary>
@@ -122,12 +122,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (((this.StructuralNavigation != null && other.StructuralNavigation != null) ? this.StructuralNavigation.Equals(other.StructuralNavigation) : (this.StructuralNavigation == null && other.StructuralNavigation == null)) &&
+            return ((this.StructuralNavigation != null && other.StructuralNavigation != null) ? this.StructuralNavigation.Equals(other.StructuralNavigation) : (this.StructuralNavigation == null && other.StructuralNavigation == null)) &&
                     ((this.ManagedNavigation != null && other.ManagedNavigation != null) ? this.ManagedNavigation == other.ManagedNavigation : (this.ManagedNavigation == null && other.ManagedNavigation == null))
-                );
+                ;
         }
 
         #endregion

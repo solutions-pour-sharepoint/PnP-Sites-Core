@@ -27,12 +27,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
 
         string IXMLSchemaFormatter.NamespaceUri
         {
-            get { return (XMLConstants.PROVISIONING_SCHEMA_NAMESPACE_2015_03); }
+            get { return XMLConstants.PROVISIONING_SCHEMA_NAMESPACE_2015_03; }
         }
 
         string IXMLSchemaFormatter.NamespacePrefix
         {
-            get { return (XMLConstants.PROVISIONING_SCHEMA_PREFIX); }
+            get { return XMLConstants.PROVISIONING_SCHEMA_PREFIX; }
         }
 
         public bool IsValid(Stream template)
@@ -43,26 +43,26 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
             }
 
             // Load the template into an XDocument
-            XDocument xml = XDocument.Load(template);
+            var xml = XDocument.Load(template);
 
             // Load the XSD embedded resource
-            Stream stream = typeof(XMLPnPSchemaV201503Formatter)
+            var stream = typeof(XMLPnPSchemaV201503Formatter)
                 .Assembly
                 .GetManifestResourceStream("OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.ProvisioningSchema-2015-03.xsd");
 
             // Prepare the XML Schema Set
-            XmlSchemaSet schemas = new XmlSchemaSet();
+            var schemas = new XmlSchemaSet();
             schemas.Add(XMLConstants.PROVISIONING_SCHEMA_NAMESPACE_2015_03,
                 new XmlTextReader(stream));
 
-            Boolean result = true;
+            var result = true;
             xml.Validate(schemas, (o, e) =>
             {
                 Diagnostics.Log.Error(e.Exception, "SchemaFormatter", "Template is not valid: {0}", e.Message);
                 result = false;
             });
 
-            return (result);
+            return result;
         }
 
         Stream ITemplateFormatter.ToFormattedTemplate(ProvisioningTemplate template)
@@ -72,7 +72,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                 throw new ArgumentNullException(nameof(template));
             }
 
-            V201503.SharePointProvisioningTemplate result = new V201503.SharePointProvisioningTemplate();
+            var result = new V201503.SharePointProvisioningTemplate();
 
             // Translate basic properties
             result.ID = template.Id;
@@ -176,11 +176,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
             if (template.ContentTypes != null && template.ContentTypes.Count > 0)
             {
                 result.ContentTypes = new V201503.SharePointProvisioningTemplateContentTypes();
-                List<XmlElement> ctElements = new List<XmlElement>();
+                var ctElements = new List<XmlElement>();
 
                 foreach (var ct in template.ContentTypes)
                 {
-                    XElement xElement = new XElement("ContentType");
+                    var xElement = new XElement("ContentType");
                     xElement.Add(new XAttribute("ID", ct.Id));
 
                     xElement.Add(new XAttribute("Name", ct.Name));
@@ -198,7 +198,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                     xElement.Add(new XAttribute("Sealed", ct.Sealed.ToString().ToLower()));
                     if (!string.IsNullOrEmpty(ct.DocumentTemplate))
                     {
-
                         var documentTemplateElement = new XElement("DocumentTemplate");
                         documentTemplateElement.Add(new XAttribute("TargetName", ct.DocumentTemplate));
                         xElement.Add(documentTemplateElement);
@@ -211,7 +210,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                     }
                 }
                 result.ContentTypes.Any = ctElements.ToArray();
-
             }
             else
             {
@@ -426,19 +424,19 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                 result.Providers = null;
             }
 
-            XmlSerializerNamespaces ns =
+            var ns =
                 new XmlSerializerNamespaces();
             ns.Add(((IXMLSchemaFormatter)this).NamespacePrefix,
                 ((IXMLSchemaFormatter)this).NamespaceUri);
 
             var output = XMLSerializer.SerializeToStream<V201503.SharePointProvisioningTemplate>(result, ns);
             output.Position = 0;
-            return (output);
+            return output;
         }
 
         public ProvisioningTemplate ToProvisioningTemplate(Stream template)
         {
-            return (this.ToProvisioningTemplate(template, null));
+            return this.ToProvisioningTemplate(template, null);
         }
 
         public ProvisioningTemplate ToProvisioningTemplate(Stream template, String identifier)
@@ -449,7 +447,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
             }
 
             // Crate a copy of the source stream
-            MemoryStream sourceStream = new MemoryStream();
+            var sourceStream = new MemoryStream();
             template.CopyTo(sourceStream);
             sourceStream.Position = 0;
 
@@ -461,10 +459,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
             }
 
             sourceStream.Position = 0;
-            XDocument xml = XDocument.Load(sourceStream);
-            V201503.SharePointProvisioningTemplate source = XMLSerializer.Deserialize<V201503.SharePointProvisioningTemplate>(xml);
+            var xml = XDocument.Load(sourceStream);
+            var source = XMLSerializer.Deserialize<V201503.SharePointProvisioningTemplate>(xml);
 
-            ProvisioningTemplate result = new ProvisioningTemplate();
+            var result = new ProvisioningTemplate();
 
             // Translate basic properties
             result.Id = source.ID;
@@ -569,14 +567,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                     var fieldRefs = xelement.Descendants("FieldRefs").Descendants("FieldRef");
                     foreach (var fieldRef in fieldRefs)
                     {
-                        FieldRef fr = new FieldRef();
+                        var fr = new FieldRef();
                         fr.Id = fieldRef.Attribute("ID") != null ? Guid.Parse(fieldRef.Attribute("ID").Value) : Guid.Empty;
                         fr.Required = fieldRef.Attribute("Required") != null ? bool.Parse(fieldRef.Attribute("Required").Value) : false;
                         fr.Hidden = fieldRef.Attribute("Hidden") != null ? bool.Parse(fieldRef.Attribute("Hidden").Value) : false;
                         ct.FieldRefs.Add(fr);
                     }
                     result.ContentTypes.Add(ct);
-
                 }
             }
 
@@ -586,31 +583,31 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                 result.Lists.AddRange(
                     from list in source.Lists
                     select new Model.ListInstance(
-                        (list.ContentTypeBindings != null ?
+                        list.ContentTypeBindings != null ?
                                 (from contentTypeBinding in list.ContentTypeBindings
                                  select new Model.ContentTypeBinding
                                  {
                                      ContentTypeId = contentTypeBinding.ContentTypeID,
                                      Default = contentTypeBinding.Default,
-                                 }) : null),
-                        (list.Views != null ?
+                                 }) : null,
+                        list.Views != null ?
                                 (from view in list.Views.Any
                                  select new View
                                  {
                                      SchemaXml = view.OuterXml,
-                                 }) : null),
-                        (list.Fields != null ?
+                                 }) : null,
+                        list.Fields != null ?
                                 (from field in list.Fields.Any
                                  select new Field
                                  {
                                      SchemaXml = field.OuterXml,
-                                 }) : null),
-                        (list.FieldRefs != null ?
+                                 }) : null,
+                        list.FieldRefs != null ?
                                  (from fieldRef in list.FieldRefs
                                   select new Model.FieldRef
                                   {
                                       Id = Guid.Parse(fieldRef.ID)
-                                  }) : null),
+                                  }) : null,
                                   null
                          )
                     {
@@ -739,7 +736,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                     });
             }
 
-            return (result);
+            return result;
         }
     }
 }

@@ -38,11 +38,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|",
+            return String.Format("{0}|{1}|{2}|",
                 this.AuditFlags.GetHashCode(),
                 this.AuditLogTrimmingRetention.GetHashCode(),
                 this.TrimAuditLog.GetHashCode()
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -54,9 +54,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is AuditSettings))
             {
-                return (false);
+                return false;
             }
-            return (Equals((AuditSettings)obj));
+            return Equals((AuditSettings)obj);
         }
 
         /// <summary>
@@ -68,13 +68,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.AuditFlags == other.AuditFlags  &&
+            return this.AuditFlags == other.AuditFlags  &&
                 this.AuditLogTrimmingRetention == other.AuditLogTrimmingRetention &&
                 this.TrimAuditLog == other.TrimAuditLog
-                );
+                ;
         }
 
         #endregion

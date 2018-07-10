@@ -1588,7 +1588,7 @@ namespace OfficeDevPnP.Core.Enums
                 s_dict[XSLStyleRequiredFields] = true;
                 s_dict[IMEUrl] = true;
             }
-            bool flag = false;
+            var flag = false;
             s_dict.TryGetValue(fid, out flag);
             return flag;
         }

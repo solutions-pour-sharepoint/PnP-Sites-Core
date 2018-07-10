@@ -41,7 +41,6 @@ namespace Microsoft.SharePoint.Client
             ClientContextExtensions.userAgentFromConfig = ConfigurationManager.AppSettings["SharePointPnPUserAgent"];
         }
 
-
 #if ONPREMISES
         private const string MicrosoftSharePointTeamServicesHeader = "MicrosoftSharePointTeamServices";
 #endif
@@ -99,7 +98,6 @@ namespace Microsoft.SharePoint.Client
         private static void ExecuteQueryImplementation(ClientRuntimeContext clientContext, int retryCount = 10, int delay = 500, string userAgent = null)
 #endif
         {
-
 #if !ONPREMISES
             await new SynchronizationContextRemover();
 #endif
@@ -112,8 +110,8 @@ namespace Microsoft.SharePoint.Client
                 clientTag = (clientContext as PnPClientContext).ClientTag;
             }
 
-            int retryAttempts = 0;
-            int backoffInterval = delay;
+            var retryAttempts = 0;
+            var backoffInterval = delay;
             if (retryCount <= 0)
                 throw new ArgumentException("Provide a retry count greater than zero.");
 
@@ -135,7 +133,7 @@ namespace Microsoft.SharePoint.Client
                     clientContext.DisableReturnValueCache = true;
 #endif
                     // Add event handler to "insert" app decoration header to mark the PnP Sites Core library as a known application
-                    EventHandler<WebRequestEventArgs> appDecorationHandler = AttachRequestUserAgent(userAgent);
+                    var appDecorationHandler = AttachRequestUserAgent(userAgent);
 
                     clientContext.ExecutingWebRequest += appDecorationHandler;
 
@@ -193,7 +191,7 @@ namespace Microsoft.SharePoint.Client
         {
             return (s, e) =>
             {
-                bool overrideUserAgent = true;
+                var overrideUserAgent = true;
                 var existingUserAgent = e.WebRequestExecutor.WebRequest.UserAgent;
                 if (!string.IsNullOrEmpty(existingUserAgent) && existingUserAgent.StartsWith("NONISV|SharePointPnP|PnPPS/"))
                 {
@@ -230,7 +228,6 @@ namespace Microsoft.SharePoint.Client
             return clientTag;
         }
 
-
         /// <summary>
         /// Clones a ClientContext object while "taking over" the security context of the existing ClientContext instance
         /// </summary>
@@ -244,7 +241,7 @@ namespace Microsoft.SharePoint.Client
                 throw new ArgumentException(CoreResources.ClientContextExtensions_Clone_Url_of_the_site_is_required_, nameof(siteUrl));
             }
 
-            ClientContext clonedClientContext = new ClientContext(siteUrl);
+            var clonedClientContext = new ClientContext(siteUrl);
             clonedClientContext.AuthenticationMode = clientContext.AuthenticationMode;
             clonedClientContext.ClientTag = clientContext.ClientTag;
 #if !ONPREMISES
@@ -252,7 +249,6 @@ namespace Microsoft.SharePoint.Client
 #elif SP2016
             clonedClientContext.DisableReturnValueCache = clientContext.DisableReturnValueCache;
 #endif
-
 
             // In case of using networkcredentials in on premises or SharePointOnlineCredentials in Office 365
             if (clientContext.Credentials != null)
@@ -269,8 +265,8 @@ namespace Microsoft.SharePoint.Client
                 {
                     // Call the ExecutingWebRequest delegate method from the original ClientContext object, but pass along the webRequestEventArgs of 
                     // the new delegate method
-                    MethodInfo methodInfo = clientContext.GetType().GetMethod("OnExecutingWebRequest", BindingFlags.Instance | BindingFlags.NonPublic);
-                    object[] parametersArray = new object[] { webRequestEventArgs };
+                    var methodInfo = clientContext.GetType().GetMethod("OnExecutingWebRequest", BindingFlags.Instance | BindingFlags.NonPublic);
+                    var parametersArray = new object[] { webRequestEventArgs };
                     methodInfo.Invoke(clientContext, parametersArray);
                 };
             }
@@ -286,7 +282,7 @@ namespace Microsoft.SharePoint.Client
         /// <returns>A site collection client context object for the site collection</returns>
         public static ClientContext GetSiteCollectionContext(this ClientRuntimeContext clientContext)
         {
-            Site site = (clientContext as ClientContext).Site;
+            var site = (clientContext as ClientContext).Site;
             if (!site.IsObjectPropertyInstantiated("Url"))
             {
                 clientContext.Load(site);
@@ -330,7 +326,7 @@ namespace Microsoft.SharePoint.Client
             {
                 result = false;
             }
-            return (result);
+            return result;
         }
 
         /// <summary>
@@ -343,7 +339,7 @@ namespace Microsoft.SharePoint.Client
             string accessToken = null;
             EventHandler<WebRequestEventArgs> handler = (s, e) =>
             {
-                string authorization = e.WebRequestExecutor.RequestHeaders["Authorization"];
+                var authorization = e.WebRequestExecutor.RequestHeaders["Authorization"];
                 if (!string.IsNullOrEmpty(authorization))
                 {
                     accessToken = authorization.Replace("Bearer ", string.Empty);
@@ -433,7 +429,7 @@ namespace Microsoft.SharePoint.Client
         /// <returns>True if it has minimal required version, false otherwise</returns>
         public static bool HasMinimalServerLibraryVersion(this ClientRuntimeContext clientContext, Version minimallyRequiredVersion)
         {
-            bool hasMinimalVersion = false;
+            var hasMinimalVersion = false;
 #if !ONPREMISES
             try
             {
@@ -484,9 +480,9 @@ namespace Microsoft.SharePoint.Client
         /// <returns>A string with the method name</returns>
         private static string GetCallingPnPMethod()
         {
-            StackTrace t = new StackTrace();
+            var t = new StackTrace();
 
-            string pnpMethod = "";
+            var pnpMethod = "";
             try
             {
                 for (int i = 0; i < t.FrameCount; i++)
@@ -527,7 +523,7 @@ namespace Microsoft.SharePoint.Client
 
             using (var handler = new HttpClientHandler())
             {
-                string responseString = string.Empty;
+                var responseString = string.Empty;
                 var accessToken = context.GetAccessToken();
 
                 context.Web.EnsureProperty(w => w.Url);
@@ -539,14 +535,14 @@ namespace Microsoft.SharePoint.Client
 
                 using (var httpClient = new PnPHttpProvider(handler))
                 {
-                    string requestUrl = String.Format("{0}/_api/contextinfo", context.Web.Url);
-                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
+                    var requestUrl = String.Format("{0}/_api/contextinfo", context.Web.Url);
+                    var request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
                     request.Headers.Add("accept", "application/json;odata=verbose");
                     if (!string.IsNullOrEmpty(accessToken))
                     {
                         request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
                     }
-                    HttpResponseMessage response = await httpClient.SendAsync(request);
+                    var response = await httpClient.SendAsync(request);
 
                     if (response.IsSuccessStatusCode)
                     {

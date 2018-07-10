@@ -68,7 +68,7 @@ namespace OfficeDevPnP.Core.Utilities {
         /// <param name="rowLimit">&lt;RowLimit&gt; node.</param>
         /// <returns>String to be used in CAML queries</returns>
         public static string ViewQuery(ViewScope scope, string whereClause = "", string orderByClause = "", string viewFields = "", int rowLimit = 100) {
-            string viewScopeStr = scope == ViewScope.DefaultValue ? string.Empty : scope.ToString();
+            var viewScopeStr = scope == ViewScope.DefaultValue ? string.Empty : scope.ToString();
             return string.Format(VIEW_XML_WRAPPER, viewScopeStr, whereClause, orderByClause, viewFields, rowLimit);
         }
 
@@ -133,7 +133,7 @@ namespace OfficeDevPnP.Core.Utilities {
         /// <param name="fieldRefs">Field References</param>
         /// <returns>Returns string to be used in CAML queries</returns>
         public static string ViewFields(params string[] fieldRefs) {
-            string refs = string.Empty;
+            var refs = string.Empty;
 
             foreach (var refField in fieldRefs) {
                 refs += refField;
@@ -299,7 +299,6 @@ namespace OfficeDevPnP.Core.Utilities {
         }
         enum CamlConditions { And, Or }
         enum CamlClauses { Where, OrderBy, GroupBy }
-
     }
 
     /// <summary>

@@ -34,7 +34,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers
                     from x in xmlAny select x.ToXElement());
             }
 
-            return (result);
+            return result;
         }
     }
 }

@@ -28,7 +28,7 @@ namespace OfficeDevPnP.Core.Utilities
         /// <param name="relativePaths">SharePoint relative URLs</param>
         /// <returns>Returns comibed path with a relative paths</returns>
         public static string Combine(string path, params string[] relativePaths) {
-            string pathBuilder = path ?? string.Empty;
+            var pathBuilder = path ?? string.Empty;
 
             if (relativePaths == null)
                 return pathBuilder;
@@ -77,11 +77,11 @@ namespace OfficeDevPnP.Core.Utilities
         /// <returns>Returns URL along with appended query string</returns>
         public static string AppendQueryString(string path, string queryString)
         {
-            string url = path;
+            var url = path;
 
             if (queryString != null && queryString.Length > 0)
             {
-                char startChar = (path.IndexOf("?") > 0) ? '&' : '?';
+                var startChar = (path.IndexOf("?") > 0) ? '&' : '?';
                 url = string.Concat(path, startChar, queryString.TrimStart('?'));
             }
             return url;
@@ -95,7 +95,7 @@ namespace OfficeDevPnP.Core.Utilities
         /// <param name="urlToProcess">SharePoint URL to process</param>
         /// <returns>Returns realtive URL of given URL</returns>
         public static string MakeRelativeUrl(string urlToProcess) {
-            Uri uri = new Uri(urlToProcess);
+            var uri = new Uri(urlToProcess);
             return uri.AbsolutePath;
         }
 
@@ -173,7 +173,7 @@ namespace OfficeDevPnP.Core.Utilities
         /// <returns></returns>
         internal static string ConvertToServiceRelUrl(string strUrl, string strBaseUrl)
         {
-            if (((strBaseUrl == null) || !StsStartsWith(strBaseUrl, "/")) || ((strUrl == null) || !StsStartsWith(strUrl, "/")))
+            if ((strBaseUrl == null) || !StsStartsWith(strBaseUrl, "/") || ((strUrl == null) || !StsStartsWith(strUrl, "/")))
             {
                 throw new ArgumentException();
             }

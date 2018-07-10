@@ -8,7 +8,6 @@ namespace OfficeDevPnP.Core.Pages
     /// </summary>
     public class ClientSideCanvasPosition
     {
-
         /// <summary>
         /// Gets or sets JsonProperty "zoneIndex"
         /// </summary>

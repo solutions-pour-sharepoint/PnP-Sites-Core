@@ -116,18 +116,18 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns hash code in integer</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|",
+            return String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|",
                 this.PropertyDefinitions.Aggregate(0, (acc, next) => acc += next.GetHashCode()),
-                (this.DefinitionId != null ? this.DefinitionId.GetHashCode() : 0),
-                (this.ListId != null ? this.ListId.GetHashCode() : 0),
+                this.DefinitionId != null ? this.DefinitionId.GetHashCode() : 0,
+                this.ListId != null ? this.ListId.GetHashCode() : 0,
                 this.Enabled.GetHashCode(),
-                (this.EventSourceId != null ? this.EventSourceId.GetHashCode() : 0),
+                this.EventSourceId != null ? this.EventSourceId.GetHashCode() : 0,
                 this.EventTypes.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.ManualStartBypassesActivationLimit.GetHashCode(),
-                (this.Name != null ? this.Name.GetHashCode() : 0),
-                (this.ParentContentTypeId != null ? this.ParentContentTypeId.GetHashCode() : 0),
-                (this.StatusFieldName != null ? this.StatusFieldName.GetHashCode() : 0)
-            ).GetHashCode());
+                this.Name != null ? this.Name.GetHashCode() : 0,
+                this.ParentContentTypeId != null ? this.ParentContentTypeId.GetHashCode() : 0,
+                this.StatusFieldName != null ? this.StatusFieldName.GetHashCode() : 0
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -139,9 +139,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is WorkflowSubscription))
             {
-                return (false);
+                return false;
             }
-            return (Equals((WorkflowSubscription)obj));
+            return Equals((WorkflowSubscription)obj);
         }
 
         /// <summary>
@@ -153,10 +153,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (
+            return 
                 this.PropertyDefinitions.DeepEquals(other.PropertyDefinitions) &&
                 this.DefinitionId == other.DefinitionId &&
                 this.ListId == other.ListId &&
@@ -167,7 +167,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                 this.Name == other.Name &&
                 this.ParentContentTypeId == other.ParentContentTypeId &&
                 this.StatusFieldName == other.StatusFieldName
-            );
+            ;
         }
 
         #endregion

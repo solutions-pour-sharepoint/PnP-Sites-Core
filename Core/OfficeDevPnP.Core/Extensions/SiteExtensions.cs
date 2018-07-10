@@ -37,7 +37,7 @@ namespace Microsoft.SharePoint.Client
 
                     // Update the Classification of the Office 365 Group
                     // PATCH https://graph.microsoft.com/beta/groups/{groupId}
-                    string updateGroupUrl = $"{GraphHttpClient.MicrosoftGraphBetaBaseUri}groups/{site.GroupId}";
+                    var updateGroupUrl = $"{GraphHttpClient.MicrosoftGraphBetaBaseUri}groups/{site.GroupId}";
                     var updateGroupResult = GraphHttpClient.MakePatchRequestForString(
                         updateGroupUrl,
                         content: new
@@ -71,7 +71,7 @@ namespace Microsoft.SharePoint.Client
         public static string GetSiteClassification(this Site site)
         {
             site.EnsureProperty(s => s.Classification);
-            return (site.Classification);
+            return site.Classification;
         }
 #endif
     }

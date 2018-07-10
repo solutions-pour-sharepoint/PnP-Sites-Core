@@ -54,7 +54,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         {
             if (template.Tenant.AppCatalog != null && template.Tenant.AppCatalog.Packages.Count > 0)
             {
-                
                 var manager = new AppManager(web.Context as ClientContext);
 
                 var appCatalogUri = web.GetAppCatalog();
@@ -161,7 +160,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                         if (existingScript == null)
                         {
-                            TenantSiteScriptCreationInfo siteScriptCreationInfo = new TenantSiteScriptCreationInfo
+                            var siteScriptCreationInfo = new TenantSiteScriptCreationInfo
                             {
                                 Title = scriptTitle,
                                 Description = scriptDescription,
@@ -220,7 +219,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         var existingSiteDesign = existingDesigns.FirstOrDefault(d => d.Title == designTitle);
                         if (existingSiteDesign == null)
                         {
-                            TenantSiteDesignCreationInfo siteDesignCreationInfo = new TenantSiteDesignCreationInfo()
+                            var siteDesignCreationInfo = new TenantSiteDesignCreationInfo
                             {
                                 Title = designTitle,
                                 Description = designDescription,
@@ -228,7 +227,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                 PreviewImageAltText = designPreviewImageAltText,
                                 IsDefault = siteDesign.IsDefault,
                             };
-                            switch((int)siteDesign.WebTemplate)
+                            switch ((int)siteDesign.WebTemplate)
                             {
                                 case 0:
                                     {
@@ -243,7 +242,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                             }
                             if (siteDesign.SiteScripts != null && siteDesign.SiteScripts.Any())
                             {
-                                List<Guid> ids = new List<Guid>();
+                                var ids = new List<Guid>();
                                 foreach (var siteScriptRef in siteDesign.SiteScripts)
                                 {
                                     ids.Add(Guid.Parse(parser.ParseString(siteScriptRef)));
@@ -482,7 +481,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
             if (!string.IsNullOrEmpty(cdnSettings.IncludeFileExtensions))
             {
-
                 var parsedValue = parser.ParseString(cdnSettings.IncludeFileExtensions);
                 if (policies.FirstOrDefault(p => p.Key == SPOTenantCdnPolicyType.IncludeFileExtensions).Value != parsedValue)
                 {
@@ -503,7 +501,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             }
             if (!string.IsNullOrEmpty(cdnSettings.ExcludeIfNoScriptDisabled))
             {
-
                 var parsedValue = parser.ParseString(cdnSettings.ExcludeIfNoScriptDisabled);
                 if (policies.FirstOrDefault(p => p.Key == SPOTenantCdnPolicyType.ExcludeIfNoScriptDisabled).Value != parsedValue)
                 {
@@ -532,12 +529,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         public override bool WillExtract(Web web, ProvisioningTemplate template, ProvisioningTemplateCreationInformation creationInfo)
         {
             // By default we don't extract the packages
-            return (false);
+            return false;
         }
 
         public override bool WillProvision(Web web, ProvisioningTemplate template, ProvisioningTemplateApplyingInformation applyingInformation)
         {
-            return (template.Tenant != null);
+            return template.Tenant != null;
         }
     }
 

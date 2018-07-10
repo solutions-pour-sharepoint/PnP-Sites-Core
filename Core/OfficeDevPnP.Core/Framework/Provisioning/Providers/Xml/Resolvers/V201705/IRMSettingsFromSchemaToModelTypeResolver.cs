@@ -30,7 +30,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers.V2017
                 PnPObjectsMapper.MapProperties(irmSettings, result, resolvers, recursive);
             }
 
-            return (result);
+            return result;
         }
     }
 }

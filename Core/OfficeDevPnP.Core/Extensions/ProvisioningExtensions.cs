@@ -104,7 +104,6 @@ namespace Microsoft.SharePoint.Client
             }
         }
 
-
         /// <summary>
         /// Uploads the file defined by the fileXml, creating folders as necessary.
         /// </summary>
@@ -131,7 +130,7 @@ namespace Microsoft.SharePoint.Client
             var path = Path.Combine(baseFolder, filePath);
 
             var propertyDictionary = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
-            var skipProperties = new List<string>() { "ContentType", "FileDirRef", "FileLeafRef", "_ModerationStatus", "FSObjType" };
+            var skipProperties = new List<string> { "ContentType", "FileDirRef", "FileLeafRef", "_ModerationStatus", "FSObjType" };
             foreach (var child in fileXml.Elements())
             {
                 if (child.Name == XName.Get("Property", SharePointNamespaceName))
@@ -150,9 +149,9 @@ namespace Microsoft.SharePoint.Client
                 }
             }
 
-            string fileName = Path.GetFileName(webRelativeUrl);
+            var fileName = Path.GetFileName(webRelativeUrl);
             var folderWebRelativeUrl = webRelativeUrl.Substring(0, webRelativeUrl.Length - fileName.Length);
-            Folder folder = web.EnsureFolderPath(folderWebRelativeUrl);
+            var folder = web.EnsureFolderPath(folderWebRelativeUrl);
 
             // perform all operations that used to be done in UploadFile
             // Check to see that the file doesn't already exist.
@@ -178,6 +177,5 @@ namespace Microsoft.SharePoint.Client
 
             return file;
         }
-
     }
 }

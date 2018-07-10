@@ -109,7 +109,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Extensions
                             {
                                 if (roleDefinition.RoleTypeKind != RoleType.Guest)
                                 {
-                                    security.RoleAssignments.Add(new Model.RoleAssignment()
+                                    security.RoleAssignments.Add(new Model.RoleAssignment
                                     {
                                         Principal = ReplaceGroupTokens(context.Web, roleAssignment.Member.LoginName),
                                         RoleDefinition = roleDefinition.Name

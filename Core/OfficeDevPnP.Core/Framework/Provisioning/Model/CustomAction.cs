@@ -108,24 +108,24 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|{13}|{14}|{15}",
-                (this.CommandUIExtension != null ? this.CommandUIExtension.GetHashCode() : 0),
-                (this.Description != null ? this.Description.GetHashCode() : 0),
+            return String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|{13}|{14}|{15}",
+                this.CommandUIExtension != null ? this.CommandUIExtension.GetHashCode() : 0,
+                this.Description != null ? this.Description.GetHashCode() : 0,
                 this.Enabled.GetHashCode(),
-                (this.Group != null ? this.Group.GetHashCode() : 0),
-                (this.ImageUrl != null ? this.ImageUrl.GetHashCode() : 0),
-                (this.Location != null ? this.Location.GetHashCode() : 0),
-                (this.Name != null ? this.Name.GetHashCode() : 0),
-                (this.RegistrationId != null ? this.RegistrationId.GetHashCode() : 0),
+                this.Group != null ? this.Group.GetHashCode() : 0,
+                this.ImageUrl != null ? this.ImageUrl.GetHashCode() : 0,
+                this.Location != null ? this.Location.GetHashCode() : 0,
+                this.Name != null ? this.Name.GetHashCode() : 0,
+                this.RegistrationId != null ? this.RegistrationId.GetHashCode() : 0,
                 this.RegistrationType.GetHashCode(),
                 this.Remove.GetHashCode(),
                 this.Rights.GetHashCode(),
-                (this.ScriptBlock != null ? this.ScriptBlock.GetHashCode() : 0),
-                (this.ScriptSrc != null ? this.ScriptSrc.GetHashCode() : 0),
+                this.ScriptBlock != null ? this.ScriptBlock.GetHashCode() : 0,
+                this.ScriptSrc != null ? this.ScriptSrc.GetHashCode() : 0,
                 this.Sequence.GetHashCode(),
-                (this.Title != null ? this.Title.GetHashCode() : 0),
-                (this.Url != null ? this.Url.GetHashCode() : 0)
-            ).GetHashCode());
+                this.Title != null ? this.Title.GetHashCode() : 0,
+                this.Url != null ? this.Url.GetHashCode() : 0
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -137,9 +137,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is CustomAction))
             {
-                return (false);
+                return false;
             }
-            return (Equals((CustomAction)obj));
+            return Equals((CustomAction)obj);
         }
 
         /// <summary>
@@ -151,12 +151,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            XNodeEqualityComparer xnec = new XNodeEqualityComparer();
+            var xnec = new XNodeEqualityComparer();
 
-            return (
+            return 
                 xnec.Equals(this.CommandUIExtension, other.CommandUIExtension) &&
                 this.Description == other.Description &&
                 this.Enabled == other.Enabled &&
@@ -172,7 +172,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                 this.ScriptSrc == other.ScriptSrc &&
                 this.Sequence == other.Sequence &&
                 this.Title == other.Title &&
-                this.Url == other.Url);
+                this.Url == other.Url;
         }
 
         #endregion

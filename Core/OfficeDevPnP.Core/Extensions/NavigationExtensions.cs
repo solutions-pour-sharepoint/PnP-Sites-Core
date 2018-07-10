@@ -13,13 +13,11 @@ using Microsoft.SharePoint.Client.Taxonomy;
 
 namespace Microsoft.SharePoint.Client
 {
-
     /// <summary>
     /// This class holds navigation related methods
     /// </summary>
     public static partial class NavigationExtensions
     {
-
         #region Area Navigation (publishing sites)
         const string PublishingFeatureActivated = "__PublishingFeatureActivated";
         const string WebNavigationSettings = "_webnavigationsettings";
@@ -51,7 +49,7 @@ namespace Microsoft.SharePoint.Client
             }
 
             // Determine if managed navigation is used...if so the other properties are not relevant
-            string webNavigationSettings = web.AllProperties.GetPropertyAsString(WebNavigationSettings);
+            var webNavigationSettings = web.AllProperties.GetPropertyAsString(WebNavigationSettings);
             if (webNavigationSettings == null)
             {
                 nav.CurrentNavigation.ManagedNavigation = false;
@@ -60,12 +58,12 @@ namespace Microsoft.SharePoint.Client
             else
             {
                 var navigationSettings = XElement.Parse(webNavigationSettings);
-                IEnumerable<XElement> navNodes = navigationSettings.XPathSelectElements("./SiteMapProviderSettings/TaxonomySiteMapProviderSettings");
+                var navNodes = navigationSettings.XPathSelectElements("./SiteMapProviderSettings/TaxonomySiteMapProviderSettings");
                 foreach (var node in navNodes)
                 {
                     if (node.Attribute("Name").Value.Equals("CurrentNavigationTaxonomyProvider", StringComparison.InvariantCulture))
                     {
-                        bool managedNavigation = true;
+                        var managedNavigation = true;
                         if (node.Attribute("Disabled") != null)
                         {
                             if (bool.TryParse(node.Attribute("Disabled").Value, out managedNavigation))
@@ -90,7 +88,7 @@ namespace Microsoft.SharePoint.Client
                 }
 
                 // Get settings related to page creation
-                XElement pageNode = navigationSettings.XPathSelectElement("./NewPageSettings");
+                var pageNode = navigationSettings.XPathSelectElement("./NewPageSettings");
                 if (pageNode != null)
                 {
                     if (pageNode.Attribute("AddNewPagesToNavigation") != null)
@@ -113,12 +111,12 @@ namespace Microsoft.SharePoint.Client
                 }
 
                 // Get navigation inheritance
-                IEnumerable<XElement> switchableNavNodes = navigationSettings.XPathSelectElements("./SiteMapProviderSettings/SwitchableSiteMapProviderSettings");
+                var switchableNavNodes = navigationSettings.XPathSelectElements("./SiteMapProviderSettings/SwitchableSiteMapProviderSettings");
                 foreach (var node in switchableNavNodes)
                 {
                     if (node.Attribute("Name").Value.Equals("CurrentNavigationSwitchableProvider", StringComparison.InvariantCulture))
                     {
-                        bool inherit = false;
+                        var inherit = false;
                         if (node.Attribute("UseParentSiteMap") != null)
                         {
                             bool.TryParse(node.Attribute("UseParentSiteMap").Value, out inherit);
@@ -127,7 +125,7 @@ namespace Microsoft.SharePoint.Client
                     }
                     else if (node.Attribute("Name").Value.Equals("GlobalNavigationSwitchableProvider", StringComparison.InvariantCulture))
                     {
-                        bool inherit = false;
+                        var inherit = false;
                         if (node.Attribute("UseParentSiteMap") != null)
                         {
                             bool.TryParse(node.Attribute("UseParentSiteMap").Value, out inherit);
@@ -336,7 +334,7 @@ namespace Microsoft.SharePoint.Client
 
         private static int MapToNavigationIncludeTypes(StructuralNavigationEntity sne)
         {
-            int navigationIncludeType = -1;
+            var navigationIncludeType = -1;
 
             if (!sne.ShowPages && !sne.ShowSubsites)
             {
@@ -357,7 +355,6 @@ namespace Microsoft.SharePoint.Client
 
             return navigationIncludeType;
         }
-
 
         private static void MapFromNavigationIncludeTypes(StructuralNavigationEntity sne, int navigationIncludeTypes)
         {
@@ -444,13 +441,13 @@ namespace Microsoft.SharePoint.Client
             switch (navigationKind)
             {
                 case ManagedNavigationKind.Global:
-                    return (GetEditableNavigationTermSetByProviderName(web, web.Context,
-                        "GlobalNavigationTaxonomyProvider"));
+                    return GetEditableNavigationTermSetByProviderName(web, web.Context,
+                        "GlobalNavigationTaxonomyProvider");
                 case ManagedNavigationKind.Current:
-                    return (GetEditableNavigationTermSetByProviderName(web, web.Context,
-                        "CurrentNavigationTaxonomyProvider"));
+                    return GetEditableNavigationTermSetByProviderName(web, web.Context,
+                        "CurrentNavigationTaxonomyProvider");
                 default:
-                    return (null);
+                    return null;
             }
         }
 
@@ -488,7 +485,7 @@ namespace Microsoft.SharePoint.Client
                 result = targetNavigationSettings.Source == StandardNavigationSource.TaxonomyProvider;
             }
 
-            return (result);
+            return result;
         }
 
         private static NavigationTermSet GetEditableNavigationTermSetByProviderName(
@@ -511,13 +508,12 @@ namespace Microsoft.SharePoint.Client
             context.Load(editableNavigationTermSet);
             context.ExecuteQueryRetry();
 
-            return (editableNavigationTermSet);
+            return editableNavigationTermSet;
         }
 
         #endregion
 
         #region Navigation elements - quicklaunch, top navigation, search navigation
-
 
         /// <summary>
         /// Add a node to quick launch, top navigation bar or search navigation. The node will be added as the last node in the
@@ -863,7 +859,6 @@ namespace Microsoft.SharePoint.Client
             return true;
         }
 
-
         /// <summary>
         /// Returns all custom actions in a web
         /// </summary>
@@ -874,7 +869,7 @@ namespace Microsoft.SharePoint.Client
         {
             var clientContext = (ClientContext)web.Context;
 
-            List<UserCustomAction> actions = new List<UserCustomAction>();
+            var actions = new List<UserCustomAction>();
 
             if (expressions != null && expressions.Any())
             {
@@ -903,7 +898,7 @@ namespace Microsoft.SharePoint.Client
         {
             var clientContext = (ClientContext)site.Context;
 
-            List<UserCustomAction> actions = new List<UserCustomAction>();
+            var actions = new List<UserCustomAction>();
             if (expressions != null && expressions.Any())
             {
                 clientContext.Load(site.UserCustomActions, u => u.IncludeWithDefaultProperties(expressions));

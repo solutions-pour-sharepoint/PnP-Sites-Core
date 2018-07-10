@@ -38,11 +38,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|",
+            return String.Format("{0}|{1}|{2}|",
                 this.Name?.GetHashCode() ?? 0,
                 this.Width.GetHashCode(),
                 this.Height.GetHashCode()
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -54,9 +54,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is ImageRendition))
             {
-                return (false);
+                return false;
             }
-            return (Equals((ImageRendition)obj));
+            return Equals((ImageRendition)obj);
         }
 
         /// <summary>
@@ -68,13 +68,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.Name == other.Name &&
+            return this.Name == other.Name &&
                 this.Width == other.Width &&
                 this.Height == other.Height
-                );
+                ;
         }
 
         #endregion

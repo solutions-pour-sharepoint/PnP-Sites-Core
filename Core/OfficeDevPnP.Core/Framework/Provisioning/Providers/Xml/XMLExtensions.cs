@@ -26,9 +26,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
 
             using (XmlReader reader = element.CreateReader())
             {
-                XmlDocument doc = new XmlDocument();
+                var doc = new XmlDocument();
                 doc.Load(reader);
-                return (doc.DocumentElement);
+                return doc.DocumentElement;
             }
         }
 
@@ -46,8 +46,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
 
             using (XmlReader reader = new XmlNodeReader(element))
             {
-                XElement result = XElement.Load(reader);
-                return (result);
+                var result = XElement.Load(reader);
+                return result;
             }
         }
 
@@ -63,8 +63,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                 throw new ArgumentNullException(nameof(xml));
             }
 
-            XElement element = XElement.Parse(xml);
-            return (element);
+            var element = XElement.Parse(xml);
+            return element;
         }
 
         /// <summary>
@@ -79,8 +79,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                 throw new ArgumentNullException(nameof(xml));
             }
 
-            XElement element = XElement.Parse(xml);
-            return (element.ToXmlElement());
+            var element = XElement.Parse(xml);
+            return element.ToXmlElement();
         }
 
         /// <summary>
@@ -97,14 +97,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
 
             try
             {
-                XmlDocument doc = new XmlDocument();
+                var doc = new XmlDocument();
                 doc.LoadXml(xml);
-                return (doc.DocumentElement);
+                return doc.DocumentElement;
             }
             catch (XmlException)
             {
-                XmlDocument doc = new XmlDocument();
-                return (doc.CreateCDataSection(xml));
+                var doc = new XmlDocument();
+                return doc.CreateCDataSection(xml);
             }
         }
 
@@ -119,9 +119,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
             switch (xml.NodeType)
             {
                 case XmlNodeType.CDATA:
-                    return (((XmlCDataSection)xml).InnerText);
+                    return ((XmlCDataSection)xml).InnerText;
                 default:
-                    return (xml.OuterXml);
+                    return xml.OuterXml;
             }
         }
 
@@ -137,12 +137,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                 throw new ArgumentNullException(nameof(element));
             }
 
-            XElement xElement = XElement.Parse(element.OuterXml);
-            XElement cleanedElement = new XElement(xElement.Name.LocalName,
+            var xElement = XElement.Parse(element.OuterXml);
+            var cleanedElement = new XElement(xElement.Name.LocalName,
                 from a in xElement.Attributes()
                 where a.IsNamespaceDeclaration == false
                 select a);
-            return (cleanedElement.ToXmlElement());
+            return cleanedElement.ToXmlElement();
         }
 
         #endregion

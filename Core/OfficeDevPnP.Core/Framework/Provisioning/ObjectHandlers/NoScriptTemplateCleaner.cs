@@ -33,7 +33,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         /// <returns></returns>
         public ProvisioningTemplate CleanUpBeforeProvisioning(ProvisioningTemplate template)
         {
-            bool isNoScriptSite = _web.IsNoScriptSite();
+            var isNoScriptSite = _web.IsNoScriptSite();
 
             var listsToRemove = new List<ListInstance>();
             

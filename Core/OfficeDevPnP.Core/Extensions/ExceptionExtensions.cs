@@ -175,7 +175,7 @@ namespace System
         {
             if (value is DictionaryEntry)
             {
-                DictionaryEntry dictionaryEntry = (DictionaryEntry)value;
+                var dictionaryEntry = (DictionaryEntry)value;
                 stringBuilder.AppendLine($"{options.Indent}{propertyName} = {dictionaryEntry.Key} : {dictionaryEntry.Value}");
             }
             else if (value is Exception)
@@ -211,7 +211,7 @@ namespace System
     /// </summary>
     public struct ExceptionOptions
     {
-        public static readonly ExceptionOptions Default = new ExceptionOptions()
+        public static readonly ExceptionOptions Default = new ExceptionOptions
         {
             CurrentIndentLevel = 0,
             IndentSpaces = 4,

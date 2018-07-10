@@ -25,7 +25,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// </summary>
         public GlobalNavigation GlobalNavigation
         {
-            get { return (this._globalNavigation); }
+            get { return this._globalNavigation; }
             private set
             {
                 if (this._globalNavigation != null)
@@ -45,7 +45,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// </summary>
         public CurrentNavigation CurrentNavigation
         {
-            get { return (this._currentNavigation); }
+            get { return this._currentNavigation; }
             private set
             {
                 if (this._currentNavigation != null)
@@ -106,13 +106,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}|{4}|",
-                (this.GlobalNavigation != null ? this.GlobalNavigation.GetHashCode() : 0),
-                (this.CurrentNavigation != null ? this.CurrentNavigation.GetHashCode() : 0),
+            return String.Format("{0}|{1}|{2}|{3}|{4}|",
+                this.GlobalNavigation != null ? this.GlobalNavigation.GetHashCode() : 0,
+                this.CurrentNavigation != null ? this.CurrentNavigation.GetHashCode() : 0,
                 this.EnableTreeView.GetHashCode(),
                 this.AddNewPagesToNavigation.GetHashCode(),
                 this.CreateFriendlyUrlsForNewPages.GetHashCode()
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -124,9 +124,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is Navigation))
             {
-                return (false);
+                return false;
             }
-            return (Equals((Navigation)obj));
+            return Equals((Navigation)obj);
         }
 
         /// <summary>
@@ -138,15 +138,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.GlobalNavigation.Equals(other.GlobalNavigation) &&
+            return this.GlobalNavigation.Equals(other.GlobalNavigation) &&
                     this.CurrentNavigation.Equals(other.CurrentNavigation) &&
                     this.EnableTreeView == other.EnableTreeView &&
                     this.AddNewPagesToNavigation == other.AddNewPagesToNavigation &&
                     this.CreateFriendlyUrlsForNewPages == other.CreateFriendlyUrlsForNewPages
-                    );
+                    ;
         }
 
         #endregion

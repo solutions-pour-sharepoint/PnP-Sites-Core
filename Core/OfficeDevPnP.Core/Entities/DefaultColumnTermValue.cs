@@ -24,7 +24,6 @@ namespace OfficeDevPnP.Core.Entities
     /// </summary>
     public class DefaultColumnTermValue : DefaultColumnValue
     {
-      
         /// <summary>
         /// Taxonomy paths in the shape of "TermGroup|TermSet|Term"
         /// </summary>
@@ -64,6 +63,5 @@ namespace OfficeDevPnP.Core.Entities
         /// The internal name of the field
         /// </summary>
         public string FieldInternalName { get; set; }
-
     }
 }

@@ -23,7 +23,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers
 
         public object Resolve(object source, Dictionary<String, IResolver> resolvers = null, Boolean recursive = false)
         {
-            List<RoleAssignment> res = new List<RoleAssignment>();
+            var res = new List<RoleAssignment>();
             var sourceValue = source.GetPublicInstancePropertyValue("RoleAssignment");
             if(sourceValue != null)
             {

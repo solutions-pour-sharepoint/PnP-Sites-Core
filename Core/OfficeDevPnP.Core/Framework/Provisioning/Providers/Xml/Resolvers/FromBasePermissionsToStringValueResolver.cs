@@ -22,7 +22,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers
             if (sourceValue != null)
             {
                 var basePermissions = (BasePermissions)sourceValue;
-                List<string> permissions = new List<string>();
+                var permissions = new List<string>();
                 foreach (var pk in (PermissionKind[])Enum.GetValues(typeof(PermissionKind)))
                 {
                     if (basePermissions.Has(pk) && pk != PermissionKind.EmptyMask)

@@ -13,7 +13,6 @@ namespace OfficeDevPnP.Core.Extensions
     /// </summary>
     public static class ObjectExtension
     {
-
         /// <summary>
         /// Set an object field or property and returns if the value was changed.
         /// </summary>

@@ -21,7 +21,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             {
                 this.reusedTerms = new List<ReusedTerm>();
 
-                TaxonomySession taxSession = TaxonomySession.GetTaxonomySession(web.Context);
+                var taxSession = TaxonomySession.GetTaxonomySession(web.Context);
                 TermStore termStore = null;
                 TermGroup siteCollectionTermGroup = null;
 
@@ -50,7 +50,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     return parser;
                 }
 
-                SiteCollectionTermGroupNameToken siteCollectionTermGroupNameToken =
+                var siteCollectionTermGroupNameToken =
                     new SiteCollectionTermGroupNameToken(web);
 
                 foreach (var modelTermGroup in template.TermGroups)
@@ -61,7 +61,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     var normalizedGroupName = TaxonomyItem.NormalizeName(web.Context, modelTermGroup.Name);
                     web.Context.ExecuteQueryRetry();
 
-                    TermGroup group = termStore.Groups.FirstOrDefault(
+                    var group = termStore.Groups.FirstOrDefault(
                         g => g.Id == modelTermGroup.Id || g.Name == normalizedGroupName.Value);
                     if (group == null)
                     {
@@ -123,7 +123,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                 web.Context.ExecuteQueryRetry();
 
                                 newGroup = true;
-
                             }
                         }
                     }
@@ -159,7 +158,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                             {
                                 if (group.Name == siteCollectionTermGroup.Name)
                                 {
-                                    parser.AddToken((new SiteCollectionTermSetIdToken(web, modelTermSet.Name, modelTermSet.Id)));
+                                    parser.AddToken(new SiteCollectionTermSetIdToken(web, modelTermSet.Name, modelTermSet.Id));
                                 }
                             }
                             newTermSet = true;
@@ -281,7 +280,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             // If the term is a re-used term and the term is not a source term, skip for now and create later
             if (modelTerm.IsReused && !modelTerm.IsSourceTerm)
             {
-                this.reusedTerms.Add(new ReusedTerm()
+                this.reusedTerms.Add(new ReusedTerm
                 {
                     ModelTerm = modelTerm,
                     Parent = parent,
@@ -365,11 +364,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 web.Context.ExecuteQueryRetry();
             }
 
-
             parser = this.CreateChildTerms(web, modelTerm, term, termStore, parser, scope);
             return Tuple.Create(modelTerm.Id, parser);
         }
-
 
         private void CreateTermLabels(Model.Term modelTerm, TermStore termStore, TokenParser parser, PnPMonitoredScope scope, Term term)
         {
@@ -486,8 +483,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         /// <returns></returns>
         private TryReuseTermResult TryReuseTerm(Web web, Model.Term modelTerm, TaxonomyItem parent, TermStore termStore, TokenParser parser, PnPMonitoredScope scope)
         {
-            if (!modelTerm.IsReused) return new TryReuseTermResult() { Success = false, UpdatedParser = parser };
-            if (modelTerm.Id == Guid.Empty) return new TryReuseTermResult() { Success = false, UpdatedParser = parser };
+            if (!modelTerm.IsReused) return new TryReuseTermResult { Success = false, UpdatedParser = parser };
+            if (modelTerm.Id == Guid.Empty) return new TryReuseTermResult { Success = false, UpdatedParser = parser };
 
             // Since we're reusing terms ensure the previous terms are committed
             termStore.CommitAll();
@@ -500,11 +497,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
             if (taxonomySession.ServerObjectIsNull())
             {
-                return new TryReuseTermResult() { Success = false, UpdatedParser = parser };
+                return new TryReuseTermResult { Success = false, UpdatedParser = parser };
             }
 
             var freshTermStore = taxonomySession.GetDefaultKeywordsTermStore();
-            Term preExistingTerm = freshTermStore.GetTerm(modelTerm.Id);
+            var preExistingTerm = freshTermStore.GetTerm(modelTerm.Id);
 
             try
             {
@@ -524,7 +521,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             // If the matching term is not found, return false... we can't re-use just yet  
             if (preExistingTerm == null)
             {
-                return new TryReuseTermResult() { Success = false, UpdatedParser = parser };
+                return new TryReuseTermResult { Success = false, UpdatedParser = parser };
             }
             // if the matching term is found re-use, create child terms, and return true  
             else
@@ -572,7 +569,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 parser = this.CreateChildTerms(web, modelTerm, createdTerm, termStore, parser, scope);
 
                 // Return true, because our TryReuseTerm attempt succeeded!
-                return new TryReuseTermResult() { Success = true, UpdatedParser = parser };
+                return new TryReuseTermResult { Success = true, UpdatedParser = parser };
             }
         }
 
@@ -648,7 +645,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 if (creationInfo.IncludeSiteCollectionTermGroup || creationInfo.IncludeAllTermGroups)
                 {
                     // Find the site collection termgroup, if any
-                    TaxonomySession session = TaxonomySession.GetTaxonomySession(web.Context);
+                    var session = TaxonomySession.GetTaxonomySession(web.Context);
                     TermStore termStore = null;
 
                     try
@@ -696,7 +693,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     Guid termGroupGuid;
                     Guid.TryParse(siteCollectionTermGroupId, out termGroupGuid);
 
-                    List<TermGroup> termGroups = new List<TermGroup>();
+                    var termGroups = new List<TermGroup>();
                     if (creationInfo.IncludeAllTermGroups)
                     {
                         web.Context.Load(termStore.Groups, groups => groups.Include(tg => tg.Name,
@@ -719,13 +716,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                             web.Context.ExecuteQueryRetry();
 
-                            termGroups = new List<TermGroup>() { termGroup };
+                            termGroups = new List<TermGroup> { termGroup };
                         }
                     }
 
                     foreach (var termGroup in termGroups)
                     {
-                        Boolean isSiteCollectionTermGroup = termGroupGuid != Guid.Empty && termGroup.Id == termGroupGuid;
+                        var isSiteCollectionTermGroup = termGroupGuid != Guid.Empty && termGroup.Id == termGroupGuid;
 
                         var modelTermGroup = new Model.TermGroup
                         {
@@ -800,7 +797,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
         private List<Model.Term> GetTerms<T>(ClientRuntimeContext context, TaxonomyItem parent, int defaultLanguage, Boolean isSiteCollectionTermGroup = false)
         {
-            List<Model.Term> termsToReturn = new List<Model.Term>();
+            var termsToReturn = new List<Model.Term>();
             TermCollection terms;
             var customSortOrder = string.Empty;
             if (parent is TermSet)
@@ -883,7 +880,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             }
             if (!string.IsNullOrEmpty(customSortOrder))
             {
-                int count = 1;
+                var count = 1;
                 foreach (var id in customSortOrder.Split(new[] { ':' }))
                 {
                     var term = termsToReturn.FirstOrDefault(t => t.Id == Guid.Parse(id));
@@ -896,10 +893,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 termsToReturn = termsToReturn.OrderBy(t => t.CustomSortOrder).ToList();
             }
 
-
             return termsToReturn;
         }
-
 
         public override bool WillProvision(Web web, Model.ProvisioningTemplate template, ProvisioningTemplateApplyingInformation applyingInformation)
         {

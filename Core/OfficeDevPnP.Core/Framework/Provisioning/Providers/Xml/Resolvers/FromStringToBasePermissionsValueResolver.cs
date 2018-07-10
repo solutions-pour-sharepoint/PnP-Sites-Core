@@ -18,7 +18,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers
 
         public object Resolve(object source, object destination, object sourceValue)
         {
-            BasePermissions bp = new BasePermissions();
+            var bp = new BasePermissions();
             var basePermissionString = sourceValue as string;
             // Is it an int value (for backwards compability)?
             int permissionInt;

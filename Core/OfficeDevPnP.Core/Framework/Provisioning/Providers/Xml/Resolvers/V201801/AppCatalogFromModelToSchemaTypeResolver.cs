@@ -46,7 +46,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml.Resolvers.V2018
                 result = resolver.Resolve(appCatalog.Packages, resolvers, true);
             }
 
-            return (result);
+            return result;
         }
     }
 }

@@ -84,7 +84,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors.OpenXML
             }
             set
             {
-                PackagePart manifestPart = EnsurePackagePartWithRelationshipType(R_PROVISIONINGTEMPLATE_MANIFEST, CT_PROVISIONINGTEMPLATE_MANIFEST, U_PROVISIONINGTEMPLATE_MANIFEST, null);
+                var manifestPart = EnsurePackagePartWithRelationshipType(R_PROVISIONINGTEMPLATE_MANIFEST, CT_PROVISIONINGTEMPLATE_MANIFEST, U_PROVISIONINGTEMPLATE_MANIFEST, null);
                 SetXamlSerializedPackagePartValue(value, manifestPart);
             }
         }
@@ -96,12 +96,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors.OpenXML
         {
             get
             {
-                PackagePart propsPart = GetSinglePackagePartWithRelationshipType(R_PROVISIONINGTEMPLATE_PROPERTIES, ManifestPart);
+                var propsPart = GetSinglePackagePartWithRelationshipType(R_PROVISIONINGTEMPLATE_PROPERTIES, ManifestPart);
                 return GetXamlSerializedPackagePartValue<PnPProperties>(propsPart);
             }
             set
             {
-                PackagePart propsPart = EnsurePackagePartWithRelationshipType(R_PROVISIONINGTEMPLATE_PROPERTIES, CT_PROVISIONINGTEMPLATE_PROPERTIES, U_PROVISIONINGTEMPLATE_PROPERTIES, ManifestPart);
+                var propsPart = EnsurePackagePartWithRelationshipType(R_PROVISIONINGTEMPLATE_PROPERTIES, CT_PROVISIONINGTEMPLATE_PROPERTIES, U_PROVISIONINGTEMPLATE_PROPERTIES, ManifestPart);
                 SetXamlSerializedPackagePartValue(value, propsPart);
             }
         }
@@ -113,12 +113,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors.OpenXML
         {
             get
             {
-                PackagePart propsPart = GetSinglePackagePartWithRelationshipType(R_PROVISIONINGTEMPLATE_FILES_MAP, ManifestPart);
+                var propsPart = GetSinglePackagePartWithRelationshipType(R_PROVISIONINGTEMPLATE_FILES_MAP, ManifestPart);
                 return GetXamlSerializedPackagePartValue<PnPFilesMap>(propsPart);
             }
             set
             {
-                PackagePart propsPart = EnsurePackagePartWithRelationshipType(R_PROVISIONINGTEMPLATE_FILES_MAP, CT_PROVISIONINGTEMPLATE_FILES_MAP, U_PROVISIONINGTEMPLATE_FILES_MAP, ManifestPart);
+                var propsPart = EnsurePackagePartWithRelationshipType(R_PROVISIONINGTEMPLATE_FILES_MAP, CT_PROVISIONINGTEMPLATE_FILES_MAP, U_PROVISIONINGTEMPLATE_FILES_MAP, ManifestPart);
                 SetXamlSerializedPackagePartValue(value, propsPart);
             }
         }
@@ -152,16 +152,16 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors.OpenXML
         {
             get
             {
-                Dictionary<String, PnPPackageFileItem> result = new Dictionary<String, PnPPackageFileItem>();
-				var map = FilesMap?.Map;
-                List<PackagePart> fileParts = GetAllPackagePartsWithRelationshipType(R_PROVISIONINGTEMPLATE_FILE, FilesOriginPart);
+                var result = new Dictionary<String, PnPPackageFileItem>();
+                var map = FilesMap?.Map;
+                var fileParts = GetAllPackagePartsWithRelationshipType(R_PROVISIONINGTEMPLATE_FILE, FilesOriginPart);
                 foreach (PackagePart p in fileParts)
                 {
-					String fileName = p.Uri.ToString().Remove(0, U_DIR_FILES.Length);
-					String folder = fileName.LastIndexOf('/') >= 0 ?
+					var fileName = p.Uri.ToString().Remove(0, U_DIR_FILES.Length);
+                    var folder = fileName.LastIndexOf('/') >= 0 ?
 						fileName.Substring(0, fileName.LastIndexOf('/')) : String.Empty;
 
-					fileName = fileName.Substring(fileName.LastIndexOf('/') + 1);
+                    fileName = fileName.Substring(fileName.LastIndexOf('/') + 1);
 
 					if (string.IsNullOrEmpty(folder) && map != null && map.ContainsKey(fileName))
 					{
@@ -171,7 +171,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors.OpenXML
 							originalName.Substring(0, originalName.LastIndexOf('/')) : String.Empty;
 					}
 
-					Byte[] content = ReadPackagePartBytes(p);
+					var content = ReadPackagePartBytes(p);
 
                     result[fileName] = new PnPPackageFileItem
                     {
@@ -197,7 +197,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors.OpenXML
         /// <returns>Package</returns>
         public static PnPPackage Open(string path, FileMode mode, FileAccess access)
         {
-            PnPPackage package = new PnPPackage();
+            var package = new PnPPackage();
             package.Package = Package.Open(path, mode, access);
             package.EnsureMandatoryPackageComponents();
             return package;
@@ -212,7 +212,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors.OpenXML
         /// <returns>Package</returns>
         public static PnPPackage Open(Stream stream, FileMode mode, FileAccess access)
         {
-            PnPPackage package = new PnPPackage();
+            var package = new PnPPackage();
             package.Package = Package.Open(stream, mode, access);
             package.EnsureMandatoryPackageComponents();
             return package;
@@ -226,8 +226,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors.OpenXML
         public void AddFile(string fileName, Byte[] value)
         {
             fileName = fileName.TrimStart('/');
-            string uriStr = U_DIR_FILES + fileName;
-            PackagePart part = CreatePackagePart(R_PROVISIONINGTEMPLATE_FILE, CT_FILE, uriStr, FilesOriginPart);
+            var uriStr = U_DIR_FILES + fileName;
+            var part = CreatePackagePart(R_PROVISIONINGTEMPLATE_FILE, CT_FILE, uriStr, FilesOriginPart);
             SetPackagePartValue(value, part);
         }
 
@@ -260,7 +260,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors.OpenXML
 
         private PackagePart EnsurePackagePartWithRelationshipType(string relType, string contentType, string uriStr, PackagePart parent)
         {
-            PackagePart part = GetSinglePackagePartWithRelationshipType(relType, parent);
+            var part = GetSinglePackagePartWithRelationshipType(relType, parent);
             if (part == null)
             {
                 part = CreatePackagePart(relType, contentType, uriStr, parent);
@@ -270,7 +270,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors.OpenXML
 
         private PackagePart EnsurePackagePartWithUri(string relType, string contentType, string uriStr, PackagePart parent)
         {
-            Uri partUri = new Uri(uriStr, UriKind.Relative);
+            var partUri = new Uri(uriStr, UriKind.Relative);
             PackagePart part = null;
             try
             {
@@ -286,7 +286,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors.OpenXML
 
         private PackagePart GetSinglePackagePartWithRelationshipType(string relType, PackagePart parent)
         {
-            PackageRelationshipCollection rels = parent == null ? Package.GetRelationshipsByType(relType) : parent.GetRelationshipsByType(relType);
+            var rels = parent == null ? Package.GetRelationshipsByType(relType) : parent.GetRelationshipsByType(relType);
             PackageRelationship rel = null;
             foreach (PackageRelationship r in rels)
             {
@@ -305,8 +305,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors.OpenXML
 
         private List<PackagePart> GetAllPackagePartsWithRelationshipType(string relType, PackagePart parent)
         {
-            PackageRelationshipCollection rels = parent == null ? Package.GetRelationshipsByType(relType) : parent.GetRelationshipsByType(relType);
-            List<PackagePart> pkgList = new List<PackagePart>();
+            var rels = parent == null ? Package.GetRelationshipsByType(relType) : parent.GetRelationshipsByType(relType);
+            var pkgList = new List<PackagePart>();
             foreach (PackageRelationship rel in rels)
             {
                 if (rel.TargetMode == TargetMode.Internal)
@@ -337,7 +337,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors.OpenXML
 
             using (Stream stream = part.GetStream(FileMode.Create))
             {
-                string partStr = XamlServices.Save(value);
+                var partStr = XamlServices.Save(value);
                 using (stream)
                 {
                     using (StreamWriter writer = new StreamWriter(stream))
@@ -367,8 +367,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors.OpenXML
         private PackagePart CreatePackagePart(string relType, string contentType, string uriStr, PackagePart parent)
         {
             // create part & relationship
-            Uri uri = GetUri(uriStr);
-            PackagePart part = Package.CreatePart(uri, contentType, PACKAGE_COMPRESSION_LEVEL);
+            var uri = GetUri(uriStr);
+            var part = Package.CreatePart(uri, contentType, PACKAGE_COMPRESSION_LEVEL);
             if (parent == null)
             {
                 Package.CreateRelationship(uri, TargetMode.Internal, relType);
@@ -387,8 +387,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors.OpenXML
 
         private void ClearPackagePartsWithRelationshipType(string relType, PackagePart parent, string partUri)
         {
-            PackageRelationshipCollection rels = parent == null ? Package.GetRelationshipsByType(relType) : parent.GetRelationshipsByType(relType);
-            List<string> relIds = new List<string>();
+            var rels = parent == null ? Package.GetRelationshipsByType(relType) : parent.GetRelationshipsByType(relType);
+            var relIds = new List<string>();
             foreach (PackageRelationship r in rels)
             {
                 if (r.TargetMode == TargetMode.Internal)
@@ -416,7 +416,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors.OpenXML
 
         private List<byte[]> ReadPackagePartListBytes(List<PackagePart> partList)
         {
-            List<byte[]> result = new List<byte[]>();
+            var result = new List<byte[]>();
             if (partList != null)
             {
                 foreach (PackagePart p in partList)
@@ -435,7 +435,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors.OpenXML
             Byte[] bytes;
             using (Stream stream = part.GetStream())
             {
-                long size = stream.Length;
+                var size = stream.Length;
 
                 //TODO: fix method to support long streams
                 if (size > Int32.MaxValue)
@@ -445,7 +445,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Connectors.OpenXML
                 stream.Read(bytes, 0, (int)size);
             }
             return bytes;
-
         }
 
 #endregion

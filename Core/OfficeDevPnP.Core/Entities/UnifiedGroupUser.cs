@@ -19,6 +19,5 @@ namespace OfficeDevPnP.Core.Entities
         /// Unified group user's display name
         /// </summary>
         public String DisplayName { get; set; }
-        
     }
 }

@@ -26,7 +26,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 web.EnsureProperties(w => w.ServerRelativeUrl, w => w.RootFolder.WelcomePage);
 
                 // Check if this is not a noscript site as we're not allowed to update some properties
-                bool isNoScriptSite = web.IsNoScriptSite();
+                var isNoScriptSite = web.IsNoScriptSite();
 
                 foreach (var page in template.Pages)
                 {
@@ -61,12 +61,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                 scope.LogDebug(CoreResources.Provisioning_ObjectHandlers_Pages_Overwriting_existing_page__0_, url);
 
                                 // determine url of current home page
-                                string welcomePageUrl = web.RootFolder.WelcomePage;
-                                string welcomePageServerRelativeUrl = welcomePageUrl != null
+                                var welcomePageUrl = web.RootFolder.WelcomePage;
+                                var welcomePageServerRelativeUrl = welcomePageUrl != null
                                     ? UrlUtility.Combine(web.ServerRelativeUrl, web.RootFolder.WelcomePage)
                                     : null;
 
-                                bool overwriteWelcomePage = string.Equals(url, welcomePageServerRelativeUrl, StringComparison.InvariantCultureIgnoreCase);
+                                var overwriteWelcomePage = string.Equals(url, welcomePageServerRelativeUrl, StringComparison.InvariantCultureIgnoreCase);
 
                                 // temporarily reset home page so we can delete it
                                 if (overwriteWelcomePage)
@@ -130,7 +130,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     }
 
 #if !SP2013
-                    bool webPartsNeedLocalization = false;
+                    var webPartsNeedLocalization = false;
 #endif
                     if (page.WebParts != null & page.WebParts.Any())
                     {
@@ -142,7 +142,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                             {
                                 if (existingWebParts.FirstOrDefault(w => w.WebPart.Title == parser.ParseString(webPart.Title)) == null)
                                 {
-                                    WebPartEntity wpEntity = new WebPartEntity();
+                                    var wpEntity = new WebPartEntity();
                                     wpEntity.WebPartTitle = parser.ParseString(webPart.Title);
                                     wpEntity.WebPartXml = parser.ParseXmlStringWebpart(webPart.Contents.Trim(new[] { '\n', ' ' }), web, "~sitecollection", "~site");
                                     var wpd = web.AddWebPartToWikiPage(url, wpEntity, (int)webPart.Row, (int)webPart.Column, false);
@@ -229,7 +229,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         {
             return template;
         }
-
 
         public override bool WillProvision(Web web, ProvisioningTemplate template, ProvisioningTemplateApplyingInformation applyingInformation)
         {

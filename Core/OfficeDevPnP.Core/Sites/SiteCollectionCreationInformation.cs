@@ -84,7 +84,6 @@ namespace OfficeDevPnP.Core.Sites
     /// </summary>
     public class TeamSiteCollectionGroupifyInformation : SiteCreationInformation
     {
-
         /// <summary>
         /// If the site already has a modern home page, do we want to keep it?
         /// </summary>
@@ -106,7 +105,6 @@ namespace OfficeDevPnP.Core.Sites
         public TeamSiteCollectionGroupifyInformation(string alias, string displayName, string description = null) : base(alias, displayName, description)
         {
         }
-
     }
 
 
@@ -184,6 +182,5 @@ namespace OfficeDevPnP.Core.Sites
         Showcase = 1,
         Blank = 2,
     }
-
 }
 #endif

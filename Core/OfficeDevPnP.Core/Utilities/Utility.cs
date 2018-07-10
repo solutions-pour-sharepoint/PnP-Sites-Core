@@ -10,7 +10,6 @@ namespace OfficeDevPnP.Core.Utilities
     /// </summary>
     public static partial class Utility
     {
-
         /// <summary>
         /// Returns the healthscore for a SharePoint Server
         /// </summary>
@@ -18,10 +17,10 @@ namespace OfficeDevPnP.Core.Utilities
         /// <returns>Returns server health score integer value</returns>
         public static int GetHealthScore(string url)
         {
-            int value = 0;
-            Uri baseUri = new Uri(url);
-            Uri checkUri = new Uri(baseUri, "_layouts/15/blank.htm");
-            WebRequest webRequest = WebRequest.Create(checkUri);
+            var value = 0;
+            var baseUri = new Uri(url);
+            var checkUri = new Uri(baseUri, "_layouts/15/blank.htm");
+            var webRequest = WebRequest.Create(checkUri);
             webRequest.Method = "HEAD";
             webRequest.UseDefaultCredentials = true;
             using (WebResponse webResponse = webRequest.GetResponse())

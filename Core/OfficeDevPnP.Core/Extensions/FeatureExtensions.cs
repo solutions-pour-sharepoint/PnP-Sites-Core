@@ -220,7 +220,7 @@ namespace Microsoft.SharePoint.Client
             features.Context.Load(features);
             if (noRetry)
             {
-                string clientTag = $"{PnPCoreUtilities.PnPCoreVersionTag}:ProcessFeatureInternal";
+                var clientTag = $"{PnPCoreUtilities.PnPCoreVersionTag}:ProcessFeatureInternal";
                 if (clientTag.Length > 32)
                 {
                     clientTag = clientTag.Substring(0, 32);
@@ -321,7 +321,7 @@ namespace Microsoft.SharePoint.Client
 
                 try
                 {
-                    string clientTag = $"{PnPCoreUtilities.PnPCoreVersionTag}:ProcessFeatureInternal";
+                    var clientTag = $"{PnPCoreUtilities.PnPCoreVersionTag}:ProcessFeatureInternal";
                     if (clientTag.Length > 32)
                     {
                         clientTag = clientTag.Substring(0, 32);
@@ -342,8 +342,8 @@ namespace Microsoft.SharePoint.Client
                     // Don't wait for a "feature not found" exception, which is the typical exception we'll see
                     if (ex.HResult != -2146233088)
                     {
-                        int retryAttempts = 10;
-                        int retryCount = 0;
+                        var retryAttempts = 10;
+                        var retryCount = 0;
 
                         // wait and keep checking if the feature is active
                         while (retryAttempts > retryCount)

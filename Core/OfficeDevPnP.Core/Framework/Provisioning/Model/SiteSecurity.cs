@@ -127,18 +127,18 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}",
+            return String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}",
                 this.AdditionalAdministrators.Aggregate(0, (acc, next) => acc += next.GetHashCode()),
                 this.AdditionalOwners.Aggregate(0, (acc, next) => acc += next.GetHashCode()),
                 this.AdditionalMembers.Aggregate(0, (acc, next) => acc += next.GetHashCode()),
                 this.AdditionalVisitors.Aggregate(0, (acc, next) => acc += next.GetHashCode()),
                 this.SiteGroups.Aggregate(0, (acc, next) => acc += next.GetHashCode()),
-                (this.SiteSecurityPermissions != null ? this.SiteSecurityPermissions.RoleAssignments.Aggregate(0, (acc, next) => acc += next.GetHashCode()) : 0),
-                (this.SiteSecurityPermissions != null ? this.SiteSecurityPermissions.RoleDefinitions.Aggregate(0, (acc, next) => acc += next.GetHashCode()) : 0),
+                this.SiteSecurityPermissions != null ? this.SiteSecurityPermissions.RoleAssignments.Aggregate(0, (acc, next) => acc += next.GetHashCode()) : 0,
+                this.SiteSecurityPermissions != null ? this.SiteSecurityPermissions.RoleDefinitions.Aggregate(0, (acc, next) => acc += next.GetHashCode()) : 0,
                 this.BreakRoleInheritance.GetHashCode(),
                 this.CopyRoleAssignments.GetHashCode(),
                 this.ClearSubscopes.GetHashCode()
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -150,9 +150,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is SiteSecurity))
             {
-                return (false);
+                return false;
             }
-            return (Equals((SiteSecurity)obj));
+            return Equals((SiteSecurity)obj);
         }
 
         /// <summary>
@@ -165,10 +165,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (
+            return 
                 this.AdditionalAdministrators.DeepEquals(other.AdditionalAdministrators) &&
                 this.AdditionalOwners.DeepEquals(other.AdditionalOwners) &&
                 this.AdditionalMembers.DeepEquals(other.AdditionalMembers) &&
@@ -179,7 +179,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                 this.BreakRoleInheritance == other.BreakRoleInheritance &&
                 this.CopyRoleAssignments == other.CopyRoleAssignments &&
                 this.ClearSubscopes == other.ClearSubscopes
-                );
+                ;
         }
 
         #endregion

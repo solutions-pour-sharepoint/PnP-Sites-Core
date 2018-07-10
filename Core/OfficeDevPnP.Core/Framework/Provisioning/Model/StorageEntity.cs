@@ -40,12 +40,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}|",
-                (this.Key != null ? this.Key.GetHashCode() : 0),
-                (this.Value != null ? this.Value.GetHashCode() : 0),
-                (this.Comment != null ? this.Comment.GetHashCode() : 0),
-                (this.Description != null ? this.Description.GetHashCode() : 0)
-            ).GetHashCode());
+            return String.Format("{0}|{1}|{2}|{3}|",
+                this.Key != null ? this.Key.GetHashCode() : 0,
+                this.Value != null ? this.Value.GetHashCode() : 0,
+                this.Comment != null ? this.Comment.GetHashCode() : 0,
+                this.Description != null ? this.Description.GetHashCode() : 0
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -57,9 +57,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is StorageEntity))
             {
-                return (false);
+                return false;
             }
-            return (Equals((StorageEntity)obj));
+            return Equals((StorageEntity)obj);
         }
 
         /// <summary>
@@ -71,13 +71,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.Key == other.Key &&
+            return this.Key == other.Key &&
                 this.Value == other.Value &&
                 this.Comment == other.Comment &&
-                this.Description == other.Description);
+                this.Description == other.Description;
         }
 
         #endregion

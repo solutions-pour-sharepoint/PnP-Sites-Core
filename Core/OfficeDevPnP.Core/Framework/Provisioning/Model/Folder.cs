@@ -101,12 +101,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}|",
-                (this.Name.GetHashCode()),
-                (this.Folders.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0))),
-                (this.Security != null ? this.Security.GetHashCode() : 0),
+            return String.Format("{0}|{1}|{2}|{3}|",
+                this.Name.GetHashCode(),
+                this.Folders.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
+                this.Security != null ? this.Security.GetHashCode() : 0,
                 this.PropertyBagEntries.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0))
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -118,9 +118,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is Folder))
             {
-                return (false);
+                return false;
             }
-            return (Equals((Folder)obj));
+            return Equals((Folder)obj);
         }
 
         /// <summary>
@@ -132,14 +132,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.Name == other.Name &&
+            return this.Name == other.Name &&
                     this.Folders.DeepEquals(other.Folders) &&
                     (this.Security != null ? this.Security.Equals(other.Security) : true) &&
                     this.PropertyBagEntries.DeepEquals(other.PropertyBagEntries)
-               );
+               ;
         }
 
         #endregion

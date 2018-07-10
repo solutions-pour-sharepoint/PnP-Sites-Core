@@ -36,11 +36,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|",
+            return String.Format("{0}|{1}|{2}|",
                 ServerNotificationUrl?.GetHashCode() ?? 0,
                 ExpiresInDays.GetHashCode(),
                 SiteWebhookType.GetHashCode()
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -52,9 +52,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is SiteWebhook))
             {
-                return (false);
+                return false;
             }
-            return (Equals((SiteWebhook)obj));
+            return Equals((SiteWebhook)obj);
         }
 
         /// <summary>
@@ -66,13 +66,13 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.ServerNotificationUrl == other.ServerNotificationUrl &&
+            return this.ServerNotificationUrl == other.ServerNotificationUrl &&
                 this.ExpiresInDays == other.ExpiresInDays &&
                 this.SiteWebhookType == other.SiteWebhookType
-                );
+                ;
         }
 
         #endregion

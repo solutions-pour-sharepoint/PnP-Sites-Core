@@ -124,7 +124,7 @@ namespace OfficeDevPnP.Core.Entities
         /// <returns></returns>
         public override string ToString()
         {
-            StringBuilder buffer = new StringBuilder();
+            var buffer = new StringBuilder();
             buffer.Append(Path);
             buffer.Append("\t");
             buffer.Append(User.Title);

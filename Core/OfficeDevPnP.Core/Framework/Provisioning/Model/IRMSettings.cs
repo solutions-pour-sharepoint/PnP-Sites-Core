@@ -97,7 +97,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|{13}|{14}",
+            return String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|{13}|{14}",
                     this.Enabled.GetHashCode(),
                     this.AllowPrint.GetHashCode(),
                     this.AllowScript.GetHashCode(),
@@ -113,7 +113,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                     this.LicenseCacheExpireDays.GetHashCode(),
                     this.PolicyDescription?.GetHashCode() ?? 0,
                     this.PolicyTitle?.GetHashCode() ?? 0
-                ).GetHashCode());
+                ).GetHashCode();
         }
 
         /// <summary>
@@ -125,9 +125,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is IRMSettings))
             {
-                return (false);
+                return false;
             }
-            return (Equals((IRMSettings)obj));
+            return Equals((IRMSettings)obj);
         }
 
         /// <summary>
@@ -141,10 +141,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (
+            return 
                     this.Enabled == other.Enabled &&
                     this.AllowPrint == other.AllowPrint &&
                     this.AllowScript == other.AllowScript &&
@@ -160,7 +160,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                     this.LicenseCacheExpireDays == other.LicenseCacheExpireDays &&
                     this.PolicyDescription == other.PolicyDescription &&
                     this.PolicyTitle == other.PolicyTitle
-                );
+                ;
         }
 
         #endregion

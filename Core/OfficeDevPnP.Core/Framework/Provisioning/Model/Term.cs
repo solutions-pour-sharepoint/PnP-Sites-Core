@@ -155,12 +155,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         /// <returns>Returns HashCode</returns>
         public override int GetHashCode()
         {
-            return (String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|{13}|{14}",
-                (this.Id != null ? this.Id.GetHashCode() : 0),
-                (this.Name != null ? this.Name.GetHashCode() : 0),
-                (this.Description != null ? this.Description.GetHashCode() : 0),
-                (this.Language != null ? this.Language.GetHashCode() : 0),
-                (this.Owner != null ? this.Owner.GetHashCode() : 0),
+            return String.Format("{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|{13}|{14}",
+                this.Id != null ? this.Id.GetHashCode() : 0,
+                this.Name != null ? this.Name.GetHashCode() : 0,
+                this.Description != null ? this.Description.GetHashCode() : 0,
+                this.Language != null ? this.Language.GetHashCode() : 0,
+                this.Owner != null ? this.Owner.GetHashCode() : 0,
                 this.IsAvailableForTagging.GetHashCode(),
                 this.IsReused.GetHashCode(),
                 this.IsSourceTerm.GetHashCode(),
@@ -171,7 +171,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                 this.Terms.Aggregate(0, (acc, next) => acc += (next != null ? next.GetHashCode() : 0)),
                 this.Properties.Aggregate(0, (acc, next) => acc += next.GetHashCode()),
                 this.LocalProperties.Aggregate(0, (acc, next) => acc += next.GetHashCode())
-            ).GetHashCode());
+            ).GetHashCode();
         }
 
         /// <summary>
@@ -183,9 +183,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (!(obj is Term))
             {
-                return (false);
+                return false;
             }
-            return (Equals((Term)obj));
+            return Equals((Term)obj);
         }
 
         /// <summary>
@@ -198,10 +198,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
         {
             if (other == null)
             {
-                return (false);
+                return false;
             }
 
-            return (this.Id == other.Id &&
+            return this.Id == other.Id &&
                 this.Name == other.Name &&
                 this.Description == other.Description &&
                 this.Language == other.Language &&
@@ -215,7 +215,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Model
                 this.Labels.DeepEquals(other.Labels) &&
                 this.Terms.DeepEquals(other.Terms) &&
                 this.Properties.DeepEquals(other.Properties) &&
-                this.LocalProperties.DeepEquals(other.LocalProperties));
+                this.LocalProperties.DeepEquals(other.LocalProperties);
         }
 
         #endregion

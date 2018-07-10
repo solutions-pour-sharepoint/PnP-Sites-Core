@@ -43,7 +43,6 @@ namespace Microsoft.SharePoint.Client
         /// </summary>
         public const string ECM_AUTO_DECLARE_RECORDS = "ecm_AutoDeclareRecords";
 
-
         #region Site scoped In Place Records Management methods
         /// <summary>
         /// Checks if in place records management functionality is enabled for this site collection
@@ -108,7 +107,7 @@ namespace Microsoft.SharePoint.Client
             site.SetManualRecordDeclarationInAllLocations(true);
 
             // Set restrictions to default values after enablement (is also done at feature activation)
-            EcmSiteRecordRestrictions restrictions = EcmSiteRecordRestrictions.BlockDelete | EcmSiteRecordRestrictions.BlockEdit;
+            var restrictions = EcmSiteRecordRestrictions.BlockDelete | EcmSiteRecordRestrictions.BlockEdit;
             site.SetRecordRestrictions(restrictions);
 
             // Set record declaration to default value
@@ -116,7 +115,6 @@ namespace Microsoft.SharePoint.Client
 
             // Set record undeclaration to default value
             site.SetRecordUnDeclarationBy(EcmRecordDeclarationBy.OnlyAdmins);
-
         }
 
         /// <summary>
@@ -148,7 +146,6 @@ namespace Microsoft.SharePoint.Client
             }
 
             return false;
-
         }
 
         /// <summary>
@@ -158,7 +155,7 @@ namespace Microsoft.SharePoint.Client
         /// <param name="restrictions"><see cref="EcmSiteRecordRestrictions"/> enum that holds the restrictions to be applied</param>
         public static void SetRecordRestrictions(this Site site, EcmSiteRecordRestrictions restrictions)
         {
-            string restrictionsProperty = "";
+            var restrictionsProperty = "";
 
             if (restrictions.Has(EcmSiteRecordRestrictions.None))
             {
@@ -226,7 +223,7 @@ namespace Microsoft.SharePoint.Client
         /// <returns><see cref="EcmRecordDeclarationBy"/> enum that defines who can declare a record</returns>
         public static EcmRecordDeclarationBy GetRecordDeclarationBy(this Site site)
         {
-            string by = site.RootWeb.GetPropertyBagValueString(ECM_SITE_RECORD_DECLARATION_BY, "");
+            var by = site.RootWeb.GetPropertyBagValueString(ECM_SITE_RECORD_DECLARATION_BY, "");
 
             if (!string.IsNullOrEmpty(by))
             {
@@ -391,14 +388,14 @@ namespace Microsoft.SharePoint.Client
                 list.Context.Load(list.EventReceivers);
                 list.Context.ExecuteQueryRetry();
 
-                List<EventReceiverDefinition> currentEventReceivers = new List<EventReceiverDefinition>(list.EventReceivers.Count);
+                var currentEventReceivers = new List<EventReceiverDefinition>(list.EventReceivers.Count);
                 currentEventReceivers.AddRange(list.EventReceivers);
 
                 // Track changes to see if an list.Update is needed
-                bool eventReceiverAdded = false;
+                var eventReceiverAdded = false;
 
                 //ItemUpdating receiver
-                EventReceiverDefinitionCreationInformation newEventReceiver = CreateECMRecordEventReceiverDefinition(EventReceiverType.ItemUpdating, 1000, sharePointVersion);
+                var newEventReceiver = CreateECMRecordEventReceiverDefinition(EventReceiverType.ItemUpdating, 1000, sharePointVersion);
                 if (!ContainsECMRecordEventReceiver(newEventReceiver, currentEventReceivers))
                 {
                     list.EventReceivers.Add(newEventReceiver);
@@ -480,7 +477,7 @@ namespace Microsoft.SharePoint.Client
 
         private static EventReceiverDefinitionCreationInformation CreateECMRecordEventReceiverDefinition(EventReceiverType eventType, int sequenceNumber, int sharePointVersion)
         {
-            return new EventReceiverDefinitionCreationInformation()
+            return new EventReceiverDefinitionCreationInformation
             {
                 EventType = eventType,
                 ReceiverAssembly =

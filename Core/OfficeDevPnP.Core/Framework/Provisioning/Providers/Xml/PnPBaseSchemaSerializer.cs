@@ -15,7 +15,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
     {
         public string Name
         {
-            get { return (this.GetType().Name); }
+            get { return this.GetType().Name; }
         }
 
         public abstract void Deserialize(object persistence, ProvisioningTemplate template);
@@ -30,7 +30,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
         /// <returns></returns>
         protected LambdaExpression CreateSelectorLambda(Type targetType, String propertyName)
         {
-            return (Expression.Lambda(
+            return Expression.Lambda(
                 Expression.Convert(
                     Expression.MakeMemberAccess(
                         Expression.Parameter(targetType, "i"),
@@ -38,7 +38,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.Providers.Xml
                             System.Reflection.BindingFlags.Instance |
                             System.Reflection.BindingFlags.Public)),
                     typeof(object)),
-                ParameterExpression.Parameter(targetType, "i")));
+                ParameterExpression.Parameter(targetType, "i"));
         }
     }
 }
