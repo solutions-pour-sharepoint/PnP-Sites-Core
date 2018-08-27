@@ -24,6 +24,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
     internal class ObjectListInstance : ObjectHandlerBase
     {
         private readonly FieldAndListProvisioningStepHelper.Step step;
+
         public override string Name
         {
 #if DEBUG
@@ -148,7 +149,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     // We stop here unless we reached the last provisioning stop of the list
                     if (step == FieldAndListProvisioningStepHelper.Step.ListSettings)
                     {
-
                         #region Default Field Values
 
                         foreach (var listInfo in processedLists)
@@ -1384,7 +1384,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
             foreach (var ctb in templateList.ContentTypeBindings)
             {
-                var tempCT = web.GetContentTypeById(ctb.ContentTypeId, searchInSiteHierarchy: true);
+                var tempCT = web.GetContentTypeById(
+                    ctb.ContentTypeId,
+                    true,
+                    cts => cts.Include(
+                        ct => ct.Id,
+                        ct => ct.Name,
+                        ct => ct.FieldLinks.Include(fl => fl.Id, fl => fl.Hidden)
+                        ));
                 if (tempCT != null)
                 {
                     ContentTypeId existingContentTypeId = list.ContentTypes.BestMatch(ctb.ContentTypeId);
@@ -1409,6 +1416,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         }
                         else
                         {
+                            // #
+                            AddContentTypeHiddenFieldsToList(tempCT, list);
+
                             // Add the content type
                             listContentType = list.ContentTypes.AddExistingContentType(tempCT);
                         }
@@ -2492,6 +2502,33 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             schemaXml = Regex.Replace(schemaXml, web.Id.ToString("B"), "{{siteid}}", RegexOptions.IgnoreCase);
             schemaXml = Regex.Replace(schemaXml, web.Id.ToString("D"), "{siteid}", RegexOptions.IgnoreCase);
             return schemaXml;
+        }
+
+        private void AddContentTypeHiddenFieldsToList(ContentType tempCT, List createdList)
+        {
+            var ctx = (ClientContext)createdList.Context;
+            var web = ctx.Web;
+            web.Context.Load(web.AvailableFields, fields => fields.Include(fl => fl.Id, fl => fl.SchemaXmlWithResourceTokens));
+            web.Context.ExecuteQueryRetry();
+            foreach (var fieldLink in tempCT.FieldLinks)
+            {
+                if (fieldLink.Hidden && !createdList.FieldExistsById(fieldLink.Id))
+                {
+                    var siteField = web.AvailableFields.First(f => f.Id == fieldLink.Id);
+
+                    var fieldSchema = XElement.Parse(siteField.SchemaXmlWithResourceTokens);
+                    var displayNameBackup = (string)fieldSchema.Attribute("DisplayName") ?? (string)fieldSchema.Attribute("Name");
+
+                    fieldSchema.SetAttributeValue("DisplayName", (string)fieldSchema.Attribute("Name"));
+
+                    var createdField = createdList.Fields.AddFieldAsXml(fieldSchema.ToString(), false, AddFieldOptions.AddToNoContentType);
+                    ctx.ExecuteQuery();
+                    var createdFieldSchema = XElement.Parse(createdField.EnsureProperty(f => f.SchemaXml));
+                    createdFieldSchema.SetAttributeValue("DisplayName", displayNameBackup);
+                    createdField.SchemaXml = createdFieldSchema.ToString();
+                    ctx.ExecuteQuery();
+                }
+            }
         }
 
         public override bool WillProvision(Web web, ProvisioningTemplate template, ProvisioningTemplateApplyingInformation applyingInformation)
