@@ -524,10 +524,28 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                 // Fields
                 string[] viewFields = null;
+
+                Func<string,bool> checkIfFieldExists = fieldName =>
+                {
+                    if (createdList.Fields.Any(fl => fl.InternalName == fieldName))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        WriteMessage($"Field {fieldName} is not present is the list {createdList.Title} and will not be added to the view", ProvisioningMessageType.Warning);
+                        return false;
+                    }
+                };
+
                 var viewFieldsElement = viewElement.Descendants("ViewFields").FirstOrDefault();
                 if (viewFieldsElement != null)
                 {
-                    viewFields = (from field in viewElement.Descendants("ViewFields").Descendants("FieldRef") select field.Attribute("Name").Value).ToArray();
+                    viewFields = viewElement
+                        .Descendants("ViewFields")
+                        .Descendants("FieldRef")
+                        .Select(field=> (string)field.Attribute("Name"))
+                        .Where(checkIfFieldExists).ToArray();
                 }
 
                 // Default view
