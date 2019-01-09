@@ -52,7 +52,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 foreach (var file in filesToProcess)
                 {
                     file.Src = parser.ParseString(file.Src);
-                    var targetFileName = !String.IsNullOrEmpty(file.TargetFileName) ? file.TargetFileName : file.Src;
+                    var targetFileName = parser.ParseString(
+                        !String.IsNullOrEmpty(file.TargetFileName) ? file.TargetFileName : file.Src
+                        );
 
                     currentFileIndex++;
                     WriteMessage($"File|{targetFileName}|{currentFileIndex}|{filesToProcess.Length}", ProvisioningMessageType.Progress);
