@@ -53,7 +53,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 {
                     file.Src = parser.ParseString(file.Src);
                     var targetFileName = parser.ParseString(
-                        !String.IsNullOrEmpty(file.TargetFileName) ? file.TargetFileName : file.Src
+                        !String.IsNullOrEmpty(file.TargetFileName) ? file.TargetFileName : template.Connector.GetFilenamePart(file.Src)
                         );
 
                     currentFileIndex++;
