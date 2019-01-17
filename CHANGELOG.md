@@ -6,15 +6,36 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [3.5.1901.0 - unreleased]
+## [3.6.1902.0 - unreleased]
 
 ### Added
 
+- ZoneID web part property now can be used in SP2016
+- MajorVersionLimit and MajorWithMinorVersionsLimit are supported in the minimal (May 2018) version of SP2013 CSOM (Issue 1943) #1994 [tmeckel]
+- Enables Web.RequestAccessEmail for on-premises (both 15.0 and 16.0) #1794 [biste5]
+- Add token parsing in `targetFileName` property of file object #2036 [stevebeauge]
+
+### Changed
+
+- Feature/make datarow and file properties consistent #1762 [stevebeauge]
+
+## [3.5.1901.0 - January 2019 release]
+
+### Added
+
+- Added support for modern page section backgrounds
+- Added new 1st party client side web parts to the client side page API - support for provisioning engine will come with next schema update
+- Added support for webparts configured with isDomainIsolated=true - support for provisioning engine will come with next schema update
+- ResetFileToPreviousVersion extension method #2030 [skaggej]
+  
 ### Changed
 
 - Fix to make the EveryoneExceptExternalUsers token resolve correctly in all circumstances
 - Fix to ensure TLS settings are correctly configured on certain OS versions (e.g. Windows Server 2012 R2)
 - Fix throttling Retry-After processing, should be in seconds, not in milliseconds
+- Multi-lingual provisioning of list title, extraction of additional navigation node languages #1974 [czullu]
+- Updated logging logic #2018 [jensotto]
+- Performance optimization on for the client side page save action
 
 ### Deprecated
 
