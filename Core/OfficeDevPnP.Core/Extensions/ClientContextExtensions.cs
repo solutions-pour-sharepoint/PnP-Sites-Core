@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Threading;
-using System.Web;
 using OfficeDevPnP.Core;
 using OfficeDevPnP.Core.Diagnostics;
 using OfficeDevPnP.Core.Utilities;
@@ -17,7 +16,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Collections.Generic;
 
 #if !ONPREMISES
+
 using OfficeDevPnP.Core.Sites;
+
 #endif
 
 namespace Microsoft.SharePoint.Client
@@ -38,7 +39,6 @@ namespace Microsoft.SharePoint.Client
         {
             ClientContextExtensions.userAgentFromConfig = ConfigurationManager.AppSettings["SharePointPnPUserAgent"];
         }
-
 
 #if ONPREMISES
         private const string MicrosoftSharePointTeamServicesHeader = "MicrosoftSharePointTeamServices";
@@ -136,7 +136,7 @@ namespace Microsoft.SharePoint.Client
                 {
                     clientContext.ClientTag = SetClientTag(clientTag);
 
-                    // Make CSOM request more reliable by disabling the return value cache. Given we 
+                    // Make CSOM request more reliable by disabling the return value cache. Given we
                     // often clone context objects and the default value is
 #if !ONPREMISES
                     clientContext.DisableReturnValueCache = true;
@@ -296,7 +296,6 @@ namespace Microsoft.SharePoint.Client
 #elif SP2016
             clonedClientContext.DisableReturnValueCache = clientContext.DisableReturnValueCache;
 #endif
-
 
             // In case of using networkcredentials in on premises or SharePointOnlineCredentials in Office 365
             if (clientContext.Credentials != null)
@@ -506,7 +505,6 @@ namespace Microsoft.SharePoint.Client
             public MaximumRetryAttemptedException(string message)
                 : base(message)
             {
-
             }
         }
 
@@ -543,9 +541,8 @@ namespace Microsoft.SharePoint.Client
 #else
             try
             {
-                Uri urlUri = new Uri(clientContext.Url);
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create($"{urlUri.Scheme}://{urlUri.DnsSafeHost}:{urlUri.Port}/_vti_pvt/service.cnf");
-                request.UseDefaultCredentials = true;
+                var urlUri = new Uri(clientContext.Url);
+                var request = clientContext.CreateWebRequest($"{urlUri.Scheme}://{urlUri.DnsSafeHost}:{urlUri.Port}/_vti_pvt/service.cnf");
 
                 var response = request.GetResponse();
 
@@ -669,6 +666,7 @@ namespace Microsoft.SharePoint.Client
         }
 
 #if !ONPREMISES
+
         /// <summary>
         /// BETA: Creates a Communication Site Collection
         /// </summary>
@@ -721,5 +719,56 @@ namespace Microsoft.SharePoint.Client
             return await SiteCollection.AliasExistsAsync(clientContext, alias);
         }
 #endif
+
+        /// <summary>
+        /// Creates a HttpWebRequest reusing client context authentication
+        /// </summary>
+        /// <param name="ctx">Client context to get authentication from</param>
+        /// <param name="url">Url of the resource to query</param>
+        /// <returns>An <see cref="HttpWebRequest"/> object.</returns>
+        /// <remarks>The resulting request object is set with client context credentials if any (Online or OnPrem) or using the default credentials (OnPrem). The
+        /// user agent string is also set to avoid 403 errors when querying Online contexts</remarks>
+        public static HttpWebRequest CreateWebRequest(this ClientRuntimeContext ctx, string url)
+        {
+            if (ctx == null) throw new ArgumentNullException(nameof(ctx));
+            if (url == null) throw new ArgumentNullException(nameof(url));
+
+            var req = WebRequest.CreateHttp(url);
+            SetupWebRequest(ctx, req);
+            return req;
+        }
+
+        /// <summary>
+        /// Creates a HttpWebRequest reusing client context authentication
+        /// </summary>
+        /// <param name="ctx">Client context to get authentication from</param>
+        /// <param name="uri">Url of the resource to query</param>
+        /// <returns>An <see cref="HttpWebRequest"/> object.</returns>
+        /// <remarks>The resulting request object is set with client context credentials if any (Online or OnPrem) or using the default credentials (OnPrem). The
+        /// user agent string is also set to avoid 403 errors when querying Online contexts</remarks>
+        public static HttpWebRequest CreateWebRequest(this ClientRuntimeContext ctx, Uri uri)
+        {
+            if (ctx == null) throw new ArgumentNullException(nameof(ctx));
+            if (uri == null) throw new ArgumentNullException(nameof(uri));
+
+            var req = WebRequest.CreateHttp(uri);
+            SetupWebRequest(ctx, req);
+            return req;
+        }
+
+        /// <summary>
+        /// Setup a web request to reuse client context authentication
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="req"></param>
+        internal static void SetupWebRequest(ClientRuntimeContext ctx, HttpWebRequest req)
+        {
+            if (ctx == null) throw new ArgumentNullException(nameof(ctx));
+            if (req == null) throw new ArgumentNullException(nameof(req));
+            ClientRuntimeContext.SetupRequestCredential(ctx, req);
+
+            // Set a user agent to avoid 403 errors
+            req.UserAgent = PnPCoreUtilities.PnPCoreUserAgent;
+        }
     }
 }

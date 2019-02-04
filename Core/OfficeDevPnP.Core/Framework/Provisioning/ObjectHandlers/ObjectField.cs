@@ -139,6 +139,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
                     if (IsFieldXmlValid(parser.ParseXmlString(originalFieldXml), parser, web.Context))
                     {
+
                         foreach (var attribute in templateFieldElement.Attributes())
                         {
                             if (existingFieldElement.Attribute(attribute.Name) != null)

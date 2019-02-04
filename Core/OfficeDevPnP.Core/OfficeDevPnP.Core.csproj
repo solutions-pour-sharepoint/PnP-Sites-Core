@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" 
+  xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -524,6 +525,8 @@
     <Compile Include="Framework\Provisioning\ObjectHandlers\Utilities\FieldUpdateValue.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Utilities\ListItemUtilities.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Utilities\ConnectorFileHelper.cs" />
+    <Compile Include="Framework\Provisioning\ObjectHandlers\Utilities\FieldUpdateValue.cs" />
+    <Compile Include="Framework\Provisioning\ObjectHandlers\Utilities\ListItemUtilities.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Utilities\FieldUtilities.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Utilities\TenantHelper.cs" />
     <Compile Include="Framework\Provisioning\Providers\IProvisioningHierarchyFormatter.cs" />
@@ -1016,6 +1019,10 @@
     <Compile Include="Utilities\PnPHttpProvider.cs" />
     <Compile Include="Utilities\PnPHttpUtility.cs" />
     <Compile Include="Utilities\RESTUtilities.cs" />
+    <Compile Include="Utilities\SharePointWebClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Utilities\StringUtilities.cs" />
     <Compile Include="Utilities\StringUtilities.cs" />
     <Compile Include="Utilities\Themes\Palettes\Color.cs" />
     <Compile Include="Utilities\Themes\Palettes\Colors.cs" />
@@ -1028,6 +1035,9 @@
     <Compile Include="Utilities\Themes\Generator\ThemeRulesStandard.cs" />
     <Compile Include="Utilities\Themes\Generator\ThemeSlotRule.cs" />
     <Compile Include="Utilities\Themes\ThemeUtility.cs" />
+    <Compile Include="Utilities\SharePointWebClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Utilities\Webhooks\ResponseModel.cs" />
     <Compile Include="Utilities\Webhooks\WebhookUtility.cs" />
     <Compile Include="Utilities\WebParts\IWebPartPostProcessor.cs" />

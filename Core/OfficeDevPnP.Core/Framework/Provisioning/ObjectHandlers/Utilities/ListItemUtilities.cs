@@ -207,16 +207,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Utilities
 
             foreach (var dataValue in fieldValues)
             {
-                Field dataField = null;
-
-                if (parser != null)
-                {
-                    dataField = fields.FirstOrDefault(f => f.InternalName == parser.ParseString(dataValue.Key));
-                }
-                else
-                {
-                    dataField = fields.FirstOrDefault(f => f.InternalName == dataValue.Key);
-                }
+                Field dataField = fields.FirstOrDefault(f => f.InternalName == parser.ParseString(dataValue.Key));
 
                 if (dataField == null)
                 {

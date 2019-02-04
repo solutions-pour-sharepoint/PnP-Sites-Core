@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using Microsoft.SharePoint.Client.DocumentSet;
-using Microsoft.SharePoint.Client.Taxonomy;
 using System.Linq.Expressions;
+using Microsoft.SharePoint.Client.Taxonomy;
 
 namespace Microsoft.SharePoint.Client
 {
