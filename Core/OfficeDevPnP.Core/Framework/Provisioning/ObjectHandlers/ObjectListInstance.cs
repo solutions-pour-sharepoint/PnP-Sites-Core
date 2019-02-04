@@ -564,12 +564,33 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     viewType = ViewType.Calendar | ViewType.Recurrence;
                 }
 
+                web.Context.Load(createdList.Fields, flds => flds.Include(fl => fl.InternalName));
+                web.Context.ExecuteQueryRetry();
+
                 // Fields
                 string[] viewFields = null;
+
+                Func<string,bool> checkIfFieldExists = fieldName =>
+                {
+                    if (createdList.Fields.Any(fl => fl.InternalName == fieldName))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        WriteMessage($"Field {fieldName} is not present is the list {createdList.Title} and will not be added to the view", ProvisioningMessageType.Warning);
+                        return false;
+                    }
+                };
+
                 var viewFieldsElement = viewElement.Descendants("ViewFields").FirstOrDefault();
                 if (viewFieldsElement != null)
                 {
-                    viewFields = (from field in viewElement.Descendants("ViewFields").Descendants("FieldRef") select field.Attribute("Name").Value).ToArray();
+                    viewFields = viewElement
+                        .Descendants("ViewFields")
+                        .Descendants("FieldRef")
+                        .Select(field=> (string)field.Attribute("Name"))
+                        .Where(checkIfFieldExists).ToArray();
                 }
 
                 // Default view
@@ -832,7 +853,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
         {
             field.EnsureProperty(f => f.SchemaXmlWithResourceTokens);
             string fieldXml = field.SchemaXmlWithResourceTokens;
-            fieldXml = FieldUtilities.FixLookupField(fieldXml, web);
+            fieldXml = FieldUtilities.FixLookupField(fieldXml, web, parser);
             XElement element = XElement.Parse(fieldXml);
 
             element.SetAttributeValue("AllowDeletion", "TRUE");
@@ -913,7 +934,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     ? AddFieldOptions.AddFieldInternalNameHint | AddFieldOptions.AddToNoContentType
                     : AddFieldOptions.AddFieldInternalNameHint | AddFieldOptions.AddToDefaultContentType;
 
-                fieldXml = FieldUtilities.FixLookupField(fieldXml, context.Web);
+                fieldXml = FieldUtilities.FixLookupField(fieldXml, context.Web, parser);
 
                 field = listInfo.SiteList.Fields.AddFieldAsXml(fieldXml, false, addOptions);
                 listInfo.SiteList.Context.Load(field);
@@ -1006,7 +1027,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         {
                             existingFieldElement.Attributes("Version").Remove();
                         }
-                        var existingFieldXml = FieldUtilities.FixLookupField(existingFieldElement.ToString(), web);
+                        var existingFieldXml = FieldUtilities.FixLookupField(existingFieldElement.ToString(), web, parser);
                         existingField.SchemaXml = parser.ParseXmlString(existingFieldXml);
                         existingField.UpdateAndPushChanges(true);
                         web.Context.ExecuteQueryRetry();
