@@ -611,9 +611,7 @@
     <Compile Include="Framework\Provisioning\ObjectHandlers\Utilities\FieldUpdateValue.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Utilities\ListItemUtilities.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Utilities\ConnectorFileHelper.cs" />
-    <Compile Include="Framework\Provisioning\ObjectHandlers\Utilities\FieldUpdateValue.cs" />
-    <Compile Include="Framework\Provisioning\ObjectHandlers\Utilities\ListItemUtilities.cs" />
-    <Compile Include="Framework\Provisioning\ObjectHandlers\Utilities\FieldUtilities.cs" />
+     <Compile Include="Framework\Provisioning\ObjectHandlers\Utilities\FieldUtilities.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Utilities\TenantHelper.cs" />
     <Compile Include="Framework\Provisioning\Providers\IProvisioningHierarchyFormatter.cs" />
     <Compile Include="Framework\Provisioning\ObjectHandlers\Utilities\TermGroupHelper.cs" />
@@ -1109,7 +1107,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Utilities\StringUtilities.cs" />
-    <Compile Include="Utilities\StringUtilities.cs" />
     <Compile Include="Utilities\Themes\Palettes\Color.cs" />
     <Compile Include="Utilities\Themes\Palettes\Colors.cs" />
     <Compile Include="Utilities\Themes\Palettes\ColorValues.cs" />
@@ -1121,9 +1118,6 @@
     <Compile Include="Utilities\Themes\Generator\ThemeRulesStandard.cs" />
     <Compile Include="Utilities\Themes\Generator\ThemeSlotRule.cs" />
     <Compile Include="Utilities\Themes\ThemeUtility.cs" />
-    <Compile Include="Utilities\SharePointWebClient.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Utilities\Webhooks\ResponseModel.cs" />
     <Compile Include="Utilities\Webhooks\WebhookUtility.cs" />
     <Compile Include="Utilities\WebParts\IWebPartPostProcessor.cs" />
