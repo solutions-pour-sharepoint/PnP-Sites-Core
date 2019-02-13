@@ -6,10 +6,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [3.6.1902.0 - unreleased]
+## [3.7.1903.0 - unreleased]
 
 ### Added
 
+### Changed
+
+- Fixed token handling for resource files having quotes
+
+## [3.6.1902.0 - February 2019 release]
+
+### Added
+
+- Beta support for SP2019
+- Provision and extract associated groups #2020 [jensotto]
+- Fix provisioning navigation settings #1883 [phibsi]
+- Add support for Kerberos authentication against ADFS #2050 [tmeckel]
+- AssociatedGroupId token added + processing of it
+- SequenceSiteCollectionId, SequenceSiteGroupId and SequenceSiteId tokens added
 - Added support for creating and loading modern pages from sub folders inside the sitepages library
 - ZoneID web part property now can be used in SP2016
 - MajorVersionLimit and MajorWithMinorVersionsLimit are supported in the minimal (May 2018) version of SP2013 CSOM (Issue 1943) #1994 [tmeckel]
@@ -17,6 +31,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Add token parsing in `targetFileName` property of file object #2036 [stevebeauge]
 - Added support to delete search configurations
 - Add support for setting default sharing and sharing permissions on tenant extensions
+- Added ThemeManager class with support for ApplyTheme extension method on Web objects
+- Added delegate for callback on site fully provisioned within the Provisioning Engine
+- Added STS#3 base template for SharePoint Online template extraction
+- Added support to specify the hubsite id when creating modern sites and to set owners when creating a modern team site/O365 group associated site. [gautamdsheth]
 
 ### Changed
 

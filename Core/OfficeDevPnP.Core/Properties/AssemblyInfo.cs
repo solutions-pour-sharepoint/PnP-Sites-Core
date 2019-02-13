@@ -11,6 +11,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("Office Dev PnP Core library for SharePoint 2013")]
 #elif SP2016
 [assembly: AssemblyDescription("Office Dev PnP Core library for SharePoint 2016")]
+#elif SP2019
+[assembly: AssemblyDescription("Office Dev PnP Core library for SharePoint 2019")]
 #else
 [assembly: AssemblyDescription("Office Dev PnP Core library for SharePoint Online")]
 #endif
@@ -43,7 +45,7 @@ using System.Runtime.InteropServices;
 // Minor version = Sequence...version 0 was with Aug 2018 release, 1 = Sept, 2 = Oct,...
 // Third part = version indenpendant showing the release month in YYMM
 // Fourth part = 0 normally or a sequence number when we do an emergency release
-[assembly: AssemblyVersion("3.6.1902.0")]
-[assembly: AssemblyFileVersion("3.6.1902.0")]
+[assembly: AssemblyVersion("3.7.1903.0")]
+[assembly: AssemblyFileVersion("3.7.1903.0")]
 
 [assembly: InternalsVisibleTo("OfficeDevPnP.Core.Tests")]
