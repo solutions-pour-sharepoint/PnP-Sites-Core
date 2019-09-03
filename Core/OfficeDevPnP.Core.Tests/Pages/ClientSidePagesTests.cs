@@ -40,7 +40,7 @@ namespace OfficeDevPnP.Core.Tests.Authentication
         //[TestMethod]
         //public void PageTest()
         //{
-        //    using (var clientContext = TestCommon.CreateClientContext("https://bertonline.sharepoint.com/sites/bert1"))
+        //    using (var clientContext = TestCommon.CreateClientContext("https://bertonline.sharepoint.com/sites/ProvisioningTest"))
         //    {
         //        ProvisioningTemplateCreationInformation ptci = new ProvisioningTemplateCreationInformation(clientContext.Web)
         //        {
@@ -48,7 +48,7 @@ namespace OfficeDevPnP.Core.Tests.Authentication
         //            HandlersToProcess = Handlers.PageContents,
         //            // Create FileSystemConnector, so that we can store composed files temporarely somewhere 
         //            FileConnector = new FileSystemConnector(@"C:\temp", ""),
-        //            //PersistBrandingFiles = true,
+        //            PersistBrandingFiles = true,
         //            ProgressDelegate = delegate (String message, Int32 progress, Int32 total)
         //            {
         //                // Only to output progress for console UI
@@ -61,28 +61,28 @@ namespace OfficeDevPnP.Core.Tests.Authentication
 
         //        // Serialize to XML using the beta 201705 schema
         //        XMLTemplateProvider provider = new XMLFileSystemTemplateProvider(@"C:\temp", "");
-        //        var formatter = XMLPnPSchemaFormatter.GetSpecificFormatter(XMLConstants.PROVISIONING_SCHEMA_NAMESPACE_2017_05);
-        //        provider.SaveAs(template, "PnPProvisioningDemo201705.xml", formatter);
+        //        var formatter = XMLPnPSchemaFormatter.GetSpecificFormatter(XMLConstants.PROVISIONING_SCHEMA_NAMESPACE_2019_03);
+        //        provider.SaveAs(template, "PnPProvisioningDemo201903.xml", formatter);
         //    }
         //}
 
         //[TestMethod]
         //public void Page2Test()
         //{
-        //    using (var clientContext = TestCommon.CreateClientContext("https://bertonline.sharepoint.com/sites/bert1"))
+        //    using (var clientContext = TestCommon.CreateClientContext("https://bertonline.sharepoint.com/sites/provisioningtest"))
         //    {
         //        ProvisioningTemplateApplyingInformation ptai = new ProvisioningTemplateApplyingInformation()
         //        {
-        //            HandlersToProcess = Handlers.PageContents,
+        //            //HandlersToProcess = Handlers.PageContents,
         //            ProgressDelegate = delegate (String message, Int32 progress, Int32 total)
         //            {
-        //                    // Only to output progress for console UI
-        //                    Console.WriteLine("{0:00}/{1:00} - {2}", progress, total, message);
+        //                // Only to output progress for console UI
+        //                Console.WriteLine("{0:00}/{1:00} - {2}", progress, total, message);
         //            }
         //        };
 
-        //        XMLTemplateProvider provider = new XMLFileSystemTemplateProvider(@"c:\temp", "");
-        //        ProvisioningTemplate sourceTemplate = provider.GetTemplate("PnPProvisioningDemo201705_load.xml");
+        //        XMLTemplateProvider provider = new XMLFileSystemTemplateProvider(@".", "");
+        //        ProvisioningTemplate sourceTemplate = provider.GetTemplate("PnPProvisioningDemo201903.xml");
 
         //        // Execute actual extraction of the tepmplate
         //        clientContext.Web.ApplyProvisioningTemplate(sourceTemplate);

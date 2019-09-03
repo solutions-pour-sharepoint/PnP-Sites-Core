@@ -11,7 +11,7 @@ using System.Web.UI;
 
 namespace OfficeDevPnP.Core.Pages
 {
-#if !ONPREMISES
+#if !SP2013 && !SP2016
     /// <summary>
     /// Controls of type 4 ( = text control)
     /// </summary>
@@ -114,6 +114,10 @@ namespace OfficeDevPnP.Core.Pages
                     SectionFactor = this.Column.ColumnFactor,
                     ControlIndex = controlIndex,
                 },
+                Emphasis = new ClientSideSectionEmphasis()
+                {
+                    ZoneEmphasis = this.Section.ZoneEmphasis,
+                },
                 EditorType = "CKEditor"
             };
             jsonControlData = JsonConvert.SerializeObject(controlData);
@@ -138,16 +142,24 @@ namespace OfficeDevPnP.Core.Pages
                 htmlWriter.NewLine = string.Empty;
 
                 htmlWriter.AddAttribute(CanvasControlAttribute, this.CanvasControlData);
-                htmlWriter.AddAttribute(CanvasDataVersionAttribute, this.DataVersion);
+                htmlWriter.AddAttribute(CanvasDataVersionAttribute, this.CanvasDataVersion);
                 htmlWriter.AddAttribute(ControlDataAttribute, this.JsonControlData);
                 htmlWriter.RenderBeginTag(HtmlTextWriterTag.Div);
 
                 htmlWriter.AddAttribute(TextRteAttribute, this.Rte);
                 htmlWriter.RenderBeginTag(HtmlTextWriterTag.Div);
 
-                htmlWriter.RenderBeginTag(HtmlTextWriterTag.P);
-                htmlWriter.Write(this.Text);
-                htmlWriter.RenderEndTag();
+                // Don't wrap in Paragraph if the text already is wrapped in a paragraph
+                if (this.Text.Trim().StartsWith("<p>", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    htmlWriter.Write(this.Text);
+                }
+                else
+                {
+                    htmlWriter.RenderBeginTag(HtmlTextWriterTag.P);
+                    htmlWriter.Write(this.Text);
+                    htmlWriter.RenderEndTag();
+                }
 
                 htmlWriter.RenderEndTag();
                 htmlWriter.RenderEndTag();

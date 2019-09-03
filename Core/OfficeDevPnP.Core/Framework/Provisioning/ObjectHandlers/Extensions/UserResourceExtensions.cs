@@ -14,11 +14,12 @@ using System.Threading.Tasks;
 namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Extensions
 {
 
-#if !SP2013
+
     internal static class UserResourceExtensions
     {
         private static List<Tuple<string, int, string>> ResourceTokens = new List<Tuple<string, int, string>>();
 
+#if !SP2013
         public static ProvisioningTemplate SaveResourceValues(ProvisioningTemplate template, ProvisioningTemplateCreationInformation creationInfo)
         {
             var tempFolder = System.IO.Path.GetTempPath();
@@ -94,18 +95,6 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Extensions
             return isDirty;
         }
 
-        public static bool ContainsResourceToken(this string value)
-        {
-            if (value != null)
-            {
-                return Regex.IsMatch(value, "\\{(res|loc|resource|localize|localization):(.*?)(\\})", RegexOptions.IgnoreCase);
-            }
-            else
-            {
-                return false;
-            }
-        }
-
         public static bool PersistResourceValue(UserResource userResource, string token, ProvisioningTemplate template, ProvisioningTemplateCreationInformation creationInfo)
         {
             bool returnValue = false;
@@ -124,6 +113,59 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Extensions
 
             return returnValue;
         }
-    }
-#endif
+
+        public static bool PersistResourceValue(string token, int LCID, string Title)
+        {
+            bool returnValue = false;
+
+            if (!string.IsNullOrWhiteSpace(Title))
+            {
+                returnValue = true;
+                ResourceTokens.Add(new Tuple<string, int, string>(token, LCID, Title));
             }
+
+            return returnValue;
+        }
+
+        public static bool PersistResourceValue(List siteList, Guid viewId, string token, ProvisioningTemplate template, ProvisioningTemplateCreationInformation creationInfo)
+        {
+            bool returnValue = false;
+            var clientContext = siteList.Context;
+
+            foreach (var language in template.SupportedUILanguages)
+            {
+                var culture = new CultureInfo(language.LCID);
+                var currentView = siteList.GetViewById(viewId);
+                clientContext.Load(currentView, cc => cc.Title);
+                var acceptLanguage = clientContext.PendingRequest.RequestExecutor.WebRequest.Headers["Accept-Language"];
+                clientContext.PendingRequest.RequestExecutor.WebRequest.Headers["Accept-Language"] = new CultureInfo(language.LCID).Name;
+                clientContext.ExecuteQueryRetry();
+
+                if (!string.IsNullOrWhiteSpace(currentView.Title))
+                {
+                    returnValue = true;
+                    ResourceTokens.Add(new Tuple<string, int, string>(token, language.LCID, currentView.Title));
+                }
+
+                clientContext.PendingRequest.RequestExecutor.WebRequest.Headers["Accept-Language"] = acceptLanguage;
+
+            }
+            return returnValue;
+        }
+      
+#endif
+        public static bool ContainsResourceToken(this string value)
+        {
+            if (value != null)
+            {
+                return Regex.IsMatch(value, "\\{(res|loc|resource|localize|localization):(.*?)(\\})", RegexOptions.IgnoreCase);
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+    }
+
+}

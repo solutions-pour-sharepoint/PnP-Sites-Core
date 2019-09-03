@@ -12,8 +12,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.TokenDefinitio
     internal class GuidToken : TokenDefinition
     {
         public GuidToken(Web web)
-            : base(web, "~guid", "{guid}")
+            : base(web, "{guid}")
         {
+            IsCacheable = false;
         }
 
         public override string GetReplaceValue()

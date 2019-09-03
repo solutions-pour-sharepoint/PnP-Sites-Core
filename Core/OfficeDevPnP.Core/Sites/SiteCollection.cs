@@ -6,10 +6,9 @@ using OfficeDevPnP.Core.Utilities;
 using OfficeDevPnP.Core.Utilities.Async;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace OfficeDevPnP.Core.Sites
@@ -20,17 +19,50 @@ namespace OfficeDevPnP.Core.Sites
     /// </summary>
     public static class SiteCollection
     {
+
+        /// <summary>
+        /// Creates a new Communication Site Collection and waits for it to be created
+        /// </summary>
+        /// <param name="clientContext">ClientContext object of a regular site</param>
+        /// <param name="siteCollectionCreationInformation">information about the site to create</param>
+        /// <param name="delayAfterCreation">Defines the number of seconds to wait after creation</param>
+        /// <returns>ClientContext object for the created site collection</returns>
+        public static ClientContext Create(ClientContext clientContext, CommunicationSiteCollectionCreationInformation siteCollectionCreationInformation, Int32 delayAfterCreation = 0)
+        {
+            var context = CreateAsync(clientContext, siteCollectionCreationInformation, delayAfterCreation).GetAwaiter().GetResult();
+            return context;
+        }
+
+        /// <summary>
+        /// Creates a new Team Site Collection and waits for it to be created
+        /// </summary>
+        /// <param name="clientContext">ClientContext object of a regular site</param>
+        /// <param name="siteCollectionCreationInformation">information about the site to create</param>
+        /// <param name="delayAfterCreation">Defines the number of seconds to wait after creation</param>
+        /// <returns>ClientContext object for the created site collection</returns>
+        public static ClientContext Create(ClientContext clientContext, TeamSiteCollectionCreationInformation siteCollectionCreationInformation, Int32 delayAfterCreation = 0)
+        {
+            var context = CreateAsync(clientContext, siteCollectionCreationInformation, delayAfterCreation).GetAwaiter().GetResult();
+            return context;
+        }
+
         /// <summary>
         /// Creates a new Communication Site Collection
         /// </summary>
         /// <param name="clientContext">ClientContext object of a regular site</param>
         /// <param name="siteCollectionCreationInformation">information about the site to create</param>
+        /// <param name="delayAfterCreation">Defines the number of seconds to wait after creation</param>
         /// <returns>ClientContext object for the created site collection</returns>
-        public static async Task<ClientContext> CreateAsync(ClientContext clientContext, CommunicationSiteCollectionCreationInformation siteCollectionCreationInformation)
+        public static async Task<ClientContext> CreateAsync(ClientContext clientContext, CommunicationSiteCollectionCreationInformation siteCollectionCreationInformation, Int32 delayAfterCreation = 0)
         {
             await new SynchronizationContextRemover();
 
             ClientContext responseContext = null;
+
+            if (clientContext.IsAppOnly() && string.IsNullOrEmpty(siteCollectionCreationInformation.Owner))
+            {
+                throw new Exception("You need to set the owner in App-only context");
+            }
 
             var accessToken = clientContext.GetAccessToken();
 
@@ -45,22 +77,29 @@ namespace OfficeDevPnP.Core.Sites
 
                 using (var httpClient = new PnPHttpProvider(handler))
                 {
-                    string requestUrl = String.Format("{0}/_api/sitepages/communicationsite/create", clientContext.Web.Url);
+                    string requestUrl = $"{clientContext.Web.Url}/_api/SPSiteManager/Create";
+                    //    string requestUrl = String.Format("{0}/_api/sitepages/communicationsite/create", clientContext.Web.Url);
 
                     var siteDesignId = GetSiteDesignId(siteCollectionCreationInformation);
 
                     Dictionary<string, object> payload = new Dictionary<string, object>();
-                    payload.Add("__metadata", new { type = "SP.Publishing.CommunicationSiteCreationRequest" });
+                    //payload.Add("__metadata", new { type = "Microsoft.SharePoint.Portal.SPSiteCreationRequest" });
                     payload.Add("Title", siteCollectionCreationInformation.Title);
+                    payload.Add("Lcid", siteCollectionCreationInformation.Lcid);
+                    payload.Add("ShareByEmailEnabled", siteCollectionCreationInformation.ShareByEmailEnabled);
                     payload.Add("Url", siteCollectionCreationInformation.Url);
-                    payload.Add("AllowFileSharingForGuestUsers", siteCollectionCreationInformation.AllowFileSharingForGuestUsers);
+                    // Deprecated
+                    // payload.Add("AllowFileSharingForGuestUsers", siteCollectionCreationInformation.AllowFileSharingForGuestUsers);
                     if (siteDesignId != Guid.Empty)
                     {
                         payload.Add("SiteDesignId", siteDesignId);
                     }
-                    payload.Add("Classification", siteCollectionCreationInformation.Classification == null ? "" : siteCollectionCreationInformation.Classification);
-                    payload.Add("Description", siteCollectionCreationInformation.Description == null ? "" : siteCollectionCreationInformation.Description);
+                    payload.Add("Classification", siteCollectionCreationInformation.Classification ?? "");
+                    payload.Add("Description", siteCollectionCreationInformation.Description ?? "");
+                    payload.Add("WebTemplate", "SITEPAGEPUBLISHING#0");
                     payload.Add("WebTemplateExtensionId", Guid.Empty);
+                    payload.Add("HubSiteId", siteCollectionCreationInformation.HubSiteId);
+                    payload.Add("Owner", siteCollectionCreationInformation.Owner);
 
                     var body = new { request = payload };
 
@@ -71,9 +110,10 @@ namespace OfficeDevPnP.Core.Sites
                     // Build Http request
                     HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
                     request.Content = requestBody;
-                    request.Headers.Add("accept", "application/json;odata=verbose");
+                    request.Headers.Add("accept", "application/json;odata.metadata=none");
+                    request.Headers.Add("odata-version", "4.0");
                     MediaTypeHeaderValue sharePointJsonMediaType = null;
-                    MediaTypeHeaderValue.TryParse("application/json;odata=verbose;charset=utf-8", out sharePointJsonMediaType);
+                    MediaTypeHeaderValue.TryParse("application/json;odata.metadata=none;charset=utf-8", out sharePointJsonMediaType);
                     requestBody.Headers.ContentType = sharePointJsonMediaType;
 
                     if (!string.IsNullOrEmpty(accessToken))
@@ -96,12 +136,12 @@ namespace OfficeDevPnP.Core.Sites
                             {
                                 var responseJson = JObject.Parse(responseString);
 #if !NETSTANDARD2_0
-                                if (Convert.ToInt32(responseJson["d"]["Create"]["SiteStatus"]) == 2)
+                                if (Convert.ToInt32(responseJson["SiteStatus"]) == 2)
 #else
-                                if(responseJson["d"]["Create"]["SiteStatus"].Value<int>() == 2)
+                                if(responseJson["SiteStatus"].Value<int>() == 2)
 #endif
                                 {
-                                    responseContext = clientContext.Clone(responseJson["d"]["Create"]["SiteUrl"].ToString());
+                                    responseContext = clientContext.Clone(responseJson["SiteUrl"].ToString());
                                 }
                                 else
                                 {
@@ -112,6 +152,12 @@ namespace OfficeDevPnP.Core.Sites
                             {
                                 throw;
                             }
+                        }
+
+                        // If there is a delay, let's wait
+                        if (delayAfterCreation > 0)
+                        {
+                            System.Threading.Thread.Sleep(TimeSpan.FromSeconds(delayAfterCreation));
                         }
                     }
                     else
@@ -129,8 +175,15 @@ namespace OfficeDevPnP.Core.Sites
         /// </summary>
         /// <param name="clientContext">ClientContext object of a regular site</param>
         /// <param name="siteCollectionCreationInformation">information about the site to create</param>
+        /// <param name="delayAfterCreation">Defines the number of seconds to wait after creation</param>
+        /// <param name="maxRetryCount">Maximum number of retries for a pending site provisioning. Default 12 retries.</param>
+        /// <param name="retryDelay">Delay between retries for a pending site provisioning. Default 10 seconds.</param>
         /// <returns>ClientContext object for the created site collection</returns>
-        public static async Task<ClientContext> CreateAsync(ClientContext clientContext, TeamSiteCollectionCreationInformation siteCollectionCreationInformation)
+        public static async Task<ClientContext> CreateAsync(ClientContext clientContext, TeamSiteCollectionCreationInformation siteCollectionCreationInformation, 
+            Int32 delayAfterCreation = 0, 
+            Int32 maxRetryCount = 12, // Maximum number of retries (12 x 10 sec = 120 sec = 2 mins)
+            Int32 retryDelay = 1000 * 10 // Wait time default to 10sec
+            )
         {
             if (siteCollectionCreationInformation.Alias.Contains(" "))
             {
@@ -140,13 +193,14 @@ namespace OfficeDevPnP.Core.Sites
             await new SynchronizationContextRemover();
 
             ClientContext responseContext = null;
-            
-            var accessToken = clientContext.GetAccessToken();
 
             if (clientContext.IsAppOnly())
             {
                 throw new Exception("App-Only is currently not supported.");
             }
+
+            var accessToken = clientContext.GetAccessToken();
+
             using (var handler = new HttpClientHandler())
             {
                 clientContext.Web.EnsureProperty(w => w.Url);
@@ -166,9 +220,20 @@ namespace OfficeDevPnP.Core.Sites
                     payload.Add("isPublic", siteCollectionCreationInformation.IsPublic);
 
                     var optionalParams = new Dictionary<string, object>();
-                    optionalParams.Add("Description", siteCollectionCreationInformation.Description != null ? siteCollectionCreationInformation.Description : "");
-                    optionalParams.Add("CreationOptions", new { results = new object[0], Classification = siteCollectionCreationInformation.Classification != null ? siteCollectionCreationInformation.Classification : "" });
+                    optionalParams.Add("Description", siteCollectionCreationInformation.Description ?? "");
+                    optionalParams.Add("Classification", siteCollectionCreationInformation.Classification ?? "");
+                    var creationOptionsValues = new List<string>();
+                    if (siteCollectionCreationInformation.Lcid != 0)
+                    {
+                        creationOptionsValues.Add($"SPSiteLanguage:{siteCollectionCreationInformation.Lcid}");
+                    }
+                    creationOptionsValues.Add($"HubSiteId:{siteCollectionCreationInformation.HubSiteId}");
+                    optionalParams.Add("CreationOptions", creationOptionsValues);
 
+                    if (siteCollectionCreationInformation.Owners != null && siteCollectionCreationInformation.Owners.Length > 0)
+                    {
+                        optionalParams.Add("Owners", siteCollectionCreationInformation.Owners);
+                    }
                     payload.Add("optionalParams", optionalParams);
 
                     var body = payload;
@@ -180,9 +245,10 @@ namespace OfficeDevPnP.Core.Sites
                     // Build Http request
                     HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
                     request.Content = requestBody;
-                    request.Headers.Add("accept", "application/json;odata=verbose");
+                    request.Headers.Add("accept", "application/json;odata.metadata=none");
+                    request.Headers.Add("odata-version", "4.0");
                     MediaTypeHeaderValue sharePointJsonMediaType = null;
-                    MediaTypeHeaderValue.TryParse("application/json;odata=verbose;charset=utf-8", out sharePointJsonMediaType);
+                    MediaTypeHeaderValue.TryParse("application/json;odata.metadata=none;charset=utf-8", out sharePointJsonMediaType);
                     requestBody.Headers.ContentType = sharePointJsonMediaType;
 
                     if (!string.IsNullOrEmpty(accessToken))
@@ -201,16 +267,94 @@ namespace OfficeDevPnP.Core.Sites
                         var responseString = await response.Content.ReadAsStringAsync();
                         var responseJson = JObject.Parse(responseString);
 #if !NETSTANDARD2_0
-                        if (Convert.ToInt32(responseJson["d"]["CreateGroupEx"]["SiteStatus"]) == 2)
+                        if (Convert.ToInt32(responseJson["SiteStatus"]) == 2)
 #else
-                        if (responseJson["d"]["CreateGroupEx"]["SiteStatus"].Value<int>() == 2)
+                        if (responseJson["SiteStatus"].Value<int>() == 2)
 #endif
                         {
-                            responseContext = clientContext.Clone(responseJson["d"]["CreateGroupEx"]["SiteUrl"].ToString());
+                            responseContext = clientContext.Clone(responseJson["SiteUrl"].ToString());
                         }
                         else
                         {
-                            throw new Exception(responseString);
+                            /*
+                             * BEGIN : Changes to address the SiteStatus=Provisioning scenario
+                             */
+                            if (Convert.ToInt32(responseJson["SiteStatus"]) == 1 && string.IsNullOrWhiteSpace(Convert.ToString(responseJson["ErrorMessage"])))
+                            {
+                                var spOperationsMaxRetryCount = maxRetryCount; 
+                                var spOperationsRetryWait = retryDelay; 
+                                var siteCreated = false;
+                                var siteUrl = string.Empty;
+                                var retryAttempt = 1;
+
+                                do
+                                {
+                                    if (retryAttempt > 1)
+                                    {
+                                        System.Threading.Thread.Sleep(retryAttempt * spOperationsRetryWait);
+                                    }
+
+                                    try
+                                    {
+                                        var groupId = responseJson["GroupId"].ToString();
+                                        var siteStatusRequestUrl = $"{clientContext.Web.Url}/_api/groupsitemanager/GetSiteStatus('{groupId}')";
+
+                                        var siteStatusRequest = new HttpRequestMessage(HttpMethod.Get, siteStatusRequestUrl);
+                                        siteStatusRequest.Headers.Add("accept", "application/json;odata=verbose");
+
+                                        if (!string.IsNullOrEmpty(accessToken))
+                                        {
+                                            siteStatusRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                                        }
+
+                                        siteStatusRequest.Headers.Add("X-RequestDigest", await clientContext.GetRequestDigest());
+
+                                        var siteStatusResponse = await httpClient.SendAsync(siteStatusRequest, new System.Threading.CancellationToken());
+                                        var siteStatusResponseString = await siteStatusResponse.Content.ReadAsStringAsync();
+
+                                        var siteStatusResponseJson = JObject.Parse(siteStatusResponseString);
+
+                                        if (siteStatusResponse.IsSuccessStatusCode)
+                                        {
+                                            var siteStatus = Convert.ToInt32(siteStatusResponseJson["d"]["GetSiteStatus"]["SiteStatus"].ToString());
+                                            if (siteStatus == 2)
+                                            {
+                                                siteCreated = true;
+                                                siteUrl = siteStatusResponseJson["d"]["GetSiteStatus"]["SiteUrl"].ToString();
+                                            }
+                                        }
+                                    }
+                                    catch (Exception)
+                                    {
+                                        // Just skip it and retry after a delay
+                                    }
+
+                                    retryAttempt++;
+                                }
+                                while (!siteCreated && retryAttempt <= spOperationsMaxRetryCount);
+
+                                if (siteCreated)
+                                {
+                                    responseContext = clientContext.Clone(siteUrl);
+                                }
+                                else
+                                {
+                                    throw new Exception("OfficeDevPnP.Core.Sites.SiteCollection.CreateAsync: Could not create team site.");
+                                }
+                            }
+                            else
+                            {
+                                throw new Exception(responseString);
+                            }
+                            /*
+                             * END : Changes to address the SiteStatus=Provisioning scenario
+                             */
+                        }
+
+                        // If there is a delay, let's wait
+                        if (delayAfterCreation > 0)
+                        {
+                            System.Threading.Thread.Sleep(TimeSpan.FromSeconds(delayAfterCreation));
                         }
                     }
                     else
@@ -241,7 +385,7 @@ namespace OfficeDevPnP.Core.Sites
                 throw new ArgumentException("Alias cannot contain spaces", "Alias");
             }
 
-            if(string.IsNullOrEmpty(siteCollectionGroupifyInformation.DisplayName))
+            if (string.IsNullOrEmpty(siteCollectionGroupifyInformation.DisplayName))
             {
                 throw new ArgumentException("DisplayName is required", "DisplayName");
             }
@@ -250,12 +394,13 @@ namespace OfficeDevPnP.Core.Sites
 
             ClientContext responseContext = null;
 
-            var accessToken = clientContext.GetAccessToken();
-
             if (clientContext.IsAppOnly())
             {
                 throw new Exception("App-Only is currently not supported.");
             }
+
+            var accessToken = clientContext.GetAccessToken();
+
             using (var handler = new HttpClientHandler())
             {
                 clientContext.Web.EnsureProperty(w => w.Url);
@@ -274,20 +419,21 @@ namespace OfficeDevPnP.Core.Sites
                     payload.Add("alias", siteCollectionGroupifyInformation.Alias);
                     payload.Add("isPublic", siteCollectionGroupifyInformation.IsPublic);
 
-                    var optionalParams = new Dictionary<string, object>();                    
-                    optionalParams.Add("Description", siteCollectionGroupifyInformation.Description != null ? siteCollectionGroupifyInformation.Description : "");
-
+                    var optionalParams = new Dictionary<string, object>();
+                    optionalParams.Add("Description", siteCollectionGroupifyInformation.Description ?? "");
+                    optionalParams.Add("Classification", siteCollectionGroupifyInformation.Classification ?? "");
                     // Handle groupify options
                     var creationOptionsValues = new List<string>();
                     if (siteCollectionGroupifyInformation.KeepOldHomePage)
                     {
                         creationOptionsValues.Add("SharePointKeepOldHomepage");
                     }
-                    var creationOptions = new Dictionary<string, object>();
-                    creationOptions.Add("results", creationOptionsValues.ToArray());
-                    optionalParams.Add("CreationOptions", creationOptions);
-
-                    optionalParams.Add("Classification", siteCollectionGroupifyInformation.Classification != null ? siteCollectionGroupifyInformation.Classification : "");
+                    creationOptionsValues.Add($"HubSiteId:{siteCollectionGroupifyInformation.HubSiteId}");
+                    optionalParams.Add("CreationOptions", creationOptionsValues);
+                    if (siteCollectionGroupifyInformation.Owners != null && siteCollectionGroupifyInformation.Owners.Length > 0)
+                    {
+                        optionalParams.Add("Owners", siteCollectionGroupifyInformation.Owners);
+                    }
 
                     payload.Add("optionalParams", optionalParams);
 
@@ -300,9 +446,10 @@ namespace OfficeDevPnP.Core.Sites
                     // Build Http request
                     HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
                     request.Content = requestBody;
-                    request.Headers.Add("accept", "application/json;odata=verbose");
+                    request.Headers.Add("accept", "application/json;odata.metadata=none");
+                    request.Headers.Add("odata-version", "4.0");
                     MediaTypeHeaderValue sharePointJsonMediaType = null;
-                    MediaTypeHeaderValue.TryParse("application/json;odata=verbose;charset=utf-8", out sharePointJsonMediaType);
+                    MediaTypeHeaderValue.TryParse("application/json;odata.metadata=none;charset=utf-8", out sharePointJsonMediaType);
                     requestBody.Headers.ContentType = sharePointJsonMediaType;
 
                     if (!string.IsNullOrEmpty(accessToken))
@@ -322,7 +469,11 @@ namespace OfficeDevPnP.Core.Sites
                         var responseJson = JObject.Parse(responseString);
 
                         // SiteStatus 1 = Provisioning, SiteStatus 2 = Ready
-                        if (Convert.ToInt32(responseJson["d"]["CreateGroupForSite"]["SiteStatus"]) == 2 || Convert.ToInt32(responseJson["d"]["CreateGroupForSite"]["SiteStatus"]) == 1)
+#if !NETSTANDARD2_0
+                        if (Convert.ToInt32(responseJson["SiteStatus"]) == 2 || Convert.ToInt32(responseJson["SiteStatus"]) == 1)
+#else
+                        if (responseJson["SiteStatus"].Value<int>() == 2 || responseJson["SiteStatus"].Value<int>() == 1)
+#endif                  
                         {
                             responseContext = clientContext;
                         }
@@ -397,7 +548,7 @@ namespace OfficeDevPnP.Core.Sites
                 {
                     string requestUrl = String.Format("{0}/_api/SP.Directory.DirectorySession/Group(alias='{1}')", context.Web.Url, alias);
                     HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
-                    request.Headers.Add("accept", "application/json;odata.metadata=minimal");
+                    request.Headers.Add("accept", "application/json;odata.metadata=none");
                     httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     request.Headers.Add("odata-version", "4.0");
 
@@ -428,6 +579,103 @@ namespace OfficeDevPnP.Core.Sites
             }
         }
 
+        /// <summary>
+        /// Checks if a given alias is already in use or not
+        /// </summary>
+        /// <param name="context">Context to operate against</param>
+        /// <param name="alias">Alias to check</param>
+        /// <returns>True if in use, false otherwise</returns>
+        public static async Task<Dictionary<string, string>> GetGroupInfo(ClientContext context, string alias)
+        {
+            await new SynchronizationContextRemover();
+
+            Dictionary<string, string> siteInfo = new Dictionary<string, string>();
+
+            var accessToken = context.GetAccessToken();
+
+            using (var handler = new HttpClientHandler())
+            {
+                context.Web.EnsureProperty(w => w.Url);
+
+                if (String.IsNullOrEmpty(accessToken))
+                {
+                    handler.SetAuthenticationCookies(context);
+                }
+
+                using (var httpClient = new HttpClient(handler))
+                {
+                    string requestUrl = String.Format("{0}/_api/SP.Directory.DirectorySession/Group(alias='{1}')", context.Web.Url, alias);
+                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
+                    request.Headers.Add("accept", "application/json;odata.metadata=none");
+                    httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    request.Headers.Add("odata-version", "4.0");
+
+                    if (!string.IsNullOrEmpty(accessToken))
+                    {
+                        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                    }
+
+                    // Perform actual GET request
+                    HttpResponseMessage response = await httpClient.SendAsync(request);
+
+                    if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    {
+                        siteInfo = null;
+                    }
+                    else if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        var responseString = await response.Content.ReadAsStringAsync();
+                        siteInfo = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseString);
+                    }
+                    else
+                    {
+                        // Something went wrong...
+                        throw new Exception(await response.Content.ReadAsStringAsync());
+                    }
+                }
+                return await Task.Run(() => siteInfo);
+            }
+        }
+
+        public static async Task<bool> SetGroupImage(ClientContext context, byte[] file, string mimeType)
+        {
+            var accessToken = context.GetAccessToken();
+            var returnValue = false;
+            using (var handler = new HttpClientHandler())
+            {
+                context.Web.EnsureProperty(w => w.Url);
+
+                // we're not in app-only or user + app context, so let's fall back to cookie based auth
+                if (String.IsNullOrEmpty(accessToken))
+                {
+                    handler.SetAuthenticationCookies(context);
+                }
+
+                using (var httpClient = new PnPHttpProvider(handler))
+                {
+
+                    string requestUrl = $"{context.Web.Url}/_api/groupservice/setgroupimage";
+
+                    var requestDigest = await context.GetRequestDigest();
+                    HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
+                    request.Headers.Add("accept", "application/json;odata=verbose");
+                    if (!string.IsNullOrEmpty(accessToken))
+                    {
+                        request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+                    }
+                    request.Headers.Add("X-RequestDigest", requestDigest);
+                    request.Headers.Add("binaryStringRequestBody", "true");
+                    request.Content = new ByteArrayContent(file);
+                    request.Content.Headers.ContentType = new MediaTypeHeaderValue(mimeType);
+                    httpClient.Timeout = new TimeSpan(0, 0, 200);
+                    // Perform actual post operation
+                    HttpResponseMessage response = await httpClient.SendAsync(request, new System.Threading.CancellationToken());
+
+                    returnValue = response.IsSuccessStatusCode;
+                }
+            }
+            return await Task.Run(() => returnValue);
+        }
 
         private static async Task<string> GetValidSiteUrlFromAliasAsync(ClientContext context, string alias)
         {
@@ -448,7 +696,7 @@ namespace OfficeDevPnP.Core.Sites
                 {
                     string requestUrl = String.Format("{0}/_api/GroupSiteManager/GetValidSiteUrlFromAlias?alias='{1}'", context.Web.Url, alias);
                     HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
-                    request.Headers.Add("accept", "application/json;odata.metadata=minimal");
+                    request.Headers.Add("accept", "application/json;odata.metadata=none");
                     httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     request.Headers.Add("odata-version", "4.0");
 
@@ -464,6 +712,7 @@ namespace OfficeDevPnP.Core.Sites
                     {
                         // If value empty, URL is taken
                         responseString = await response.Content.ReadAsStringAsync();
+
                     }
                     else
                     {
@@ -471,6 +720,38 @@ namespace OfficeDevPnP.Core.Sites
                         throw new Exception(await response.Content.ReadAsStringAsync());
                     }
                 }
+                return await Task.Run(() => responseString);
+            }
+        }
+
+        /// <summary>
+        /// Enable Microsoft Teams team in an O365 group connected team site
+        /// Will also enable it on a newly Groupified classic site
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public static async Task<string> TeamifySiteAsync(ClientContext context)
+        {
+            string responseString = null;
+
+            context.Site.EnsureProperties(s => s.GroupId);
+
+            if (context.Web.IsSubSite())
+            {
+                throw new Exception("You cannot Teamify a subsite");
+            }
+            else if (context.Site.GroupId == Guid.Empty)
+            {
+                throw new Exception($"You cannot associate Teams on this site collection. It is only supported for O365 Group connected sites.");
+            }
+            else
+            {
+                var result = await context.Web.ExecutePost("/_api/groupsitemanager/EnsureTeamForGroup", string.Empty);
+
+                var teamId = JObject.Parse(result);
+
+                responseString = Convert.ToString(teamId["value"]);
+
                 return await Task.Run(() => responseString);
             }
         }

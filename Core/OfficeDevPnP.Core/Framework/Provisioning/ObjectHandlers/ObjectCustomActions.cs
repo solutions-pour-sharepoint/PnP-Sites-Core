@@ -16,6 +16,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             get { return "Custom Actions"; }
         }
 
+        public override string InternalName => "CustomActions";
+
         public override TokenParser ProvisionObjects(Web web, ProvisioningTemplate template, TokenParser parser, ProvisioningTemplateApplyingInformation applyingInformation)
         {
             using (var scope = new PnPMonitoredScope(this.Name))
@@ -86,9 +88,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                     var customActionEntity = new CustomActionEntity()
                     {
 #if !ONPREMISES
-                        ClientSideComponentId = customAction.ClientSideComponentId,                        
+                        ClientSideComponentId = customAction.ClientSideComponentId,
                         ClientSideComponentProperties = customAction.ClientSideComponentProperties != null ? parser.ParseString(customAction.ClientSideComponentProperties) : customAction.ClientSideComponentProperties,
-#endif 
+#endif
                         CommandUIExtension = customAction.CommandUIExtension != null ? parser.ParseString(customAction.CommandUIExtension.ToString()) : string.Empty,
                         Description = parser.ParseString(customAction.Description),
                         Group = customAction.Group,
@@ -100,7 +102,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         Remove = customAction.Remove,
                         Rights = customAction.Rights,
                         ScriptBlock = parser.ParseString(customAction.ScriptBlock),
-                        ScriptSrc = parser.ParseString(customAction.ScriptSrc, "~site", "~sitecollection"),
+                        ScriptSrc = parser.ParseString(customAction.ScriptSrc),
                         Sequence = customAction.Sequence,
                         Title = parser.ParseString(customAction.Title),
                         Url = parser.ParseString(customAction.Url)
@@ -199,6 +201,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 if  (existingCustomAction.ClientSideComponentId != customAction.ClientSideComponentId)
                 {
                     existingCustomAction.ClientSideComponentId = customAction.ClientSideComponentId;
+                    isDirty = true;
                 }
             }
 
@@ -207,6 +210,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 if (existingCustomAction.ClientSideComponentProperties != parser.ParseString(customAction.ClientSideComponentProperties))
                 {
                     existingCustomAction.ClientSideComponentProperties = parser.ParseString(customAction.ClientSideComponentProperties);
+                    isDirty = true;
                 }
             }
 #endif
@@ -262,10 +266,10 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 existingCustomAction.ScriptBlock = parser.ParseString(customAction.ScriptBlock);
                 isDirty = true;
             }
-            if (existingCustomAction.ScriptSrc != parser.ParseString(customAction.ScriptSrc, "~site", "~sitecollection"))
+            if (existingCustomAction.ScriptSrc != parser.ParseString(customAction.ScriptSrc))
             {
                 scope.LogPropertyUpdate("ScriptSrc");
-                existingCustomAction.ScriptSrc = parser.ParseString(customAction.ScriptSrc, "~site", "~sitecollection");
+                existingCustomAction.ScriptSrc = parser.ParseString(customAction.ScriptSrc);
                 isDirty = true;
             }
             if (existingCustomAction.Sequence != customAction.Sequence)
@@ -421,7 +425,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 #if !ONPREMISES
             customAction.ClientSideComponentId = userCustomAction.ClientSideComponentId;
             customAction.ClientSideComponentProperties = userCustomAction.ClientSideComponentProperties;
-#endif 
+#endif
 
             customAction.CommandUIExtension = !System.String.IsNullOrEmpty(userCustomAction.CommandUIExtension) ?
                 XElement.Parse(userCustomAction.CommandUIExtension) : null;

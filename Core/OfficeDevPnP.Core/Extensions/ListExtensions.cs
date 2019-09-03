@@ -1599,6 +1599,7 @@ namespace Microsoft.SharePoint.Client
 
         private static void SetDefaultColumnValuesImplementation(this List list, IEnumerable<IDefaultColumnValue> columnValues)
         {
+            if (columnValues == null || !columnValues.Any()) return;
             using (var clientContext = list.Context as ClientContext)
             {
                 try
@@ -1623,7 +1624,7 @@ namespace Microsoft.SharePoint.Client
                         path = path.Equals("/") ? list.RootFolder.ServerRelativeUrl : UrlUtility.Combine(list.RootFolder.ServerRelativeUrl, path);
                         // Find all in the same path:
                         var defaultColumnValuesInSamePath = columnValues.Where(x => x.FolderRelativePath == defaultColumnValue.FolderRelativePath);
-                        path = Uri.EscapeUriString(path);
+                        path = Utilities.HttpUtility.UrlPathEncode(path, false);
 
                         var xATag = new XElement("a", new XAttribute("href", path));
 
@@ -1773,7 +1774,7 @@ namespace Microsoft.SharePoint.Client
                         foreach (var value in values)
                         {
                             var href = value.Attribute("href").Value;
-                            href = Uri.UnescapeDataString(href);
+                            href = Utilities.HttpUtility.UrlKeyValueDecode(href);
                             href = href.Replace(list.RootFolder.ServerRelativeUrl, "/").Replace("//", "/");
                             var defaultValues = from d in value.Descendants("DefaultValue") select d;
                             foreach (var defaultValue in defaultValues)
@@ -1869,11 +1870,25 @@ namespace Microsoft.SharePoint.Client
             Folder formsFolder = null;
             try
             {
-                formsFolder = clientContext.Web.GetFolderByServerRelativeUrl(list.RootFolder.ServerRelativeUrl + "/Forms");
+                formsFolder = list.ParentWeb.GetFolderByServerRelativeUrl(list.RootFolder.ServerRelativeUrl + "/Forms");
                 clientContext.ExecuteQueryRetry();
             }
             catch (FileNotFoundException)
             {
+                // eat the exception
+                return null;
+            }
+            catch (ServerException ex)
+            {
+                if (ex.ServerErrorTypeName.Equals("System.IO.FileNotFoundException"))
+                {
+                    // eat the exception
+                    return null;
+                }
+                else
+                {
+                    throw ex;
+                }
             }
             return formsFolder;
         }
@@ -1980,8 +1995,8 @@ namespace Microsoft.SharePoint.Client
                         foreach (var value in values)
                         {
                             var href = value.Attribute("href").Value;
-                            href = Uri.UnescapeDataString(href);
-                            href = href.Replace(list.RootFolder.ServerRelativeUrl, "/");
+                            href = Utilities.HttpUtility.UrlKeyValueDecode(href);
+                            href = href.Replace(list.RootFolder.ServerRelativeUrl, "/").Replace("//", "/");
                             var defaultValues = from d in value.Descendants("DefaultValue") select d;
                             foreach (var defaultValue in defaultValues)
                             {
@@ -2111,7 +2126,7 @@ namespace Microsoft.SharePoint.Client
                         foreach (var value in values)
                         {
                             var href = value.Attribute("href").Value;
-                            href = Uri.UnescapeDataString(href);
+                            href = Utilities.HttpUtility.UrlKeyValueDecode(href);
                             href = href.Replace(list.RootFolder.ServerRelativeUrl, "/").Replace("//", "/");
 
                             var defaultValues = from d in value.Descendants("DefaultValue") select d;

@@ -13,6 +13,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using ContentType = OfficeDevPnP.Core.Framework.Provisioning.Model.ContentType;
+using Field = OfficeDevPnP.Core.Framework.Provisioning.Model.Field;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 {
@@ -22,8 +23,14 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
         public override string Name
         {
-            get { return $"Content Types ({_step} step)"; }
+#if DEBUG
+            get { return $"Content Types ({_step})"; }
+#else
+            get { return $"Content Types"; }
+#endif
         }
+
+        public override string InternalName => "ContentTypes";
 
         public ObjectContentType(FieldAndListProvisioningStepHelper.Step step)
         {
@@ -149,10 +156,12 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             }
             if (existingContentType.Name != parser.ParseString(templateContentType.Name))
             {
+                var oldName = existingContentType.Name;
                 scope.LogPropertyUpdate("Name");
                 existingContentType.Name = parser.ParseString(templateContentType.Name);
                 isDirty = true;
                 // CT is being renamed, add an extra token to the tokenparser
+                parser.RemoveToken(new ContentTypeIdToken(web, oldName, existingContentType.StringId));
                 parser.AddToken(new ContentTypeIdToken(web, existingContentType.Name, existingContentType.StringId));
             }
             if (templateContentType.Group != null && existingContentType.Group != parser.ParseString(templateContentType.Group))
@@ -215,7 +224,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             // Set flag to reorder fields CT fields are not equal to template fields
             var existingFieldNames = existingContentType.FieldLinks.AsEnumerable().Select(fld => fld.Name).ToArray();
             var ctFieldNames = templateContentType.FieldRefs.Select(fld => parser.ParseString(fld.Name)).ToArray();
-            reOrderFields = !existingFieldNames.SequenceEqual(ctFieldNames);
+            reOrderFields = ctFieldNames.Length > 0 && !existingFieldNames.SequenceEqual(ctFieldNames);
 
             // Delta handling
             existingContentType.EnsureProperty(c => c.FieldLinks);
@@ -327,16 +336,17 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             var group = parser.ParseString(templateContentType.Group);
 
             var createdCT = web.CreateContentType(name, description, id, group);
+            createdCT.EnsureProperties(ct => ct.ReadOnly, ct => ct.Hidden, ct => ct.Sealed);
 
-            var fieldsRefsToProcess = templateContentType.FieldRefs.Select(fr => new
+            List<FieldRef> fieldsRefsToProcess = new List<FieldRef>();
+            foreach (FieldRef fr in templateContentType.FieldRefs)
             {
-                FieldRef = fr,
-                TemplateField = template.SiteFields.FirstOrDefault(tf => (Guid)XElement.Parse(parser.ParseString(tf.SchemaXml)).Attribute("ID") == fr.Id)
-            }).Where(frData =>
-                frData.TemplateField == null // Process fields refs if the target is not defined in the current template
-                || frData.TemplateField.GetFieldProvisioningStep(parser) == _step // or process field ref only if the current step is matching
-            ).Select(fr => fr.FieldRef).ToArray();
-
+                var templateField = template.SiteFields.FirstOrDefault(tf => tf.GetFieldId(parser) == fr.Id);
+                if (templateField == null || templateField.GetFieldProvisioningStep(parser) == _step)
+                {
+                    fieldsRefsToProcess.Add(fr);
+                }
+            }
 
             foreach (var fieldRef in fieldsRefsToProcess)
             {
@@ -376,11 +386,23 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             //In this case the new Content Type has all field of the original Content Type and missing fields
             //will be added at the end. To fix this issue we ordering the fields once more.
 
-            createdCT.FieldLinks.Reorder(templateContentType.FieldRefs.Select(fld => parser.ParseString(fld.Name)).ToArray());
-
-            createdCT.ReadOnly = templateContentType.ReadOnly;
-            createdCT.Hidden = templateContentType.Hidden;
-            createdCT.Sealed = templateContentType.Sealed;
+            var ctFields = templateContentType.FieldRefs.Select(fld => parser.ParseString(fld.Name)).ToArray();
+            if (ctFields.Length > 0)
+            {
+                createdCT.FieldLinks.Reorder(ctFields);
+            }
+            if (createdCT.ReadOnly != templateContentType.ReadOnly)
+            {
+                createdCT.ReadOnly = templateContentType.ReadOnly;
+            }
+            if (createdCT.Hidden != templateContentType.Hidden)
+            {
+                createdCT.Hidden = templateContentType.Hidden;
+            }
+            if (createdCT.Sealed != templateContentType.Sealed)
+            {
+                createdCT.Sealed = templateContentType.Sealed;
+            }
 
             if (templateContentType.DocumentSetTemplate == null)
             {
@@ -659,18 +681,18 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                         newCT.DocumentSetTemplate = new DocumentSetTemplate(
                             null, // TODO: WelcomePage not yet supported
                             (from allowedCT in documentSetTemplate.AllowedContentTypes.AsEnumerable()
-                             select allowedCT.StringValue).ToArray(),
+                             select allowedCT.StringValue).ToList(),
                             (from defaultDocument in documentSetTemplate.DefaultDocuments.AsEnumerable()
                              select new DefaultDocument
                              {
                                  ContentTypeId = defaultDocument.ContentTypeId.StringValue,
                                  Name = defaultDocument.Name,
                                  FileSourcePath = String.Empty, // TODO: How can we extract the proper file?!
-                             }).ToArray(),
+                             }).ToList(),
                             (from sharedField in documentSetTemplate.SharedFields.AsEnumerable()
-                             select sharedField.Id).ToArray(),
+                             select sharedField.Id).ToList(),
                             (from welcomePageField in documentSetTemplate.WelcomePageFields.AsEnumerable()
-                             select welcomePageField.Id).ToArray()
+                             select welcomePageField.Id).ToList()
                         );
                     }
 

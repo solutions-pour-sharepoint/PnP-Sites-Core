@@ -7,9 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Web;
 
 namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Utilities
@@ -20,6 +18,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Utilities
     /// </summary>
     public class ClientSidePageContentsHelper
     {
+        private const string ContentTypeIdField = "ContentTypeId";
+
         /// <summary>
         /// Extracts a client side page
         /// </summary>
@@ -30,7 +30,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Utilities
         /// <param name="pageUrl">Url of the page to extract</param>
         /// <param name="pageName">Name of the page to extract</param>
         /// <param name="isHomePage">Is this a home page?</param>
-        public void ExtractClientSidePage(Web web, ProvisioningTemplate template, ProvisioningTemplateCreationInformation creationInfo, PnPMonitoredScope scope, string pageUrl, string pageName, bool isHomePage)
+        /// <param name="isTemplate">Is this a template?</param>
+        public void ExtractClientSidePage(Web web, ProvisioningTemplate template, ProvisioningTemplateCreationInformation creationInfo, PnPMonitoredScope scope, string pageUrl, string pageName, bool isHomePage, bool isTemplate = false)
         {
             try
             {
@@ -43,25 +44,46 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Utilities
                 }
                 else
                 {
+                    // Get the page content type
+                    string pageContentTypeId = pageToExtract.PageListItem[ContentTypeIdField].ToString();
+
+                    if (!string.IsNullOrEmpty(pageContentTypeId))
+                    {
+                        pageContentTypeId = GetParentIdValue(pageContentTypeId);
+                    }
+
                     // Create the page
                     var extractedPageInstance = new ClientSidePage()
                     {
                         PageName = pageName,
                         PromoteAsNewsArticle = false,
+                        PromoteAsTemplate = isTemplate,
                         Overwrite = true,
                         Publish = true,
                         Layout = pageToExtract.LayoutType.ToString(),
                         EnableComments = !pageToExtract.CommentsDisabled,
+                        Title = pageToExtract.PageTitle,
+                        ContentTypeID = !pageContentTypeId.Equals(BuiltInContentTypeId.ModernArticlePage, StringComparison.InvariantCultureIgnoreCase) ? pageContentTypeId : null,                        
                     };
+
 
                     if(pageToExtract.PageHeader != null)
                     {
                         var extractedHeader = new ClientSidePageHeader()
                         {
-                            Type = (ClientSidePageHeaderType)Enum.Parse(typeof(Pages.ClientSidePageHeaderType),pageToExtract.PageHeader.Type.ToString()),
-                            ServerRelativeImageUrl = pageToExtract.PageHeader.ImageServerRelativeUrl,
+                            Type = (ClientSidePageHeaderType)Enum.Parse(typeof(Pages.ClientSidePageHeaderType), pageToExtract.PageHeader.Type.ToString()),
+                            ServerRelativeImageUrl = TokenizeJsonControlData(web, pageToExtract.PageHeader.ImageServerRelativeUrl),
                             TranslateX = pageToExtract.PageHeader.TranslateX,
-                            TranslateY = pageToExtract.PageHeader.TranslateY
+                            TranslateY = pageToExtract.PageHeader.TranslateY,
+                            LayoutType = (ClientSidePageHeaderLayoutType)Enum.Parse(typeof(Pages.ClientSidePageHeaderLayoutType), pageToExtract.PageHeader.LayoutType.ToString()),
+                            TextAlignment = (ClientSidePageHeaderTextAlignment)Enum.Parse(typeof(Pages.ClientSidePageHeaderTitleAlignment), pageToExtract.PageHeader.TextAlignment.ToString()),
+                            ShowTopicHeader = pageToExtract.PageHeader.ShowTopicHeader,
+                            ShowPublishDate = pageToExtract.PageHeader.ShowPublishDate,
+                            TopicHeader = pageToExtract.PageHeader.TopicHeader,
+                            AlternativeText = pageToExtract.PageHeader.AlternativeText,
+                            Authors = pageToExtract.PageHeader.Authors,
+                            AuthorByLine = pageToExtract.PageHeader.AuthorByLine,
+                            AuthorByLineId = pageToExtract.PageHeader.AuthorByLineId,
                         };
                         extractedPageInstance.Header = extractedHeader;
                     }
@@ -73,6 +95,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Utilities
                         var sectionInstance = new CanvasSection()
                         {
                             Order = section.Order,
+                            BackgroundEmphasis = (BackgroundEmphasis)section.ZoneEmphasis,
                         };
 
                         // Set section type
@@ -106,7 +129,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Utilities
                         {
                             foreach (var control in column.Controls)
                             {
-                                // Create control 
+                                // Create control
                                 CanvasControl controlInstance = new CanvasControl()
                                 {
                                     Column = column.Order,
@@ -127,7 +150,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Utilities
                                 }
                                 else
                                 {
-                                    // set ControlId to webpart id 
+                                    // set ControlId to webpart id
                                     controlInstance.ControlId = Guid.Parse((control as Pages.ClientSideWebPart).WebPartId);
                                     var webPartType = Pages.ClientSidePage.NameToClientSideWebPartEnum((control as Pages.ClientSideWebPart).WebPartId);
                                     switch (webPartType)
@@ -218,17 +241,32 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Utilities
                                             break;
                                     }
 
+                                    string jsonControlData = "\"id\": \"" + (control as Pages.ClientSideWebPart).WebPartId + "\", \"instanceId\": \"" + (control as Pages.ClientSideWebPart).InstanceId + "\", \"title\": \"" + (control as Pages.ClientSideWebPart).Title + "\", \"description\": \"" + (control as Pages.ClientSideWebPart).Description + "\", \"dataVersion\": \"" + (control as Pages.ClientSideWebPart).DataVersion + "\", \"properties\": " + (control as Pages.ClientSideWebPart).PropertiesJson + "";
+
                                     // set the control properties
                                     if ((control as Pages.ClientSideWebPart).ServerProcessedContent != null)
                                     {
                                         // If we have serverProcessedContent then also export that one, it's important as some controls depend on this information to be present
                                         string serverProcessedContent = (control as Pages.ClientSideWebPart).ServerProcessedContent.ToString(Formatting.None);
-                                        controlInstance.JsonControlData = "{ \"serverProcessedContent\": " + serverProcessedContent + ", \"properties\": " + (control as Pages.ClientSideWebPart).PropertiesJson + "}";
+                                        jsonControlData = jsonControlData + ", \"serverProcessedContent\": " + serverProcessedContent + "";
                                     }
-                                    else
+
+                                    if ((control as Pages.ClientSideWebPart).DynamicDataPaths != null)
                                     {
-                                        controlInstance.JsonControlData = (control as Pages.ClientSideWebPart).PropertiesJson;
+                                        // If we have serverProcessedContent then also export that one, it's important as some controls depend on this information to be present
+                                        string dynamicDataPaths = (control as Pages.ClientSideWebPart).DynamicDataPaths.ToString(Formatting.None);
+                                        jsonControlData = jsonControlData + ", \"dynamicDataPaths\": " + dynamicDataPaths + "";
                                     }
+
+
+                                    if ((control as Pages.ClientSideWebPart).DynamicDataValues != null)
+                                    {
+                                        // If we have serverProcessedContent then also export that one, it's important as some controls depend on this information to be present
+                                        string dynamicDataValues = (control as Pages.ClientSideWebPart).DynamicDataValues.ToString(Formatting.None);
+                                        jsonControlData = jsonControlData + ", \"dynamicDataValues\": " + dynamicDataValues + "";
+                                    }
+
+                                    controlInstance.JsonControlData = "{" + jsonControlData + "}";
 
                                     // Tokenize the JsonControlData
                                     controlInstance.JsonControlData = TokenizeJsonControlData(web, controlInstance.JsonControlData);
@@ -366,7 +404,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Utilities
                     {
                         if (template.WebSettings == null)
                         {
-                            template.WebSettings = new WebSettings();                            
+                            template.WebSettings = new WebSettings();
                         }
 
                         if (pageUrl.StartsWith(web.ServerRelativeUrl, StringComparison.InvariantCultureIgnoreCase))
@@ -376,7 +414,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Utilities
                         else
                         {
                             template.WebSettings.WelcomePage = pageUrl;
-                        }                        
+                        }
                     }
                 }
             }
@@ -387,6 +425,27 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Utilities
         }
 
         #region Helper methods
+        private string GetParentIdValue(string contentTypeId)
+        {
+            int length = 0;
+            //Exclude the 0x part
+            string contentTypeIdValue = contentTypeId.Substring(2);
+            for (int i = 0; i < contentTypeIdValue.Length; i += 2)
+            {
+                length = i;
+                if (contentTypeIdValue.Substring(i, 2).Equals("00", StringComparison.OrdinalIgnoreCase))
+                {
+                    i += 32;
+                }
+            }
+            string parentIdValue = string.Empty;
+            if (length > 0)
+            {
+                parentIdValue = "0x" + contentTypeIdValue.Substring(0, length);
+            }
+            return parentIdValue;
+        }
+
         private void PersistFile(Web web, ProvisioningTemplateCreationInformation creationInfo, PnPMonitoredScope scope, string folderPath, string fileName)
         {
             if (creationInfo.FileConnector != null)
@@ -429,6 +488,11 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Utilities
 
         private string TokenizeJsonControlData(Web web, string json)
         {
+            if (string.IsNullOrEmpty(json))
+            {
+                return json;
+            }
+
             var lists = web.Lists;
             var site = (web.Context as ClientContext).Site;
             web.Context.Load(site, s => s.Id, s => s.GroupId);
@@ -447,9 +511,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers.Utilities
             }
 
             // Some webparts might already contains the site URL using ~sitecollection token (i.e: CQWP) - shouldn't be needed for client side web parts, but just in case
-            json = Regex.Replace(json, "\"~sitecollection/(.)*\"", "\"{site}\"", RegexOptions.IgnoreCase);
-            json = Regex.Replace(json, "'~sitecollection/(.)*'", "'{site}'", RegexOptions.IgnoreCase);
-            json = Regex.Replace(json, ">~sitecollection/(.)*<", ">{site}<", RegexOptions.IgnoreCase);
+            //json = Regex.Replace(json, "\"~sitecollection/(.)*\"", "\"{site}\"", RegexOptions.IgnoreCase);
+            //json = Regex.Replace(json, "'~sitecollection/(.)*'", "'{site}'", RegexOptions.IgnoreCase);
+            //json = Regex.Replace(json, ">~sitecollection/(.)*<", ">{site}<", RegexOptions.IgnoreCase);
 
             // HostUrl token replacement
             var uri = new Uri(web.Url);

@@ -8,13 +8,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace OfficeDevPnP.Core.ALM
 {
-#if !ONPREMISES
+#if !SP2013 && !SP2016
     /// <summary>
     /// Allows Application Lifecycle Management for Apps
     /// </summary>
@@ -51,10 +52,11 @@ namespace OfficeDevPnP.Core.ALM
         /// <param name="filename">The filename (e.g. myapp.sppkg) of the file to upload</param>
         /// <param name="overwrite">If true will overwrite an existing entry</param>
         /// <param name="scope">Specifies the app catalog to work with. Defaults to Tenant</param>
+        /// <param name="timeoutSeconds">If specified will set the timeout on the request. Defaults to 200 seconds.</param>
         /// <returns></returns>
-        public AppMetadata Add(byte[] file, string filename, bool overwrite = false, AppCatalogScope scope = AppCatalogScope.Tenant)
+        public AppMetadata Add(byte[] file, string filename, bool overwrite = false, AppCatalogScope scope = AppCatalogScope.Tenant, int timeoutSeconds = 200)
         {
-            return Task.Run(() => AddAsync(file, filename, overwrite, scope)).GetAwaiter().GetResult();
+            return Task.Run(() => AddAsync(file, filename, overwrite, scope, timeoutSeconds)).GetAwaiter().GetResult();
         }
 
         /// <summary>
@@ -63,10 +65,11 @@ namespace OfficeDevPnP.Core.ALM
         /// <param name="path"></param>
         /// <param name="overwrite">If true will overwrite an existing entry</param>
         /// <param name="scope">Specifies the app catalog to work with. Defaults to Tenant</param>
+        /// <param name="timeoutSeconds">If specified will set the timeout on the request. Defaults to 200 seconds.</param>
         /// <returns></returns>
-        public AppMetadata Add(string path, bool overwrite = false, AppCatalogScope scope = AppCatalogScope.Tenant)
+        public AppMetadata Add(string path, bool overwrite = false, AppCatalogScope scope = AppCatalogScope.Tenant, int timeoutSeconds = 200)
         {
-            return Task.Run(() => AddAsync(path, overwrite, scope)).GetAwaiter().GetResult();
+            return Task.Run(() => AddAsync(path, overwrite, scope, timeoutSeconds)).GetAwaiter().GetResult();
         }
 
         /// <summary>
@@ -76,8 +79,9 @@ namespace OfficeDevPnP.Core.ALM
         /// <param name="filename">The filename (e.g. myapp.sppkg) of the file to upload</param>
         /// <param name="overwrite">If true will overwrite an existing entry</param>
         /// <param name="scope">Specifies the app catalog to work with. Defaults to Tenant</param>
+        /// <param name="timeoutSeconds">If specified will set the timeout on the request. Defaults to 200 seconds.</param>
         /// <returns></returns>
-        public async Task<AppMetadata> AddAsync(byte[] file, string filename, bool overwrite = false, AppCatalogScope scope = AppCatalogScope.Tenant)
+        public async Task<AppMetadata> AddAsync(byte[] file, string filename, bool overwrite = false, AppCatalogScope scope = AppCatalogScope.Tenant, int timeoutSeconds = 200)
         {
             if (file == null && file.Length == 0)
             {
@@ -90,7 +94,7 @@ namespace OfficeDevPnP.Core.ALM
 
             await new SynchronizationContextRemover();
 
-            return await BaseAddRequest(file, filename, overwrite, scope);
+            return await BaseAddRequest(file, filename, overwrite, timeoutSeconds, scope);
         }
 
         /// <summary>
@@ -99,8 +103,9 @@ namespace OfficeDevPnP.Core.ALM
         /// <param name="path"></param>
         /// <param name="overwrite">If true will overwrite an existing entry</param>
         /// <param name="scope">Specifies the app catalog to work with. Defaults to Tenant</param>
+        /// <param name="timeoutSeconds">If specified will set the timeout on the request. Defaults to 200 seconds.</param>
         /// <returns></returns>
-        public async Task<AppMetadata> AddAsync(string path, bool overwrite = false, AppCatalogScope scope = AppCatalogScope.Tenant)
+        public async Task<AppMetadata> AddAsync(string path, bool overwrite = false, AppCatalogScope scope = AppCatalogScope.Tenant, int timeoutSeconds = 200)
         {
             if (string.IsNullOrEmpty(path))
             {
@@ -117,7 +122,7 @@ namespace OfficeDevPnP.Core.ALM
 
             await new SynchronizationContextRemover();
 
-            return await BaseAddRequest(bytes, fileInfo.Name, overwrite, scope);
+            return await BaseAddRequest(bytes, fileInfo.Name, overwrite, timeoutSeconds, scope);
         }
 
         /// <summary>
@@ -285,7 +290,7 @@ namespace OfficeDevPnP.Core.ALM
         /// <returns></returns>
         public bool Upgrade(Guid id, AppCatalogScope scope = AppCatalogScope.Tenant)
         {
-            return Task.Run(() => UpgradeAsync(id)).GetAwaiter().GetResult();
+            return Task.Run(() => UpgradeAsync(id, scope)).GetAwaiter().GetResult();
         }
 
         /// <summary>
@@ -505,6 +510,60 @@ namespace OfficeDevPnP.Core.ALM
         }
 
         /// <summary>
+        /// Synchronize an app from the tenant app catalog with the teams app catalog
+        /// </summary>
+        /// <param name="id">The unique id of the app. Notice that this is not the product id as listen in the app catalog</param>
+        /// <returns></returns>
+        public async Task<bool> SyncToTeamsAsync(Guid id)
+        {
+            if (id == Guid.Empty)
+            {
+                throw new ArgumentException(nameof(id));
+            }
+
+            await new SynchronizationContextRemover();
+
+            return await SyncToTeamsImplementation(id);
+        }
+
+        /// <summary>
+        /// Synchronize an app from the tenant app catalog with the teams app catalog
+        /// </summary>
+        /// <param name="appMetadata">The app metadata object of the app to remove.</param>
+        /// <returns></returns>
+        public async Task<bool> SyncToTeamsAsync(AppMetadata appMetadata)
+        {
+            if (appMetadata == null || appMetadata.Id == null)
+            {
+                throw new ArgumentException(nameof(appMetadata));
+            }
+
+            await new SynchronizationContextRemover();
+
+            return await SyncToTeamsImplementation(appMetadata.Id);
+        }
+
+        /// <summary>
+        /// Synchronize an app from the tenant app catalog with the teams app catalog
+        /// </summary>
+        /// <param name="id">The unique id of the app. Notice that this is not the product id as listen in the app catalog</param>
+        /// <returns></returns>
+        public bool SyncToTeams(Guid id)
+        {
+            return Task.Run(() => SyncToTeamsAsync(id)).GetAwaiter().GetResult();
+        }
+
+        /// <summary>
+        /// Synchronize an app from the tenant app catalog with the teams app catalog
+        /// </summary>
+        /// <param name="appMetadata">The app metadata object of the app to remove.</param>
+        /// <returns></returns>
+        public bool SyncToTeams(AppMetadata appMetadata)
+        {
+            return Task.Run(() => SyncToTeamsAsync(appMetadata)).GetAwaiter().GetResult();
+        }
+
+        /// <summary>
         /// Returns all available apps.
         /// </summary>
         /// <param name="scope">Specifies the app catalog to work with. Defaults to Tenant</param>
@@ -562,7 +621,7 @@ namespace OfficeDevPnP.Core.ALM
         }
 
         /// <summary>
-        /// REturns an avialable app
+        /// Returns an avialable app
         /// </summary>
         /// <param name="title">The title of the app.</param>
         /// <param name="scope">Specifies the app catalog to work with. Defaults to Tenant</param>
@@ -612,6 +671,13 @@ namespace OfficeDevPnP.Core.ALM
                     if (!string.IsNullOrEmpty(accessToken))
                     {
                         request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+                    }
+                    else
+                    {
+                        if (_context.Credentials is NetworkCredential networkCredential)
+                        {
+                            handler.Credentials = networkCredential;
+                        }
                     }
                     request.Headers.Add("X-RequestDigest", await _context.GetRequestDigest());
 
@@ -663,7 +729,7 @@ namespace OfficeDevPnP.Core.ALM
         }
 
 
-        private async Task<bool> BaseRequest(Guid id, AppManagerAction action, bool switchToAppCatalogContext, Dictionary<string, object> postObject, AppCatalogScope scope)
+        private async Task<bool> BaseRequest(Guid id, AppManagerAction action, bool switchToAppCatalogContext, Dictionary<string, object> postObject, AppCatalogScope scope, int timeoutSeconds = 200)
         {
             var context = _context;
             if (switchToAppCatalogContext == true && scope == AppCatalogScope.Tenant)
@@ -685,16 +751,26 @@ namespace OfficeDevPnP.Core.ALM
                     handler.SetAuthenticationCookies(context);
                 }
 
+
                 using (var httpClient = new PnPHttpProvider(handler))
                 {
+                    httpClient.Timeout = new TimeSpan(0, 0, timeoutSeconds);
+
                     var method = action.ToString();
-                    string requestUrl = $"{context.Web.Url}/_api/web/{(scope == AppCatalogScope.Tenant ? "tenant" : "sitecollection")}appcatalog/AvailableApps/GetByID('{id}')/{method}";
+                    var requestUrl = $"{context.Web.Url}/_api/web/{(scope == AppCatalogScope.Tenant ? "tenant" : "sitecollection")}appcatalog/AvailableApps/GetByID('{id}')/{method}";
 
                     HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
                     request.Headers.Add("accept", "application/json;odata=nometadata");
                     if (!string.IsNullOrEmpty(accessToken))
                     {
                         request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+                    }
+                    else
+                    {
+                        if (context.Credentials is NetworkCredential networkCredential)
+                        {
+                            handler.Credentials = networkCredential;
+                        }
                     }
                     request.Headers.Add("X-RequestDigest", await context.GetRequestDigest());
 
@@ -735,7 +811,85 @@ namespace OfficeDevPnP.Core.ALM
             return await Task.Run(() => returnValue);
         }
 
-        private async Task<AppMetadata> BaseAddRequest(byte[] file, string filename, bool overwrite, AppCatalogScope scope)
+        private async Task<bool> SyncToTeamsImplementation(Guid appId)
+        {
+            var context = _context;
+
+            // switch context to appcatalog
+            var appcatalogUri = _context.Web.GetAppCatalog();
+            context = context.Clone(appcatalogUri);
+
+            var returnValue = false;
+            var accessToken = context.GetAccessToken();
+
+            using (var handler = new HttpClientHandler())
+            {
+                context.Web.EnsureProperty(w => w.Url);
+
+                // find the app by id
+
+                var list = context.Web.GetListByUrl("appcatalog");
+                var query = new CamlQuery();
+                query.ViewXml = $"<View><Query><Where><Contains><FieldRef Name='UniqueId'/><Value Type='Text'>{appId}</Value></Contains></Where></Query></View>";
+                var items = list.GetItems(query);
+                context.Load(items);
+                context.ExecuteQueryRetry();
+                
+                // we're not in app-only or user + app context, so let's fall back to cookie based auth
+                if (String.IsNullOrEmpty(accessToken))
+                {
+                    handler.SetAuthenticationCookies(context);
+                }
+                if (items.Count > 0)
+                {
+                    using (var httpClient = new PnPHttpProvider(handler))
+                    {
+                        var requestUrl = $"{context.Web.Url}/_api/web/tenantappcatalog/SyncSolutionToTeams(id={items[0].Id})";
+
+                        HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
+                        request.Headers.Add("accept", "application/json;odata=nometadata");
+                        if (!string.IsNullOrEmpty(accessToken))
+                        {
+                            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+                        }
+                        else
+                        {
+                            if (context.Credentials is NetworkCredential networkCredential)
+                            {
+                                handler.Credentials = networkCredential;
+                            }
+                        }
+                        request.Headers.Add("X-RequestDigest", await context.GetRequestDigest());
+
+                        // Perform actual post operation
+                        HttpResponseMessage response = await httpClient.SendAsync(request, new System.Threading.CancellationToken());
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            // If value empty, URL is taken
+                            var responseString = await response.Content.ReadAsStringAsync();
+                            if (responseString != null)
+                            {
+                                try
+                                {
+                                    var responseJson = JObject.Parse(responseString);
+                                    returnValue = true;
+                                }
+                                catch { }
+                            }
+                        }
+                        else
+                        {
+                            // Something went wrong...
+                            throw new Exception(await response.Content.ReadAsStringAsync());
+                        }
+                    }
+                }
+            }
+            return await Task.Run(() => returnValue);
+        }
+
+        private async Task<AppMetadata> BaseAddRequest(byte[] file, string filename, bool overwrite, int timeoutSeconds, AppCatalogScope scope)
         {
             AppMetadata returnValue = null;
 
@@ -771,10 +925,17 @@ namespace OfficeDevPnP.Core.ALM
                     {
                         request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
                     }
+                    else
+                    {
+                        if (context.Credentials is NetworkCredential networkCredential)
+                        {
+                            handler.Credentials = networkCredential;
+                        }
+                    }
                     request.Headers.Add("X-RequestDigest", requestDigest);
                     request.Headers.Add("binaryStringRequestBody", "true");
                     request.Content = new ByteArrayContent(file);
-
+                    httpClient.Timeout = new TimeSpan(0, 0, timeoutSeconds);
                     // Perform actual post operation
                     HttpResponseMessage response = await httpClient.SendAsync(request, new System.Threading.CancellationToken());
 
