@@ -6,6 +6,56 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+
+### Added
+
+- Option to use an access token in the TimerJob framework
+- Option specify the Azure environment being used by the timerjob framework
+
+### Changed
+
+- Respect the set Azure environment in the GetAzureADCredentialsContext AuthenticationManager method
+- Added fallback to check for web setting on search redirect url on a root site if sc setting is empty in the SearchExtensions SetWebSearchCenterUrl method
+
+## [3.17.2002.0 - February 2020 release]
+
+### Added
+
+- EnableCommunicationSite extension method to transform a classic, non publishing, site into a communication site
+- February 2020 schema version was added and set as default schema
+- Support for SharingSettings, Search Center URL, new Teams settings, and Groupify of STS#3 sites in the Provisioning Engine
+
+### Changed
+
+- Reliability improvements in pages API to load some very old pages
+- Add Folder UniqueID to parser token as fileuniqueid #2524 [czullu - Christian Zuellig]
+- Fix: Change indentation back to spaces. #2529 [jensotto - Jens Otto Hatlevold]
+- Added option to set requesting access to a web to the default owners + marked the methods supporting multiple email addresses as obsolete #2533 / #2534 [KoenZomers - Koen Zomers]
+
+## [3.17.2001.2 - January 2020 release]
+
+### Changed
+
+- Reverted the apply part of #2478 as this is a breaking change for folks that did not have QuickLaunchEnabled set in their templates
+
+## [3.17.2001.0 - January 2020 release]
+
+### Added
+
+- Support for folder level properties [czullu - Christian Zuellig]
+- Multi-lingual page status and generation methods on the ClientSidePage object
+- Multi-lingual page support for provisioning templates
+- Support for Microsoft Spaces pages (API and provisioning templates)
+
+### Changed
+
+- Improved code for exporting Teams from Microsoft Teams [JarbasHorst - Jarbas Horst]
+- Fixed QuickLaunchEnabled provisioning / extract #2478 [kezack - zackariya el khalfaoui]
+- Bumped the minimal .Net version from 4.5 to 4.6.1
+- Fix #2407 by adding hidden fields to the list prior to the content type. #2408 [stevebeauge - Steve Beaugé]
+- Fix provisioning ReadOnly content type #2501 [SchauDK - Michael Schau]
+
 ## [3.16.1912.0 - December 2019 release]
 
 ### Added
@@ -14,6 +64,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - SiteExistsAnywhere method to improve SiteExists internal behavior
 
 ### Changed
+
+- Added support for tokens in Term names [fzbm - Florian Zink]
+- Improved ObjectApplicationLifecycleManagement inner logic [gautamdsheth - Gautam Sheth]
+- Fixed support for calculated fields in PowerShell [jackpoz - Giacomo Pozzoni]
 
 ## [3.15.1911.0 - November 2019 release]
 

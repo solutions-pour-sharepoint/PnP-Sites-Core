@@ -26,7 +26,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 #if DEBUG
             get { return $"Content Types ({_step})"; }
 #else
-            get { return $"Content Types"; }
+			get { return $"Content Types"; }
 #endif
         }
 
@@ -75,6 +75,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                             if (newCT != null)
                             {
                                 existingCTs.Add(newCT);
+                                existingCT = newCT;
                             }
                         }
                         else
@@ -89,6 +90,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                 if (newCT != null)
                                 {
                                     existingCTs.Add(newCT);
+                                    existingCT = newCT;
                                 }
                             }
                             else
@@ -104,6 +106,16 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                     scope.LogWarning(CoreResources.Provisioning_ObjectHandlers_ContentTypes_Updating_existing_Content_Type_Sealed, ct.Id, ct.Name);
                                 }
                             }
+                        }
+
+                        // Set ReadOnly as the last thing because a ReadOnly content type cannot be updated
+                        if (this._step == FieldAndListProvisioningStepHelper.Step.LookupFields && existingCT.ReadOnly == false && ct.ReadOnly == true)
+                        {
+                            scope.LogPropertyUpdate("ReadOnly");
+                            existingCT.ReadOnly = ct.ReadOnly;
+
+                            existingCT.Update(false);
+                            existingCT.Context.ExecuteQueryRetry();
                         }
                     }
                 }
@@ -131,7 +143,9 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 existingContentType.Hidden = templateContentType.Hidden;
                 isDirty = true;
             }
-            if (existingContentType.ReadOnly != templateContentType.ReadOnly)
+            // Only change ReadOnly here, if change is from True => False (not ReadOnly)
+            // If change is ReadOnly = True, it will be set later
+            if (existingContentType.ReadOnly == true && templateContentType.ReadOnly == false)
             {
                 scope.LogPropertyUpdate("ReadOnly");
                 existingContentType.ReadOnly = templateContentType.ReadOnly;
@@ -216,15 +230,15 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                 isDirty = true;
             }
 #endif
-			if (isDirty)
-			{
-				// Default to false as there is no reason to update children on CT property changes.
-				existingContentType.Update(false);
-				web.Context.ExecuteQueryRetry();
-			}
+            if (isDirty)
+            {
+                // Default to false as there is no reason to update children on CT property changes.
+                existingContentType.Update(false);
+                web.Context.ExecuteQueryRetry();
+            }
 
-			// Set flag to reorder fields CT fields are not equal to template fields
-			var existingFieldNames = existingContentType.FieldLinks.AsEnumerable().Select(fld => fld.Name).ToArray();
+            // Set flag to reorder fields CT fields are not equal to template fields
+            var existingFieldNames = existingContentType.FieldLinks.AsEnumerable().Select(fld => fld.Name).ToArray();
             var ctFieldNames = templateContentType.FieldRefs.Select(fld => parser.ParseString(fld.Name)).ToArray();
             reOrderFields = ctFieldNames.Length > 0 && !existingFieldNames.SequenceEqual(ctFieldNames);
 
@@ -235,18 +249,18 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
             var fieldsNotPresentInTarget = sourceIds.Except(targetIds).ToArray();
 
-			// Should child content types be updated.
-			bool UpdateChildren()
-			{
-				if(fieldsNotPresentInTarget.Any())
-				{
-					return !templateContentType.FieldRefs.All(f => f.UpdateChildren == false);
-				}
+            // Should child content types be updated.
+            bool UpdateChildren()
+            {
+                if (fieldsNotPresentInTarget.Any())
+                {
+                    return !templateContentType.FieldRefs.All(f => f.UpdateChildren == false);
+                }
 
-				return true;
-			}
-			
-			if (fieldsNotPresentInTarget.Any())
+                return true;
+            }
+
+            if (fieldsNotPresentInTarget.Any())
             {
                 // Set flag to reorder fields when new fields are added.
                 reOrderFields = true;
@@ -327,8 +341,8 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
 
             if (isDirty)
             {
-				scope.LogDebug("Update child Content Types: {0}", UpdateChildren());
-				existingContentType.Update(UpdateChildren());
+                scope.LogDebug("Update child Content Types: {0}", UpdateChildren());
+                existingContentType.Update(UpdateChildren());
                 web.Context.ExecuteQueryRetry();
             }
         }
@@ -405,10 +419,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
             {
                 createdCT.FieldLinks.Reorder(ctFields);
             }
-            if (createdCT.ReadOnly != templateContentType.ReadOnly)
-            {
-                createdCT.ReadOnly = templateContentType.ReadOnly;
-            }
+            // Set Hidden and Sealed property, ReadOnly will be set later
             if (createdCT.Hidden != templateContentType.Hidden)
             {
                 createdCT.Hidden = templateContentType.Hidden;
@@ -773,7 +784,7 @@ namespace OfficeDevPnP.Core.Framework.Provisioning.ObjectHandlers
                                  ContentTypeId = defaultDocument.ContentTypeId.StringValue,
                                  Name = defaultDocument.Name,
 #if SP2013 || SP2016
-                                 FileSourcePath = string.Empty
+								 FileSourcePath = string.Empty
 #else
                                  FileSourcePath = creationInfo.PersistBrandingFiles ? $"_cts/{ct.Name}/{defaultDocument.DocumentPath.DecodedUrl}" : string.Empty
 #endif

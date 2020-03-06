@@ -1,4 +1,5 @@
 ﻿#if !ONPREMISES
+using Microsoft.Graph;
 using Microsoft.SharePoint.Client;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -10,7 +11,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Headers;
+#if !NETSTANDARD2_0
 using System.Text.Encodings.Web;
+#endif
 using System.Threading.Tasks;
 using System.Web;
 
@@ -156,6 +159,10 @@ namespace OfficeDevPnP.Core.Sites
                     optionalParams.Add("Description", siteCollectionCreationInformation.Description ?? "");
                     optionalParams.Add("Classification", siteCollectionCreationInformation.Classification ?? "");
                     var creationOptionsValues = new List<string>();
+                    if (siteCollectionCreationInformation.SiteDesignId.HasValue)
+                    {
+                        creationOptionsValues.Add($"implicit_formula_292aa8a00786498a87a5ca52d9f4214a_{siteCollectionCreationInformation.SiteDesignId.Value.ToString("D").ToLower()}");
+                    }
                     if (siteCollectionCreationInformation.Lcid != 0)
                     {
                         creationOptionsValues.Add($"SPSiteLanguage:{siteCollectionCreationInformation.Lcid}");
@@ -361,7 +368,7 @@ namespace OfficeDevPnP.Core.Sites
                     request.Content = requestBody;
                     request.Headers.Add("accept", "application/json;odata.metadata=none");
                     request.Headers.Add("odata-version", "4.0");
-                    if(MediaTypeHeaderValue.TryParse("application/json;odata.metadata=none;charset=utf-8", out MediaTypeHeaderValue sharePointJsonMediaType))
+                    if (MediaTypeHeaderValue.TryParse("application/json;odata.metadata=none;charset=utf-8", out MediaTypeHeaderValue sharePointJsonMediaType))
                     {
                         requestBody.Headers.ContentType = sharePointJsonMediaType;
                     }
@@ -518,7 +525,7 @@ namespace OfficeDevPnP.Core.Sites
                         return;
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     // Catch this...sometimes there's that "sharepoint push feature has not been ..." error
                 }
@@ -537,10 +544,21 @@ namespace OfficeDevPnP.Core.Sites
                     isProvisioningComplete = web.IsProvisioningComplete;
 
                     retryAttempt++;
+
+                    // If we already waited more than 90 secs
+                    if (retryAttempt * retryDelay > 90000)
+                    {
+                        var unlockUrl = UrlUtility.Combine(web.Context.Url,
+                            "/_api/Microsoft.Sharepoint.Utilities.WebTemplateExtensions.SiteScriptUtility.ValidatePendingWebTemplateExtension");
+
+                        var clientContext = web.Context as ClientContext;
+
+                        HttpHelper.MakePostRequest(unlockUrl, spContext: clientContext);
+                    }
                 }
                 while (!isProvisioningComplete && retryAttempt <= maxRetryCount);
             }
-            catch(Exception)
+            catch (Exception)
             {
                 // Eat the exception for now as not all tenants already have this feature
                 // TODO: remove try/catch once IsProvisioningComplete is globally deployed
@@ -550,7 +568,7 @@ namespace OfficeDevPnP.Core.Sites
             if (!isProvisioningComplete)
             {
                 // Bummer, sites seems to be still not ready...log a warning but let's not fail
-                Log.Warning(Constants.LOGGING_SOURCE,  string.Format(CoreResources.SiteCollection_WaitForIsProvisioningComplete, maxRetryCount * retryDelay));
+                Log.Warning(Constants.LOGGING_SOURCE, string.Format(CoreResources.SiteCollection_WaitForIsProvisioningComplete, maxRetryCount * retryDelay));
                 //throw new Exception($"Server side provisioning of this web did not finish after waiting for {maxRetryCount * retryDelay} milliseconds.");
             }
         }
@@ -678,7 +696,7 @@ namespace OfficeDevPnP.Core.Sites
                         if (Convert.ToInt32(responseJson["SiteStatus"]) == 2 || Convert.ToInt32(responseJson["SiteStatus"]) == 1)
 #else
                         if (responseJson["SiteStatus"].Value<int>() == 2 || responseJson["SiteStatus"].Value<int>() == 1)
-#endif                  
+#endif
                         {
                             responseContext = clientContext;
                         }
@@ -1039,6 +1057,48 @@ namespace OfficeDevPnP.Core.Sites
                 return await Task.Run(() => responseString);
             }
         }
+
+        /// <summary>
+        /// Turns a team site into a communication site
+        /// </summary>
+        /// <param name="context">ClientContext of the team site to update to a communication site</param>
+        /// <returns></returns>
+        public static async Task EnableCommunicationSite(ClientContext context)
+        {
+            await EnableCommunicationSite(context, Guid.Parse("96c933ac-3698-44c7-9f4a-5fd17d71af9e"));
+        }
+
+        /// <summary>
+        /// Turns a team site into a communication site
+        /// </summary>
+        /// <param name="context">ClientContext of the team site to update to a communication site</param>
+        /// <param name="designPackageId">Design package id to be applied, 96c933ac-3698-44c7-9f4a-5fd17d71af9e (Topic = default), 6142d2a0-63a5-4ba0-aede-d9fefca2c767 (Showcase) or f6cc5403-0d63-442e-96c0-285923709ffc (Blank)</param>
+        /// <returns></returns>
+        public static async Task EnableCommunicationSite(ClientContext context, Guid designPackageId)
+        {
+
+            if (context == null)
+            {
+                throw new ArgumentNullException("context");
+            }
+
+            context.Web.EnsureProperty(p => p.Url);
+
+            if (designPackageId == Guid.Empty)
+            {
+                throw new Exception("Please specify a valid designPackageId");
+            }
+
+            if (designPackageId != Guid.Parse("96c933ac-3698-44c7-9f4a-5fd17d71af9e") &&  // Topic
+                designPackageId != Guid.Parse("6142d2a0-63a5-4ba0-aede-d9fefca2c767") &&  // Showcase
+                designPackageId != Guid.Parse("f6cc5403-0d63-442e-96c0-285923709ffc"))    // Blank
+            {
+                throw new Exception("Invalid designPackageId specified. Use 96c933ac-3698-44c7-9f4a-5fd17d71af9e (Topic = default), 6142d2a0-63a5-4ba0-aede-d9fefca2c767 (Showcase) or f6cc5403-0d63-442e-96c0-285923709ffc (Blank)");
+            }
+
+            await context.Web.ExecutePost("/_api/sitepages/communicationsite/enable", $@" {{ ""designPackageId"": ""{designPackageId.ToString()}"" }}");
+        }
+
     }
 }
 #endif
